@@ -25,7 +25,7 @@ app.get('/api/auth/referrer/:code', authController.getReferrer);
 
 // --- CLEAN URL ROUTING FOR PUBLIC PAGES ---
 // These must be defined BEFORE the express.static middleware
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'homepage.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'public', 'register.html')));
 app.get('/leaderboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'leaderboard.html')));
@@ -76,3 +76,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000; // Set to 5000 to match your dev logs
 app.listen(PORT, () => console.log(`Server operational on port ${PORT}`));
+// 2. Add '0.0.0.0' so it accepts external connections in the cloud
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
+});

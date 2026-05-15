@@ -164,7 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     data = await response.json();
                 } else {
-                    data = { error: "An unexpected error occurred." };
+                    const text = await response.text();
+                    data = { error: `Server Error: ${response.status}. Check console for details.` };
+                    console.error("Non-JSON Response:", text);
                 }
 
                 if (response.ok) {
