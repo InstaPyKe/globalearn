@@ -25,19 +25,24 @@ exports.getReferrer = async (req, res, next) => {
  */
 exports.registerUser = async (req, res, next) => {
     try {
-        const { username, email, password, phone, referrerCode } = req.body;
+        // Sanitize and normalize inputs
+        const username = req.body.username?.trim();
+        const email = req.body.email?.trim().toLowerCase();
+        const phone = req.body.phone?.trim();
+        const password = req.body.password;
+        const referrerCode = req.body.referrerCode?.trim();
 
         // Basic validation
         if (!username || !email || !password || !phone) {
             return res.status(400).json({ error: "Username, email, password, and phone are required." });
         }
 
-        // Check if user with this email or username already exists
-        const existingUser = await db.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username]);
+        // Comprehensive duplicate check (Email, Username, and Phone)
+        const existingUser = await db.query('SELECT email, username, phone FROM users WHERE email = $1 OR username = $2 OR phone = $3', [email, username, phone]);
         if (existingUser.rows.length > 0) {
-            if (existingUser.rows[0].email === email) {
-            return res.status(409).json({ error: "Email already registered." });
-            }
+            const user = existingUser.rows[0];
+            if (user.email === email) return res.status(409).json({ error: "Email already registered." });
+            if (user.phone === phone) return res.status(409).json({ error: "Phone number already registered." });
             return res.status(409).json({ error: "Username already taken." });
         }
 
@@ -48,7 +53,7 @@ exports.registerUser = async (req, res, next) => {
         // Handle Referral logic
         let referredById = null;
         // Only query if referrerCode is a valid non-empty string
-        if (referrerCode && referrerCode.trim() !== "") {
+        if (referrerCode) {
             const refRes = await db.query('SELECT id FROM users WHERE referral_code = $1', [referrerCode]);
             if (refRes.rows.length > 0) referredById = refRes.rows[0].id;
         }

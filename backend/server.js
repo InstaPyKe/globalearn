@@ -42,10 +42,16 @@ app.use('/api/membership', membershipRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Landing Page Route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/homepage.html'));
-});
+// --- CLEAN URL ROUTING FOR PUBLIC PAGES ---
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, '../public/login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, '../public/register.html')));
+app.get('/leaderboard', (req, res) => res.sendFile(path.join(__dirname, '../public/leaderboard.html')));
+app.get('/payments', (req, res) => res.sendFile(path.join(__dirname, '../public/payments.html')));
+app.get('/features', (req, res) => res.sendFile(path.join(__dirname, '../public/features.html')));
+app.get('/faq', (req, res) => res.sendFile(path.join(__dirname, '../public/faq.html')));
+app.get('/legal', (req, res) => res.sendFile(path.join(__dirname, '../public/legal.html')));
+app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, '../public/contact.html')));
 
 // Health Check / DB Test Route
 app.get('/api/health', async (req, res) => {
@@ -59,6 +65,17 @@ app.get('/api/health', async (req, res) => {
     console.error('Database connection error:', err);
     res.status(500).json({ status: 'offline', error: err.message });
   }
+});
+
+// 404 Handler for unmatched routes
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
+});
+
+// Global JSON Error Handler
+app.use((err, req, res, next) => {
+  console.error('SERVER_ERROR:', err.stack);
+  res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
 });
 
 // Global Error Handling for startup/runtime stability
