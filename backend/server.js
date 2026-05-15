@@ -4,10 +4,12 @@ const cors = require('cors');
 require('dotenv').config();
 const db = require('./db'); // Corrected path
 const authRoutes = require('./routes/authRoutes'); // Corrected path
+const authController = require('./controllers/authController');
 const transactionRoutes = require('./routes/transactionRoutes');
 const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const spinRoutes = require('./routes/spinRoutes');
+const mpesaRoutes = require('./routes/mpesaRoutes'); // NEW: Import M-Pesa routes
 const referralRoutes = require('./routes/referralRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const surveyRoutes = require('./routes/surveyRoutes'); // NEW: Import survey routes
@@ -30,8 +32,11 @@ app.use('/admin', express.static(path.join(__dirname, '../admin')));
 
 // Routes
 app.use('/api/auth', authRoutes);
+// Explicit override for login to prevent 404s
+app.post('/api/auth/login', authController.loginUser);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/mpesa', mpesaRoutes); // NEW: Use M-Pesa routes
 app.use('/api/tasks', taskRoutes);
 app.use('/api/spin', spinRoutes);
 app.use('/api/referrals', referralRoutes);

@@ -10,15 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.add('light-mode');
     }
 
-    menuOpen.addEventListener('click', () => mobileDrawer.classList.add('open'));
-    menuOpen.addEventListener('mouseenter', () => mobileDrawer.classList.add('open'));
-    mobileDrawer.addEventListener('mouseleave', () => mobileDrawer.classList.remove('open'));
-    menuClose.addEventListener('click', () => mobileDrawer.classList.remove('open'));
-
-    themeToggle.addEventListener('click', () => {
-        body.classList.toggle('light-mode');
-        localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
-    });
+    if (menuOpen) {
+        menuOpen.addEventListener('click', () => mobileDrawer.classList.add('open'));
+        menuOpen.addEventListener('mouseenter', () => mobileDrawer.classList.add('open'));
+    }
+    if (mobileDrawer) {
+        mobileDrawer.addEventListener('mouseleave', () => mobileDrawer.classList.remove('open'));
+    }
+    if (menuClose) {
+        menuClose.addEventListener('click', () => mobileDrawer.classList.remove('open'));
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+        });
+    }
 
     // Login Logic
     const loginForm = document.getElementById('loginForm');
@@ -28,13 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value;
             const messageDiv = document.getElementById('message');
 
             try {
-                const response = await fetch('/api/auth/login', { // Assuming this is your login endpoint
+                const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password, phone })
                 });
 
                 let data;

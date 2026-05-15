@@ -508,28 +508,54 @@
             if (!confirm(`Are you sure you want to request an upgrade to ${tier.toUpperCase()} for KSH. ${amount}?`)) {
                 return;
             }
+            
+            upgradeBtn.disabled = true;
+            upgradeBtn.innerText = "Processing...";
 
             try {
-                const res = await fetch('/api/membership/upgrade', {
+                // First, get the user's phone number from their profile
+                const profileRes = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!profileRes.ok) {
+                    throw new Error('Failed to fetch user profile for phone number.');
+                }
+                const userProfile = await profileRes.json();
+                const phoneNumber = userProfile.phone; // Assuming 'phone' is available in the profile
+
+                if (!phoneNumber) {
+                    alert("Your phone number is not registered. Please update your profile settings.");
+                    upgradeBtn.disabled = false;
+                    upgradeBtn.innerText = "Upgrade Now"; // Reset button text
+                    if (tier === 'basic') upgradeBtn.innerText = "Current Tier"; // Special case for basic
+                    return;
+                }
+
+                // Now initiate the M-Pesa STK Push
+                const mpesaRes = await fetch('/api/mpesa/stk-push', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ tier, amount })
+                    body: JSON.stringify({ phoneNumber, amount })
                 });
 
-                const data = await res.json();
+                const mpesaData = await mpesaRes.json();
 
-                if (res.ok) {
-                    alert(data.message);
-                    // Optional: redirect to a payment instruction page
+                if (mpesaRes.ok) {
+                    alert(`M-Pesa STK Push initiated for KSH. ${amount}. Please enter your M-Pesa PIN on your phone.`);
+                    // The actual membership upgrade will happen in the M-Pesa callback on the backend
                 } else {
-                    alert(data.error || 'Failed to submit upgrade request');
+                    alert(mpesaData.error || 'Failed to initiate M-Pesa STK Push.');
                 }
             } catch (err) {
-                console.error('Upgrade error:', err);
-                alert('Connection failure. Please try again.');
+                console.error('M-Pesa STK Push initiation error:', err);
+                alert('Connection failure or unexpected error during M-Pesa initiation. Please try again.');
+            } finally {
+                upgradeBtn.disabled = false;
+                upgradeBtn.innerText = "Upgrade Now"; // Reset button text
+                if (tier === 'basic') upgradeBtn.innerText = "Current Tier"; // Special case for basic
             }
         }
 

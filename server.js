@@ -74,9 +74,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 5000; // Set to 5000 to match your dev logs
-app.listen(PORT, () => console.log(`Server operational on port ${PORT}`));
-// 2. Add '0.0.0.0' so it accepts external connections in the cloud
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server operational on port ${PORT} (0.0.0.0)`);
 });

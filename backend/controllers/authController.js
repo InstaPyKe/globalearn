@@ -87,17 +87,20 @@ exports.registerUser = async (req, res, next) => {
  */
 exports.loginUser = async (req, res, next) => {
     try {
-        const { email, password } = req.body || {};
+        // Sanitize and normalize inputs to match registration data
+        const email = req.body.email?.trim().toLowerCase();
+        const password = req.body.password;
+        const phone = req.body.phone?.trim();
         
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required.' });
+        if (!email || !password || !phone) {
+            return res.status(400).json({ error: 'Email, password, and phone number are required.' });
         }
 
-        // 1. Fetch User from Database
-        const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        // 1. Fetch User from Database - Verify both email and phone for higher security
+        const result = await db.query('SELECT * FROM users WHERE email = $1 AND phone = $2', [email, phone]);
         
         if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Invalid email or password.' });
+            return res.status(401).json({ error: 'Invalid credentials. Please verify your email and phone number.' });
         }
         const user = result.rows[0];
 
