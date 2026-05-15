@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Command | GlobalEarn Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --gold: #FFD700;
+            --obsidian: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 260px; background: var(--obsidian); border-right: 1px solid var(--border); padding: 40px 20px; flex-shrink: 0; transition: 0.3s; overflow: hidden; }
+        .sidebar.collapsed { width: 0; padding: 40px 0; border-right: none; opacity: 0; pointer-events: none; }
+        .nav-item { padding: 15px; color: #444; text-decoration: none; display: flex; gap: 12px; font-weight: 700; transition: 0.3s; }
+        .nav-item.active { color: #fff; background: var(--glass); border-radius: 12px; border: 1px solid var(--border); }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { flex-grow: 1; padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+
+        /* --- EMERGENCY KILL-SWITCH --- */
+        .kill-switch-container {
+            background: rgba(255, 0, 0, 0.05);
+            border: 2px dashed var(--pure-red);
+            padding: 25px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kill-switch-text h2 { color: var(--pure-red); font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; }
+        .kill-switch-text p { font-size: 0.75rem; color: #666; margin-top: 4px; }
+        
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #222; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--pure-red); box-shadow: 0 0 15px var(--pure-red); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* --- WITHDRAWAL QUEUE --- */
+        .queue-header { display: flex; justify-content: space-between; align-items: flex-end; }
+        .queue-header h1 { font-size: 2rem; font-weight: 900; letter-spacing: -1.5px; }
+
+        .payout-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .payout-table th { text-align: left; padding: 15px 20px; font-size: 0.65rem; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+        .payout-row { background: var(--glass); transition: 0.3s; cursor: pointer; }
+        .payout-row:hover { background: rgba(255,255,255,0.06); }
+        .payout-row td { padding: 20px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .payout-row td:first-child { border-left: 1px solid var(--border); border-radius: 15px 0 0 15px; }
+        .payout-row td:last-child { border-right: 1px solid var(--border); border-radius: 0 15px 15px 0; }
+
+        .amount { color: var(--pure-green); font-weight: 900; font-family: monospace; }
+        .wallet-addr { font-family: monospace; font-size: 0.75rem; color: #666; }
+        .trust-score { font-size: 0.65rem; font-weight: 900; padding: 4px 8px; border-radius: 4px; }
+        .trust-high { background: rgba(0, 255, 0, 0.1); color: var(--pure-green); }
+        .trust-low { background: rgba(255, 0, 0, 0.1); color: var(--pure-red); }
+
+        .btn-action { padding: 10px 15px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
+        .btn-approve { background: var(--pure-blue); color: #fff; }
+        .btn-reject { background: transparent; border: 1px solid #333; color: #555; margin-left: 5px; }
+        .btn-reject:hover { border-color: var(--pure-red); color: var(--pure-red); }
+
+        /* --- MOBILE --- */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .kill-switch-container { flex-direction: column; gap: 20px; text-align: center; }
+            .payout-table th:nth-child(3), .payout-table td:nth-child(3) { display: none; } /* Hide wallet on mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div style="font-weight:900; color:var(--pure-red);">GLOBAL_OS</div>
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:#444; cursor:pointer; font-size:1.2rem;">❮</button>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="admin-users.html" class="nav-item">👥 Users</a>
+            <a href="admin-membership.html" class="nav-item">⭐ Tier Manager</a>
+            <a href="admin-content.html" class="nav-item">🎬 Content</a>
+            <a href="admin-finance.html" class="nav-item active">💸 Financials</a>
+            <a href="admin-security.html" class="nav-item">🛡️ Security</a>
+            <a href="admin-support.html" class="nav-item">🎧 Support</a>
+            <a href="messages.html" class="nav-item">📬 Support Inbox</a>
+            <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <section class="kill-switch-container">
+            <div class="kill-switch-text">
+                <h2>SYSTEM_KILL_SWITCH</h2>
+                <p>Instantly freeze all withdrawals, earnings, and user logins across the entire platform.</p>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="killSwitch">
+                <span class="slider"></span>
+            </label>
+        </section>
+
+        <div class="queue-header" style="align-items: center; gap: 20px;">
+            <button onclick="toggleSidebar()" id="openBtn" style="display: none; background:none; border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; cursor:pointer;">☰</button>
+            <div style="flex-grow: 1;">
+                <h1>PAYOUT<span>_QUEUE</span></h1>
+                <p id="queue-count" style="color: #444; font-size: 0.8rem;">Scanning queue for pending settlements...</p>
+            </div>
+            <div style="background: var(--glass); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border);">
+                <span style="font-size: 0.6rem; color: #555; display: block;">ESCROW BALANCE</span>
+                <span id="escrow-balance" style="font-weight: 900; color: var(--gold);">KSH. 0.00</span>
+            </div>
+        </div>
+
+        <table class="payout-table">
+            <thead>
+                <tr>
+                    <th>User / UID</th>
+                    <th>Amount</th>
+                    <th>Wallet Address (BEP-20)</th>
+                    <th>Risk Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="payout-body"></tbody>
+        </table>
+    </main>
+
+    <script src="admin-finance.js"></script>
+</body>
+</html>

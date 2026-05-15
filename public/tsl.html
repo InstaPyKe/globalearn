@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Specification Document - Global Rewards Platform</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { border-bottom: 2px solid #3498db; padding-bottom: 10px; color: #2c3e50; margin-top: 30px; }
+        h3 { color: #2980b9; margin-top: 20px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: #333; }
+        .feature-list { list-style: none; padding-left: 0; }
+        .feature-list li { margin-bottom: 10px; padding-left: 25px; position: relative; }
+        .feature-list li::before { content: '✔'; position: absolute; left: 0; color: #27ae60; font-weight: bold; }
+        .pro-tip {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Technical Specification Document (TSD)</h1>
+    <p>Global Freelance & Rewards Platform Architecture</p>
+</header>
+
+<div class="container">
+    
+    <h2>1. Professional Page Plan</h2>
+    
+    <h3>A. The Public Facing Site (Landing & Trust)</h3>
+    <ul class="feature-list">
+        <li><strong>Home Page:</strong> Hero section with CTA, "How it Works" guide, and real-time platform statistics.</li>
+        <li><strong>Leaderboard:</strong> Live rankings of top earners and referrers to drive competition.</li>
+        <li><strong>Proof of Payment Wall:</strong> A public feed of recent payouts (censored) to build global credibility.</li>
+        <li><strong>Services/Features:</strong> Detailed breakdown of Ad-watching, Video tasks, and the Spin-to-Earn system.</li>
+        <li><strong>FAQ & Help Center:</strong> Documentation on payment cycles, account rules, and troubleshooting.</li>
+        <li><strong>Legal/Compliance:</strong> GDPR/CCPA compliant Terms of Service and Privacy Policy pages.</li>
+    </ul>
+
+    <h3>B. User Portal (The Earner’s Dashboard)</h3>
+    <ul class="feature-list">
+        <li><strong>Main Dashboard:</strong> Real-time earnings snapshot, balance, and daily task progress.</li>
+        <li><strong>The Earning Hub:</strong> 
+            <ul>
+                <li>Ad-Watch & Video Lounge: High-performance players for YouTube/TikTok embeds.</li>
+                <li>Lucky Spin Room: Gamified UI with backend-validated prize logic.</li>
+            </ul>
+        </li>
+        <li><strong>Referral Management:</strong> Unique link generator and a 3-level visual downline tree.</li>
+        <li><strong>Membership Tier Center:</strong> Upgrade paths (Basic/Gold/Platinum) for higher earning caps.</li>
+        <li><strong>Wallet & Payouts:</strong> Full transaction history and multi-currency withdrawal requests.</li>
+        <li><strong>Profile Settings:</strong> 2FA security, KYC document uploads, and language preferences.</li>
+    </ul>
+
+    <h3>C. Admin Portal (The Command Center)</h3>
+    <ul class="feature-list">
+        <li><strong>Main Analytics:</strong> Global KPIs—total users, site-wide revenue vs. payout liability.</li>
+        <li><strong>User Management:</strong> Identity verification queue (KYC) and account moderation tools.</li>
+        <li><strong>Content & Ad Manager:</strong> Ad/Video uploader with pricing controls and daily view caps.</li>
+        <li><strong>Financial Manager:</strong> Withdrawal approval queue and a <strong>Global Kill-Switch</strong> for emergencies.</li>
+        <li><strong>Security Monitor:</strong> Real-time flags for IP/Device conflicts to prevent fraud.</li>
+    </ul>
+
+    <h2>2. The TLS Architecture Breakdown</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Layer</th>
+                <th>Recommended Technology</th>
+                <th>Primary Responsibility</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Presentation (Frontend)</strong></td>
+                <td>React.js / Next.js</td>
+                <td>UI/UX, Multi-language support (i18n), and client-side task timers.</td>
+            </tr>
+            <tr>
+                <td><strong>Logic (Backend API)</strong></td>
+                <td>Node.js / Python</td>
+                <td>Referral commission logic, Anti-cheat filters, and API orchestration.</td>
+            </tr>
+            <tr>
+                <td><strong>Data (Database)</strong></td>
+                <td>PostgreSQL / Redis</td>
+                <td>User balances, transaction ledgers, and session caching.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pro-tip">
+        <strong>The "Worker" Layer:</strong> Heavy tasks like calculating 3-level commissions (10% → 5% → 2%) are handled by background processors (Redis/BullMQ) to ensure the website remains fast.
+    </div>
+
+    <h2>3. Core Technical Modules & Security</h2>
+    <ul class="feature-list">
+        <li><strong>Anti-Fraud Suite:</strong> Device fingerprinting and heartbeat checks to ensure tasks are completed by humans.</li>
+        <li><strong>Global Payments:</strong> Support for Stripe, PayPal, and Crypto Gateways (USDT/BTC).</li>
+        <li><strong>Scalability:</strong> Cloudflare CDN for global speed and DDoS protection.</li>
+        <li><strong>Integrity:</strong> Immutable audit logs for every balance change and point-in-time database backups.</li>
+    </ul>
+
+    <h2>4. Final Checklist for Launch</h2>
+    <ul class="feature-list">
+        <li>Verification of legal links (Terms/Privacy) for payment processor approval.</li>
+        <li>Backend-only handling of "Spin" odds to prevent script manipulation.</li>
+        <li>Security of the <code>cloudflared</code> tunnel for the local development environment.</li>
+        <li>Taxation thresholds set for automated W-8BEN/W-9 collection.</li>
+    </ul>
+
+</div>
+
+<div class="footer">
+    &copy; 2026 Global Freelance Platform TSD. All Rights Reserved.
+</div>
+
+</body>
+</html>

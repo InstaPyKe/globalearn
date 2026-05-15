@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management | GlobalEarn Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --gold: #F1C40F;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 260px; background: #050505; border-right: 1px solid var(--border); padding: 40px 20px; flex-shrink: 0; transition: 0.3s; }
+        .sidebar.collapsed { width: 0; padding: 40px 0; border-right: none; opacity: 0; pointer-events: none; }
+        .nav-item { padding: 15px; color: #444; text-decoration: none; display: flex; gap: 12px; font-weight: 700; transition: 0.3s; }
+        .nav-item.active { color: #fff; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); }
+
+        /* --- MAIN VIEW --- */
+        .admin-main { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .header-bar { padding: 30px 40px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        
+        .search-container { position: relative; width: 400px; }
+        .search-input { width: 100%; background: var(--glass); border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; color: #fff; outline: none; }
+
+        .content-area { display: flex; flex-grow: 1; overflow: hidden; }
+
+        /* --- USER LIST --- */
+        .user-list { flex-grow: 1; overflow-y: auto; padding: 0; }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th { 
+            position: sticky; top: 0; background: #080808; z-index: 10;
+            text-align: left; padding: 20px 40px; font-size: 0.7rem; color: #666; 
+            text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid var(--border);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .data-table th:last-child { border-right: none; }
+        .data-table td { 
+            padding: 20px 40px; 
+            border-bottom: 1px solid rgba(255,255,255,0.03); 
+            border-right: 1px solid rgba(255,255,255,0.02);
+            vertical-align: middle; 
+        }
+        .data-table td:last-child { border-right: none; }
+        .data-table tr { cursor: pointer; transition: 0.2s; }
+        .data-table tr:nth-child(even) { background: rgba(255,255,255,0.01); }
+        .data-table tr:hover { background: rgba(255,255,255,0.03) !important; }
+        .data-table tr.selected { background: rgba(0,0,255,0.08) !important; }
+        .data-table td:nth-child(3) { background: rgba(0,255,0,0.005); } /* Tint Liquidity Column */
+        .data-table tr.selected td:first-child { border-left: 4px solid var(--pure-blue); }
+
+        /* --- INSPECTOR PANEL --- */
+        .inspector { 
+            width: 0; 
+            background: #050505; 
+            border-left: 1px solid var(--border); 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            overflow-y: auto;
+            padding: 0;
+        }
+        .inspector.open { width: 450px; padding: 40px; }
+
+        .det-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; display: block; }
+        .det-val { font-weight: 700; margin-top: 5px; font-size: 0.95rem; }
+
+        .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; background: #222; }
+        .status-badge.pending { color: var(--gold); border: 1px solid var(--gold); }
+        .status-badge.verified { color: var(--pure-green); border: 1px solid var(--pure-green); }
+
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 30px; }
+        .btn-action { 
+            padding: 12px; 
+            border: 1px solid var(--border); 
+            background: var(--glass); 
+            color: #fff; 
+            border-radius: 10px; 
+            font-size: 0.75rem; 
+            font-weight: 800; 
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-action:hover { background: #fff; color: #000; }
+        .btn-ban { border-color: var(--pure-red); color: var(--pure-red); }
+        .btn-ban:hover { background: var(--pure-red); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div style="font-weight:900; color:var(--pure-red);">GLOBAL_OS</div>
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:#444; cursor:pointer; font-size:1.2rem;">❮</button>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="admin-users.html" class="nav-item active">👥 Users</a>
+            <a href="admin-membership.html" class="nav-item">⭐ Tier Manager</a>
+            <a href="admin-content.html" class="nav-item">🎬 Content</a>
+            <a href="admin-finance.html" class="nav-item">💸 Financials</a>
+            <a href="admin-security.html" class="nav-item">🛡️ Security</a>
+            <a href="admin-support.html" class="nav-item">🎧 Support</a>
+            <a href="messages.html" class="nav-item">📬 Support Inbox</a>
+            <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div class="header-bar">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button onclick="toggleSidebar()" id="openBtn" style="display: none; background:none; border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; cursor:pointer;">☰</button>
+                <h1 style="font-size: 1.5rem; letter-spacing: -1px;">User_Manager <span id="user-count-badge" style="font-size: 0.8rem; color: #444; margin-left: 10px;"></span></h1>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by username, email, or phone...">
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="user-list">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Identity / UID</th>
+                            <th>Verification</th>
+                            <th style="text-align: right;">Liquidity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userList"></tbody>
+                </table>
+            </div>
+
+            <div class="inspector" id="inspector">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 id="det-username" style="font-size: 1.4rem;">Select User</h2>
+                    <span id="kyc-status-badge" class="status-badge">---</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <span class="det-label">Balance</span>
+                        <div id="det-balance" class="det-val" style="color: var(--pure-green);">KSH. 0.00</div>
+                    </div>
+                    <div>
+                        <span class="det-label">Total Earned</span>
+                        <div id="det-earned" class="det-val">KSH. 0.00</div>
+                    </div>
+                </div>
+
+                <span class="det-label">Contact Info</span>
+                <div id="det-email" class="det-val">---</div>
+                <div id="det-phone" class="det-val" style="color: #666;">---</div>
+
+                <span class="det-label">Network Stats</span>
+                <div class="det-val">Level 1: <span id="det-referrals" style="color: var(--pure-blue);">0 Users</span></div>
+                <div class="det-val">Invited By: <span id="det-referrer">---</span></div>
+
+                <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--border);">
+                    <span class="det-label" style="margin-top:0;">System Forensics</span>
+                    <div style="font-family: monospace; font-size: 0.75rem; margin-top: 10px;">
+                        <div style="color: #444;">IP_ADDR: <span id="det-ip" style="color: #888;">---</span></div>
+                        <div style="color: #444;">CREATED: <span id="det-date" style="color: #888;">---</span></div>
+                        <div style="color: #444;">WALLET: <span id="det-wallet" style="color: #888;">---</span></div>
+                    </div>
+                </div>
+
+                <div class="action-grid">
+                    <button class="btn-action" onclick="handleUserAction('adjust_balance')">Adjust Balance</button>
+                    <button class="btn-action" onclick="handleUserAction('verify')">Verify KYC</button>
+                    <button class="btn-action" onclick="handleUserAction('reject')">Reject KYC</button>
+                    <button class="btn-action btn-ban" onclick="handleUserAction('ban')">BAN ACCOUNT</button>
+                </div>
+                
+                <button onclick="toggleInspector()" class="btn-action" style="width: 100%; margin-top: 40px; border: none; color: #444;">Close Inspector</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin-users.js"></script>
+</body>
+</html>

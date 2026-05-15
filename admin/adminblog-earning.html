@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalEarn Admin | Blog Management</title>
+    <link rel="stylesheet" href="../css/admin-style.css"> <!-- Assuming consistent CSS path -->
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --pure-red: #ff4757;
+            --pure-green: #2ed573;
+            --pure-blue: #1e90ff;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #050505;
+            border-right: 1px solid var(--border);
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Enable sidebar scrolling */
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .sidebar-header {
+            padding: 30px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            font-size: 1.2rem;
+            color: var(--pure-red);
+        }
+
+        .nav-links { padding: 10px; display: flex; flex-direction: column; gap: 5px; }
+
+        .nav-link {
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+        }
+
+        .nav-link svg { opacity: 0.7; }
+        .nav-link:hover, .nav-link.active {
+            background: var(--glass);
+            color: #fff;
+        }
+        .nav-link.active svg { color: var(--pure-red); opacity: 1; }
+
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .deploy-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        input, select {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-deploy {
+            background: var(--pure-red);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .blog-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .status-active { color: var(--pure-green); font-size: 0.7rem; font-weight: 800; }
+        .status-paused { color: var(--gold); font-size: 0.7rem; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">GLOBALEARN</div>
+        <nav class="nav-links">
+            <a href="admin-dashboard.html" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a>
+            <a href="admin-users.html" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                User Management
+            </a>
+            <a href="admin-content.html" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Video Tasks
+            </a>
+            <a href="adminblog-earning.html" class="nav-link active">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Blog Rewards
+            </a>
+            <a href="admin-finance.html" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Finance & Payouts
+            </a>
+            <a href="admin-support.html" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Tickets
+            </a>
+            <a href="admin-settings.html" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                Settings
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1 style="margin:0; font-size: 1.5rem;">Blog Manager</h1>
+                <p style="color: #666; font-size: 0.8rem; margin: 5px 0 0;">Deploy and manage blog reading tasks</p>
+            </div>
+            <button class="btn-deploy" onclick="document.getElementById('blogForm').scrollIntoView({behavior:'smooth'})">Add New Article</button>
+        </header>
+
+        <section class="deploy-card" id="blogFormSection">
+            <h2 style="font-size: 1rem; margin-top: 0;">DEPLOY NEW BLOG ARTICLE</h2>
+            <form id="blogForm">
+                <input type="hidden" id="editBlogId">
+                <div class="form-grid">
+                    <div>
+                        <label style="font-size: 0.65rem; font-weight: 800; color: #888;">ARTICLE TITLE</label>
+                        <input type="text" id="blogTitle" placeholder="e.g. 5 Ways to Earn Passive Income" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.65rem; font-weight: 800; color: #888;">ARTICLE URL</label>
+                        <input type="url" id="blogUrl" placeholder="https://external-blog.com/article" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.65rem; font-weight: 800; color: #888;">REWARD (KSH)</label>
+                        <input type="number" id="blogReward" step="0.01" placeholder="10.00" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.65rem; font-weight: 800; color: #888;">DAILY READ CAP</label>
+                        <input type="number" id="blogCap" placeholder="500" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-deploy" id="submitBtn">Deploy Article</button>
+                <button type="button" class="btn-deploy" style="background:var(--border); display:none;" id="cancelBtn">Cancel Edit</button>
+            </form>
+        </section>
+
+        <h2 style="font-size: 1rem; margin-bottom: 20px;">ACTIVE INVENTORY</h2>
+        <div class="blog-grid" id="blogGrid">
+            <!-- Blog cards will be injected here by JS -->
+             <div style="padding: 50px; text-align: center; color: #444; grid-column: 1/-1;">LOADING ARTICLE REPOSITORY...</div>
+        </div>
+    </main>
+
+    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
+
+    <script>
+        // Placeholder logic - this would usually connect to a backend API
+        document.getElementById('blogForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("This requires a corresponding backend route for /api/admin/blogs. Update your server.js to handle blog data.");
+        });
+
+        // Toggle Sidebar Function
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        };
+    </script>
+</body>
+</html>

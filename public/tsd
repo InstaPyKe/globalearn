@@ -1,0 +1,67 @@
+This is the finalized **Technical Specification Document (TSD)** for your global freelance and rewards platform. It is organized using the **TLS (Three-Layer System)** architecture to ensure every feature has a designated place for professional development.
+
+---
+## 1. Professional Page Plan
+
+### A. The Public Facing Site (Landing & Trust)
+* **Home Page:** Hero section with CTA, "How it Works" guide, and platform statistics.
+* **Leaderboard:** Live rankings of top earners and referrers to drive competition.
+* **Proof of Payment Wall:** A public feed of recent payouts (censored) to build global credibility.
+* **Services/Features:** Detailed breakdown of Ad-watching, Video tasks, and the Spin-to-Earn system.
+* **FAQ & Help Center:** Clear documentation on payment cycles and account rules.
+* **Legal/Compliance:** Terms of Service and Privacy Policy (GDPR/CCPA compliant).
+
+### B. User Portal (The Earner’s Dashboard)
+* **Main Dashboard:** Real-time earnings snapshot and daily task progress.
+* **The Earning Hub:**
+    * **Ad-Watch & Video Lounge:** High-performance interfaces for YouTube/TikTok embeds.
+    * **Lucky Spin Room:** Gamified UI with anti-cheat button verification.
+* **Referral Management:** * Unique link generator.
+    * **Multi-Level Tree:** Visual breakdown of Level 1, 2, and 3 downlines.
+* **Membership Tier Center:** Upgrade options (Basic/Gold/Platinum) to increase earning limits.
+* **Wallet & Payouts:** Transaction history and withdrawal requests (Fiat/Crypto).
+* **Profile & Security:** 2FA setup, KYC document upload, and language/currency settings.
+
+### C. Admin Portal (The Command Center)
+* **Main Analytics:** Global KPIs—total users, site-wide revenue vs. payout liability.
+* **User & KYC Management:** Verification queue and user ban/unban tools.
+* **Content & Ad Manager:** * Ad/Video uploader with "per-view" pricing and daily caps.
+    * Spin Controller (odds management).
+* **Financial Manager:** * **Withdrawal Queue:** Manual/Batch approval of payouts.
+    * **Kill-Switch:** Emergency button to pause all site financial activities.
+* **Security Monitor:** Real-time flags for IP/Device conflicts (Multi-account detection).
+
+---
+
+## 2. The TLS Architecture Breakdown
+
+| Layer | Recommended Tech | Primary Responsibility |
+| :--- | :--- | :--- |
+| **Presentation (Frontend)** | React.js / Next.js | UI/UX, Multi-language (i18n), and client-side task timers. |
+| **Logic (Backend API)** | Node.js / Python | Referral commission logic, Anti-cheat filters, and Worker management. |
+| **Data (Database)** | PostgreSQL / Redis | Storing the referral tree, transaction ledgers, and session caching. |
+
+### The "Worker" Extension (Sub-Layer)
+To maintain a professional speed, heavy tasks are moved to a **Background Worker Layer** (e.g., Redis/BullMQ):
+* **Commission Engine:** Calculating the 3-level split ($10\% \to 5\% \to 2\%$) without slowing down the user's browser.
+* **Notification Engine:** Handling mass emails and web-push alerts.
+
+---
+
+## 3. Core Technical Modules & Security
+
+* **Anti-Fraud Suite:** * **Device Fingerprinting:** Identifies users even if they change IPs or use VPNs.
+    * **Task Validation:** Heartbeat checks to ensure videos are actually watched.
+* **Global Payments:** Integration of Stripe/PayPal for fiat and a crypto gateway (e.g., CoinGate) for USDT/BTC.
+* **Scalability & Performance:**
+    * **CDN (Cloudflare):** For fast global loading and DDoS protection.
+    * **Audit Logs:** Immutable records of every balance change for financial integrity.
+* **Database Redundancy:** Automatic "Point-in-Time" backups to prevent loss of user earning data.
+
+---
+
+## 4. Final Checklist for Launch
+1.  **Legal:** Are the Terms and Privacy links active? (Crucial for payment approval).
+2.  **Anti-Cheat:** Is the "Spin" logic handled on the backend to prevent script manipulation?
+3.  **Local Dev:** Is the PowerShell environment and `cloudflared` tunnel secured for testing?
+4.  **Taxation:** Is the system ready to collect tax info once a user hits a specific payout threshold?

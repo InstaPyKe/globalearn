@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features | GlobalEarn Platform Overview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+        } 
+
+        body.light-mode {
+            --bg-color: #f8f9fa;
+            --text-color: #121212;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --glass: rgba(0, 0, 0, 0.05);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            padding-bottom: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- SAMSUNG STYLE AURORA BACKGROUND --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 102, 255, 0.25) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 127, 0.2) 0%, transparent 45%),
+                radial-gradient(circle at 50% 15%, rgba(255, 0, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 15% 85%, rgba(255, 204, 0, 0.1) 0%, transparent 40%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: auroraFloat 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes auroraFloat {
+            0% { transform: scale(1.1); }
+            100% { transform: scale(1.3) rotate(3deg); }
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; text-decoration: none; color: var(--text-color); }
+        .logo span { color: var(--pure-green); }
+
+        .main-nav-group, .auth-group { display: flex; align-items: center; gap: 30px; }
+
+        .nav-link-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link-item:hover, .nav-link-item.active { color: var(--text-color); }
+
+        .nav-link-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--pure-green);
+            transition: 0.3s;
+        }
+
+        .nav-link-item:hover::after, .nav-link-item.active::after { width: 100%; }
+
+        /* --- DROPDOWN NAVIGATION --- */
+        .dropdown { position: relative; display: flex; align-items: center; }
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            min-width: 200px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            z-index: 1100;
+        }
+        .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .dropdown-content::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: rgba(10, 10, 10, 0.95); border-left: 1px solid var(--border); border-top: 1px solid var(--border); }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .dropdown-item:hover { background: var(--glass); color: var(--text-color); padding-left: 20px; }
+        .dropdown-trigger svg { transition: 0.3s; }
+        .dropdown:hover .dropdown-trigger svg { transform: rotate(180deg); color: var(--pure-green); }
+
+        .nav-cta {
+            padding: 10px 25px;
+            background: var(--pure-green);
+            color: #000 !important;
+            text-decoration: none;
+            font-weight: 800;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3); }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content Styling */
+        .container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        /* --- PHONE DISPLAY MOCKUP --- */
+        .phone-display {
+            width: 300px; height: 600px; margin: 0 auto 60px;
+            position: relative; background: #000; border-radius: 45px;
+            border: 12px solid #1a1a1a; box-shadow: 0 50px 100px rgba(0,0,0,0.8), 0 0 60px rgba(0,0,255,0.15);
+            overflow: hidden; animation: float 6s ease-in-out infinite; z-index: 5;
+        }
+        .phone-display::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: #1a1a1a; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; z-index: 10; }
+        
+        .phone-ui { width: 100%; height: 100%; padding: 40px 20px 20px; display: flex; flex-direction: column; gap: 15px; background: linear-gradient(180deg, #0a0a0a 0%, #000 100%); text-align: left; }
+        .ui-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; }
+        .ui-welcome { font-size: 0.7rem; color: #444; text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
+        .ui-username { font-size: 1rem; font-weight: 800; color: #fff; margin-top: 2px; }
+        .ui-balance-label { font-size: 0.6rem; color: #555; margin-bottom: 5px; }
+        
+        .ui-graph { height: 120px; display: flex; align-items: flex-end; gap: 4px; padding-top: 10px; }
+        .graph-bar { 
+            flex: 1; border-radius: 3px 3px 0 0; 
+            background: var(--pure-blue); opacity: 0.3;
+            animation: barGrow 2s ease-out infinite alternate; 
+        }
+
+        @keyframes barGrow { 
+            from { transform: scaleY(0.5); opacity: 0.2; } 
+            to { transform: scaleY(1); opacity: 0.6; } 
+        }
+
+        @keyframes float { 
+            0%, 100% { transform: translateY(0) rotate(0deg); } 
+            50% { transform: translateY(-20px) rotate(1deg); } 
+        }
+
+        .ui-status-pill {
+            text-align: center; color: var(--pure-blue); 
+            font-size: 0.6rem; font-weight: 900; 
+            letter-spacing: 1px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+        }
+
+        .feature-card h3 { color: var(--pure-green); margin-bottom: 15px; }
+        .feature-card p { color: #aaa; font-size: 0.95rem; line-height: 1.6; }
+
+        /* --- MOBILE TREE MENU --- */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100vh;
+            background: var(--bg-color);
+            backdrop-filter: blur(25px);
+            z-index: 2000;
+            padding: 50px 30px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .mobile-menu-overlay.open { right: 0; }
+
+        .menu-close-btn { background: none; border: none; color: var(--text-color); font-size: 1.5rem; cursor: pointer; align-self: flex-end; }
+        body.light-mode .menu-close-btn { color: var(--text-color); }
+
+        .tree-container { display: flex; flex-direction: column; gap: 8px; }
+        .tree-root { font-size: 0.65rem; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 2px; margin: 20px 0 10px 10px; }
+        .tree-leaf { 
+            color: #888; text-decoration: none; font-weight: 700; font-size: 0.95rem; 
+            padding: 12px 20px; border-radius: 12px; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px;
+        }
+        body.light-mode .tree-leaf { color: #555; }
+        .tree-leaf:hover, .tree-leaf.active { background: var(--glass); color: var(--text-color); transform: translateX(5px); }
+        body.light-mode .tree-leaf:hover { color: var(--pure-blue); }
+        .tree-leaf.active { border-left: 3px solid var(--pure-green); }
+
+        .hamburger-btn { display: none; background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
+        body.light-mode .hamburger-btn { color: var(--text-color); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .hamburger-btn { display: block; }
+            .main-nav-group, .auth-group { display: none; }
+            
+            nav { padding: 15px 8%; }
+
+            .container h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <button class="hamburger-btn" id="menuOpen">☰ MENU</button>
+        <div class="main-nav-group">
+            <a href="homepage.html" class="nav-link-item">Home</a>
+            <a href="leaderboard.html" class="nav-link-item">Leaderboard</a>
+            <a href="payments.html" class="nav-link-item">Payments</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link-item active dropdown-trigger" style="display: flex; align-items: center; gap: 8px;">Resources <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+                <div class="dropdown-content">
+                    <a href="features.html" class="dropdown-item active">Features</a>
+                    <a href="faq.html" class="dropdown-item">FAQ</a>
+                    <a href="legal.html" class="dropdown-item">Legal</a>
+                    <a href="contact.html" class="dropdown-item">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="auth-group">
+            <button id="themeToggle" class="theme-toggle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+            <a href="login.html" class="nav-link-item">Login</a>
+            <a href="register.html" class="nav-cta">Register</a>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileDrawer">
+        <button class="menu-close-btn" id="menuClose">✕</button>
+        
+        <div class="tree-container">
+            <div class="tree-root">PLATFORM_CORE</div>
+            <a href="homepage.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home
+            </a>
+            <a href="leaderboard.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Leaderboard
+            </a>
+            <a href="payments.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Payments
+            </a>
+            <a href="features.html" class="tree-leaf active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 2.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-3 5-3"/><path d="M12 15v5s3.03-.55 5-2c2.2-1.62 3-5 3-5"/></svg> Features
+            </a>
+            
+            <div class="tree-root">RESOURCES</div>
+            <a href="faq.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ
+            </a>
+            <a href="legal.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Legal
+            </a>
+            <a href="contact.html" class="tree-leaf active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact
+            </a>
+
+            <div class="tree-root" style="margin-top: 30px;">AUTHENTICATION</div>
+            <a href="login.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Login
+            </a>
+            <a href="register.html" class="tree-leaf" style="color: var(--pure-green);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg> Register Now
+            </a>
+        </div>
+    </div>
+
+    <script src="features.js"></script>
+
+    <main class="container">
+        <div class="phone-display">
+            <div class="phone-ui">
+                <div class="ui-card">
+                    <div class="ui-welcome">Platform_Features</div>
+                    <div class="ui-username">GlobalEarn_V2</div>
+                </div>
+                <div class="ui-card">
+                    <div class="ui-balance-label">NETWORK_CAPACITY</div>
+                    <div style="font-size: 1.2rem; font-weight: 900; background: linear-gradient(to right, #00FF7F, #00FFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ULTRA_HIGH</div>
+                </div>
+                <div class="ui-card" style="flex-grow: 1;">
+                    <div class="ui-balance-label">FEATURE_VELOCITY</div>
+                    <div class="ui-graph">
+                        <div class="graph-bar" style="height: 40%; animation-delay: 0.1s;"></div>
+                        <div class="graph-bar" style="height: 70%; animation-delay: 0.3s;"></div>
+                        <div class="graph-bar" style="height: 55%; animation-delay: 0.5s;"></div>
+                        <div class="graph-bar" style="height: 90%; animation-delay: 0.2s;"></div>
+                        <div class="graph-bar" style="height: 65%; animation-delay: 0.4s;"></div>
+                    </div>
+                </div>
+                <div class="ui-card ui-status-pill">SECURE_PROTOCOL_ACTIVE</div>
+            </div>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Watch & Earn</h3>
+                <p>Engage with trending YouTube and TikTok videos, or view advertisements to earn instant rewards. Our seamless player ensures a smooth experience.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Lucky Spin</h3>
+                <p>Test your luck with our daily Lucky Spin. Win bonus cash, exclusive tasks, or even membership upgrades. Every spin is a chance to win big!</p>
+            </div>
+            <div class="feature-card">
+                <h3>3-Level Referrals</h3>
+                <p>Build your global network and earn from your direct invites, their invites, and even their invites. Passive income made easy!</p>
+            </div>
+            <div class="feature-card">
+                <h3>Flexible Withdrawals</h3>
+                <p>Cash out your earnings via multiple options including Crypto (USDT, BTC) and traditional Fiat gateways like PayPal. Fast and secure payouts.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Membership Tiers</h3>
+                <p>Upgrade to Gold or Platinum for higher daily earning caps, faster withdrawals, dedicated support, and access to exclusive VIP tasks.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Global Community</h3>
+                <p>Join a thriving community of earners from around the world. Share tips, compete on the leaderboard, and grow together.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <div class="footer-logo">GLOBAL<span>EARN</span></div>
+            <div class="footer-copyright">
+                <span>GLOBALEARN PLATFORMS</span> all rights reserved.
+            </div>
+            <div style="font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; margin-top: 10px;">
+                Developed by: <span style="color: #666;">JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
+    <style>
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: 1px solid var(--border); position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
+    </style>
+</body>
+</html>

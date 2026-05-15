@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Manager | Admin Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-blue: #0000FF; --pure-green: #00FF00; --pure-red: #FF0000;
+            --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: #050505; border-right: 1px solid var(--border); padding: 40px 20px; flex-shrink: 0; transition: 0.3s; overflow: hidden; }
+        .sidebar.collapsed { width: 0; padding: 40px 0; border-right: none; opacity: 0; pointer-events: none; }
+        .nav-item { padding: 15px; color: #444; text-decoration: none; display: flex; gap: 12px; font-weight: 700; }
+        .nav-item.active { color: #fff; background: var(--glass); border-radius: 12px; border: 1px solid var(--border); }
+        .main-content { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        .config-card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 30px; margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        input, select { background: #000; border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: #fff; outline: none; }
+        .btn-post { background: var(--pure-blue); color: #fff; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; grid-column: span 3; }
+        .tier-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .tier-card { background: var(--glass); border: 1px solid var(--border); padding: 25px; border-radius: 20px; position: relative; }
+        .tier-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .price-chip { background: var(--pure-green); color: #000; font-weight: 900; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; position: absolute; top: 25px; right: 25px; }
+        .feature-row { font-size: 0.75rem; color: #666; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 5px; }
+        .btn-del { border: 1px solid var(--pure-red); color: var(--pure-red); background: none; padding: 10px; border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 20px; width: 100%; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div style="font-weight:900; color:var(--pure-red);">GLOBAL_OS</div>
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:#444; cursor:pointer; font-size:1.2rem;">❮</button>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="admin-users.html" class="nav-item">👥 Users</a>
+            <a href="admin-membership.html" class="nav-item active">⭐ Tier Manager</a>
+            <a href="admin-content.html" class="nav-item">🎬 Content</a>
+            <a href="admin-finance.html" class="nav-item">💸 Financials</a>
+            <a href="admin-security.html" class="nav-item">🛡️ Security</a>
+            <a href="admin-support.html" class="nav-item">🎧 Support</a>
+            <a href="messages.html" class="nav-item">📬 Support Inbox</a>
+            <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 20px;">
+            <button onclick="toggleSidebar()" id="openBtn" style="display: none; background:none; border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; cursor:pointer;">☰</button>
+            <h1 style="font-size: 2.2rem; letter-spacing: -1.5px;">Membership_<span>Architect</span></h1>
+        </div>
+        
+        <section class="config-card">
+            <h2 style="font-size: 0.7rem; color: var(--pure-blue); letter-spacing: 2px; margin-bottom: 20px;">DEPLOY_NEW_PACKAGE</h2>
+            <form id="tierForm" class="form-grid">
+                <input type="text" id="tier_key" placeholder="Key (e.g. gold)" required>
+                <input type="text" id="display_name" placeholder="Name (e.g. GOLD)" required>
+                <input type="number" id="price" placeholder="Price (KSH)" required>
+                <input type="text" id="duration" placeholder="Duration (e.g. Year)">
+                <input type="text" id="cap" placeholder="Daily Cap">
+                <input type="text" id="ref" placeholder="Referral Structure">
+                <button type="submit" class="btn-post">Initiate Deployment</button>
+            </form>
+        </section>
+
+        <div class="tier-list" id="tierContainer"></div>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const fetchTiers = async () => {
+            const res = await fetch('/api/admin/tiers', { headers: { 'Authorization': `Bearer ${token}` } });
+            const tiers = await res.json();
+            const container = document.getElementById('tierContainer');
+            container.innerHTML = '';
+            tiers.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'tier-card';
+                card.innerHTML = `
+                    <div class="price-chip">KSH. ${parseFloat(t.price).toLocaleString()}</div>
+                    <h3>${t.display_name}</h3>
+                    <div class="feature-row">DURATION: <b>${t.duration_text}</b></div>
+                    <div class="feature-row">CAP: <b>${t.daily_cap}</b></div>
+                    <div class="feature-row">REF: <b>${t.ref_structure}</b></div>
+                    <button class="btn-del" onclick="deleteTier(${t.id})">PURGE TIER</button>
+                `;
+                container.appendChild(card);
+            });
+        };
+
+        document.getElementById('tierForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                tier_key: document.getElementById('tier_key').value,
+                display_name: document.getElementById('display_name').value,
+                price: document.getElementById('price').value,
+                duration_text: document.getElementById('duration').value,
+                daily_cap: document.getElementById('cap').value,
+                ref_structure: document.getElementById('ref').value,
+                is_popular: false
+            };
+            const res = await fetch('/api/admin/tiers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) { fetchTiers(); e.target.reset(); }
+        };
+
+        window.deleteTier = async (id) => {
+            if (!confirm("Remove this tier? All users in this tier will remain active but won't be able to re-subscribe.")) return;
+            await fetch(`/api/admin/tiers/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            fetchTiers();
+        };
+
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('openBtn');
+            sidebar.classList.toggle('collapsed');
+            if (openBtn) {
+                openBtn.style.display = sidebar.classList.contains('collapsed') ? 'block' : 'none';
+            }
+        };
+        fetchTiers();
+    </script>
+</body>
+</html>

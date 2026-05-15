@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join GlobalEarn | Secure Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://ipapi.co/js/ipapi.js"></script>
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        body.light-mode {
+            --bg-color: #f8f9fa;
+            --text-color: #121212;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --glass: rgba(0, 0, 0, 0.05);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .bg-glow { 
+            position: fixed;
+            inset: 0; 
+            background: radial-gradient(circle at 10% 10%, rgba(0, 255, 0, 0.05) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(0, 0, 255, 0.05) 0%, transparent 40%); 
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(25px);
+            background: var(--nav-bg); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { 
+            font-size: 24px; 
+            font-weight: 900; 
+            letter-spacing: -1.5px; 
+            text-decoration: none; 
+            color: var(--text-color); 
+        }
+        .logo span { color: var(--pure-green); }
+
+        .main-nav-group { display: flex; align-items: center; gap: 25px; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .auth-group { display: flex; align-items: center; gap: 30px; }
+
+        /* Nav Link Items */
+        .nav-link-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link-item:hover, .nav-link-item.active { color: var(--text-color); }
+
+        .nav-link-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--pure-green);
+            transition: 0.3s;
+        }
+
+        .nav-link-item:hover::after, .nav-link-item.active::after { width: 100%; }
+
+        /* --- DROPDOWN NAVIGATION --- */
+        .dropdown { position: relative; display: flex; align-items: center; }
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            min-width: 200px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            z-index: 1100;
+        }
+        .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .dropdown-content::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: rgba(10, 10, 10, 0.95); border-left: 1px solid var(--border); border-top: 1px solid var(--border); }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .dropdown-item:hover { background: var(--glass); color: var(--text-color); padding-left: 20px; }
+        .dropdown-trigger svg { transition: 0.3s; }
+        .dropdown:hover .dropdown-trigger svg { transform: rotate(180deg); color: var(--pure-green); }
+
+        .nav-cta {
+            padding: 10px 25px;
+            background: var(--pure-green);
+            color: #000 !important;
+            text-decoration: none;
+            font-weight: 800;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3); }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Mobile Menu */
+        .hamburger-btn { display: none; background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 900; }
+        body.light-mode .hamburger-btn { color: var(--text-color); }
+        .mobile-menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh;
+            background: var(--bg-color); backdrop-filter: blur(35px); z-index: 2000;
+            padding: 40px 25px; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;
+        }
+
+        /* Centering Wrapper */
+        .auth-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .mobile-menu-overlay.open { right: 0; }
+
+        .reg-container {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .menu-close-btn { background: var(--glass); width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--border); color: #fff; font-size: 1.2rem; cursor: pointer; align-self: flex-end; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        body.light-mode .menu-close-btn { color: var(--text-color); }
+        .menu-close-btn:hover { background: var(--pure-red); border-color: var(--pure-red); transform: rotate(90deg); }
+
+        .tree-container { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; overflow-y: auto; }
+        .tree-root { font-size: 0.7rem; font-weight: 800; color: var(--pure-blue); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 10px 10px; opacity: 0.8; }
+        .tree-leaf { padding: 16px 20px; border-radius: 15px; transition: 0.3s; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; color: #ccc; text-decoration: none; font-weight: 600; font-size: 1.05rem; }
+        body.light-mode .tree-leaf { color: #555; }
+        .tree-leaf:hover { background: var(--glass); color: var(--text-color); transform: translateX(8px); border-color: var(--border); }
+        body.light-mode .tree-leaf:hover { color: var(--pure-blue); }
+        .tree-leaf.active { background: rgba(0, 255, 0, 0.05); color: var(--pure-green); border-color: rgba(0, 255, 0, 0.1); }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .header p { color: #666; font-size: 0.8rem; }
+
+        .form-grid { display: flex; flex-direction: column; gap: 16px; text-align: left; }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.7rem; font-weight: 700; color: #555; text-transform: uppercase; }
+        
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border);
+            padding: 13px 15px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--pure-blue); }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-register {
+            width: 100%;
+            background: var(--pure-green);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .btn-register:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.3); 
+        }
+
+        .btn-google {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Social Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #444;
+            font-size: 0.65rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+        .divider:not(:empty)::before { margin-right: 15px; }
+        .divider:not(:empty)::after { margin-left: 15px; }
+
+        /* --- INTERACTIVE NOTIFICATIONS --- */
+        #message {
+            font-size: 0.82rem;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 700;
+            padding: 15px;
+            border-radius: 16px;
+            display: none;
+            border: 1px solid transparent;
+            backdrop-filter: blur(10px);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+        }
+
+        #message.error { background: rgba(255, 0, 0, 0.1); border-color: rgba(255, 0, 0, 0.2); color: #ff4d4d; border-left: 4px solid var(--pure-red); }
+        #message.success { background: rgba(0, 255, 0, 0.1); border-color: rgba(0, 255, 0, 0.2); color: var(--pure-green); border-left: 4px solid var(--pure-green); }
+
+        .shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+        }
+
+        /* Spinner Animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-register.loading {
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-register.loading .spinner {
+            display: inline-block;
+        }
+
+        /* Floating Support Button */
+        .support-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: clamp(50px, 8vw, 65px);
+            height: clamp(50px, 8vw, 65px);
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--pure-green);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-decoration: none;
+        }
+
+        .support-float:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--pure-green);
+            box-shadow: 0 20px 45px rgba(0, 255, 0, 0.15);
+        }
+
+        /* --- MOBILE TREE MENU --- */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100vh;
+            background: var(--bg-color);
+            backdrop-filter: blur(25px);
+            z-index: 2000;
+            padding: 50px 30px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .mobile-menu-overlay.open { right: 0; }
+
+        .menu-close-btn { background: none; border: none; color: var(--text-color); font-size: 1.5rem; cursor: pointer; align-self: flex-end; }
+        body.light-mode .menu-close-btn { color: var(--text-color); }
+
+        .tree-container { display: flex; flex-direction: column; gap: 8px; }
+        .tree-root { font-size: 0.65rem; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 2px; margin: 20px 0 10px 10px; }
+        .tree-leaf { 
+            color: #888; text-decoration: none; font-weight: 700; font-size: 0.95rem; 
+            padding: 12px 20px; border-radius: 12px; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px;
+        }
+        body.light-mode .tree-leaf { color: #555; }
+        .tree-leaf:hover, .tree-leaf.active { background: var(--glass); color: var(--text-color); transform: translateX(5px); }
+        body.light-mode .tree-leaf:hover { color: var(--pure-blue); }
+        .tree-leaf.active { border-left: 3px solid var(--pure-green); }
+
+        .hamburger-btn { display: none; background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
+        body.light-mode .hamburger-btn { color: var(--text-color); }
+
+        .footer-links { text-align: center; margin-top: 25px; font-size: 0.8rem; color: #666; display: flex; flex-direction: column; gap: 8px; }
+        .footer-links a { color: var(--pure-blue); text-decoration: none; font-weight: 700; }
+        .footer-links a:hover { color: var(--pure-green); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            nav { padding: 15px 5%; }
+            .main-nav-group, .auth-group { display: none; }
+            .hamburger-btn { display: block; }
+            .reg-container { padding: 40px 25px; }
+            .support-float { bottom: 20px; right: 20px; }
+        }
+
+        /* Footer Styles */
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: 1px solid var(--border); position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <nav>
+        <a href="/" class="logo">GLOBAL<span>EARN</span></a>
+        <div class="main-nav-group">
+            <a href="/" class="nav-link-item">Home</a>
+            <a href="/leaderboard" class="nav-link-item">Leaderboard</a>
+            <a href="/payments" class="nav-link-item">Payments</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link-item dropdown-trigger" style="display: flex; align-items: center; gap: 8px;">Resources <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+                <div class="dropdown-content">
+                    <a href="/features" class="dropdown-item">Features</a>
+                    <a href="/faq" class="dropdown-item">FAQ</a>
+                    <a href="/legal" class="dropdown-item">Legal</a>
+                    <a href="/contact" class="dropdown-item">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileDrawer">
+        <button class="menu-close-btn" id="menuClose">✕</button>
+        
+        <div class="tree-container">
+            <div class="tree-root">PLATFORM_CORE</div>
+            <a href="/" class="tree-leaf"><span>🏠</span> Home</a>
+            <a href="/leaderboard" class="tree-leaf"><span>📊</span> Leaderboard</a>
+            <a href="/payments" class="tree-leaf"><span>💸</span> Payments</a>
+            <a href="/features" class="tree-leaf"><span>🚀</span> Features</a>
+            
+            <div class="tree-root">RESOURCES</div>
+            <a href="/faq" class="tree-leaf"><span>❓</span> FAQ</a>
+            <a href="/legal" class="tree-leaf"><span>⚖️</span> Legal</a>
+            <a href="/contact" class="tree-leaf"><span>📧</span> Contact</a>
+
+            <div class="tree-root" style="margin-top: 30px;">AUTHENTICATION</div>
+            <a href="/login" class="tree-leaf"><span>🔑</span> Login</a>
+            <a href="/register" class="tree-leaf active" style="color: var(--pure-green);"><span>✨</span> Register Now</a>
+        </div>
+    </div>
+
+    <main class="auth-wrapper">
+        <div class="reg-container">
+            <header class="header">
+                <h1>Create Account</h1>
+                <p>Start your high-velocity earning journey.</p>
+            </header>
+            <form id="registerForm" class="form-grid">
+                <div id="invite-section" style="display: none; background: rgba(0, 255, 0, 0.05); border: 1px solid rgba(0, 255, 0, 0.2); padding: 12px; border-radius: 12px; font-size: 0.8rem; text-align: center; color: var(--pure-green);">
+                    <span style="color: var(--pure-green);">✨ You were invited by: </span><span id="referrer-name">...</span>
+                </div>
+
+                <div class="input-group"><label>Username</label><input type="text" id="username" placeholder="Choose a unique ID" required></div>
+                <div class="input-group"><label>Email Address</label><input type="email" id="email" placeholder="name@example.com" required></div>
+                <div class="input-group"><label>Secure Password</label><input type="password" id="password" placeholder="••••••••" required></div>
+                <div class="input-group"><label>Confirm Password</label><input type="password" id="confirm-password" placeholder="••••••••" required></div>
+                <div class="input-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="07XXXXXXXX" required>
+                    <div id="phone-feedback" style="font-size: 0.65rem; font-weight: 800; min-height: 1.2em; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;"></div>
+                </div>
+                
+                <div id="message"></div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-register" id="submitBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">Initialize Protocol</span>
+                    </button>
+                    <div class="divider">OR</div>
+                    <button type="button" class="btn-google">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Continue with Google
+                    </button>
+                </div>
+                <div class="footer-links">
+                    <a href="/login">Already a member? <span style="color: var(--pure-green); font-weight: 700;">Login to Vault</span></a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <a href="support.html" class="support-float" title="Contact Support">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </a>
+
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <a href="/" class="footer-logo">GLOBAL<span>EARN</span></a>
+            <div class="footer-copyright">
+                Developed by: <span style="color: #666;">JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/register.js"></script>
+</body>
+</html>

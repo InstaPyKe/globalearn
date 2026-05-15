@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal & Compliance | GlobalEarn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #000000;
+            --text-color: #cccccc;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+            --heading-color: #ffffff;
+        }
+
+        body.light-mode {
+            --bg-color: #f8f9fa;
+            --text-color: #333333;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --glass: rgba(0, 0, 0, 0.05);
+            --border: rgba(0, 0, 0, 0.1);
+            --heading-color: #121212;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            padding-bottom: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; text-decoration: none; color: var(--heading-color); }
+        .logo span { color: var(--pure-green); }
+
+        .main-nav-group, .auth-group { display: flex; align-items: center; gap: 30px; }
+
+        .nav-link-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link-item:hover, .nav-link-item.active { color: var(--heading-color); }
+        .nav-link-item::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--pure-green); transition: 0.3s;
+        }
+        .nav-link-item:hover::after, .nav-link-item.active::after { width: 100%; }
+
+        /* --- DROPDOWN NAVIGATION --- */
+        .dropdown { position: relative; display: flex; align-items: center; }
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            min-width: 200px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            z-index: 1100;
+        }
+        .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .dropdown-content::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: rgba(10, 10, 10, 0.95); border-left: 1px solid var(--border); border-top: 1px solid var(--border); }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .dropdown-item:hover { background: var(--glass); color: var(--text-color); padding-left: 20px; }
+        .dropdown-trigger svg { transition: 0.3s; }
+        .dropdown:hover .dropdown-trigger svg { transform: rotate(180deg); color: var(--pure-green); }
+
+        .nav-cta {
+            padding: 10px 25px; background: var(--pure-green); color: #000 !important;
+            text-decoration: none; font-weight: 800; border-radius: 8px; font-size: 0.8rem;
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3); }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--heading-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 90% 90%, rgba(0, 0, 255, 0.05) 0%, transparent 40%);
+        }
+
+        .legal-nav {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .legal-nav a {
+            color: var(--heading-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .legal-nav a:hover, .legal-nav a.active {
+            color: var(--pure-blue);
+        }
+
+        .glass-content {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 { color: var(--heading-color); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: -1px; }
+        h2 { color: var(--heading-color); font-size: 1.5rem; margin-top: 40px; margin-bottom: 15px; border-left: 3px solid var(--pure-blue); padding-left: 15px; }
+        
+        p { margin-bottom: 20px; }
+        
+        .highlight-red { color: var(--pure-red); font-weight: 600; }
+        .highlight-blue { color: var(--pure-blue); font-weight: 600; }
+
+        .data-box {
+            background: rgba(0, 0, 255, 0.05);
+            border: 1px solid rgba(0, 0, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* --- MOBILE TREE MENU --- */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100vh;
+            background: var(--bg-color);
+            backdrop-filter: blur(25px);
+            z-index: 2000;
+            padding: 50px 30px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .mobile-menu-overlay.open { right: 0; }
+
+        .menu-close-btn { background: none; border: none; color: var(--heading-color); font-size: 1.5rem; cursor: pointer; align-self: flex-end; }
+        body.light-mode .menu-close-btn { color: var(--heading-color); }
+
+        .tree-container { display: flex; flex-direction: column; gap: 8px; }
+        .tree-root { font-size: 0.65rem; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 2px; margin: 20px 0 10px 10px; }
+        .tree-leaf { 
+            color: #888; text-decoration: none; font-weight: 700; font-size: 0.95rem; 
+            padding: 12px 20px; border-radius: 12px; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px;
+        }
+        body.light-mode .tree-leaf { color: #555; }
+        .tree-leaf:hover, .tree-leaf.active { background: var(--glass); color: var(--heading-color); transform: translateX(5px); }
+        body.light-mode .tree-leaf:hover { color: var(--pure-blue); }
+        .tree-leaf.active { border-left: 3px solid var(--pure-green); }
+
+        .hamburger-btn { display: none; background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
+        body.light-mode .hamburger-btn { color: var(--heading-color); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .hamburger-btn { display: block; }
+            .main-nav-group, .auth-group { display: none; }
+            
+            nav { padding: 15px 8%; }
+
+            .legal-nav { flex-wrap: wrap; justify-content: center; gap: 15px; padding: 0 5% 20px !important; }
+            .glass-content { padding: 30px 20px; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <nav>
+        <a href="homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <button class="hamburger-btn" id="menuOpen">☰ MENU</button>
+        <div class="main-nav-group">
+            <a href="homepage.html" class="nav-link-item">Home</a>
+            <a href="leaderboard.html" class="nav-link-item">Leaderboard</a>
+            <a href="payments.html" class="nav-link-item">Payments</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link-item active dropdown-trigger" style="display: flex; align-items: center; gap: 8px;">Resources <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+                <div class="dropdown-content">
+                    <a href="features.html" class="dropdown-item">Features</a>
+                    <a href="faq.html" class="dropdown-item">FAQ</a>
+                    <a href="legal.html" class="dropdown-item active">Legal</a>
+                    <a href="contact.html" class="dropdown-item">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button id="themeToggle" class="theme-toggle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+            <div class="auth-group">
+                <a href="login.html" class="nav-link-item">Login</a>
+                <a href="register.html" class="nav-cta">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileDrawer">
+        <button class="menu-close-btn" id="menuClose">✕</button>
+        
+        <div class="tree-container">
+            <div class="tree-root">PLATFORM_CORE</div>
+            <a href="homepage.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home
+            </a>
+            <a href="leaderboard.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Leaderboard
+            </a>
+            <a href="payments.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Payments
+            </a>
+            <a href="features.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 2.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-3 5-3"/><path d="M12 15v5s3.03-.55 5-2c2.2-1.62 3-5 3-5"/></svg> Features
+            </a>
+            
+            <div class="tree-root">RESOURCES</div>
+            <a href="faq.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> FAQ
+            </a>
+            <a href="legal.html" class="tree-leaf active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Legal
+            </a>
+            <a href="contact.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact
+            </a>
+
+            <div class="tree-root" style="margin-top: 30px;">AUTHENTICATION</div>
+            <a href="login.html" class="tree-leaf">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Login
+            </a>
+            <a href="register.html" class="tree-leaf" style="color: var(--pure-green);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg> Register Now
+            </a>
+        </div>
+    </div>
+
+    <script src="legal.js"></script>
+
+    <div class="legal-nav" style="margin-top: 60px; padding: 0 10% 20px;">
+        <a href="#tos" class="active">Terms of Service</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#cookies">Cookie Policy</a>
+    </div>
+
+    <div class="glass-content" id="tos">
+        <h1>Terms of Service</h1>
+        <p>Last Updated: April 14, 2026</p>
+
+        <h2>1. User Agreement</h2>
+        <p>By accessing GlobalEarn, you agree to be bound by these terms. This platform is a global rewards-based system. Users must be at least 18 years of age to participate in the 3-level referral program and financial withdrawals.</p>
+
+        <h2>2. Prohibited Activities</h2>
+        <p class="highlight-red">The following actions will result in an immediate and permanent account ban without refund of balance:</p>
+        <ul>
+            <li>Creation of multiple accounts by a single user (Sybil Attack).</li>
+            <li>Use of VPNs, Proxies, or VPS to mask your true location.</li>
+            <li>Automating tasks using scripts, bots, or any third-party software.</li>
+            <li>Exploiting the 3-level referral system through self-referral.</li>
+        </ul>
+
+        <h2>3. Earnings & Withdrawals</h2>
+        <p>Earnings are not guaranteed and depend on task availability. GlobalEarn reserves the right to hold payments for up to 72 hours for security auditing if fraudulent activity is suspected.</p>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 60px 0;">
+
+        <h1>Privacy Policy (GDPR & CCPA)</h1>
+        
+        <h2>1. Data Collection</h2>
+        <p>Under the <span class="highlight-blue">General Data Protection Regulation (GDPR)</span> and <span class="highlight-blue">California Consumer Privacy Act (CCPA)</span>, we disclose that we collect:</p>
+        <div class="data-box">
+            <ul>
+                <li><strong>Identification:</strong> Email address, Username, and KYC Documents (for high-tier withdrawals).</li>
+                <li><strong>Technical Data:</strong> IP Address, Browser type, and Device Fingerprint (to prevent fraud).</li>
+                <li><strong>Financial Data:</strong> Wallet addresses and transaction history.</li>
+            </ul>
+        </div>
+
+        <h2>2. Your Rights</h2>
+        <p>You have the right to request a copy of your data, the right to "be forgotten" (data deletion), and the right to restrict processing. To exercise these rights, please submit a ticket via the Help Center.</p>
+
+        <h2>3. Security</h2>
+        <p>We use TLS encryption for all data transfers and store sensitive information in encrypted, cold-storage environments to ensure your global profile remains secure.</p>
+    </div>
+
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <div class="footer-logo">GE<span>L</span></div>
+            <div style="font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; margin-top: 10px;">
+                Developed by: <span style="color: #666;">JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
+    <style>
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: 1px solid var(--border); position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
+    </style>
+
+</body>
+</html>

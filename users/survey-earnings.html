@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveys | GlobalEarn Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --survey-blue: #0066FF;
+            --survey-green: #00FF7F;
+            --survey-purple: #9B59B6;
+            --survey-red: #FF0055;
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: rgba(10, 10, 10, 0.8); 
+            backdrop-filter: blur(25px); 
+            border-right: 1px solid var(--border); 
+            height: 100vh; 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            z-index: 1000; 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Sleek Sidebar Scrollbar */
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .sidebar.collapsed { transform: translateX(-100%); }
+
+        .logo { font-size: 22px; font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: -1px; text-decoration: none; color: inherit; display: block; }
+        .logo span { color: var(--pure-green); }
+        .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .nav-link { padding: 14px 18px; text-decoration: none; color: #888; border-radius: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { background: var(--glass); color: #fff; }
+        .nav-link.active { border-left: 4px solid var(--pure-blue); }
+
+        .main-wrapper { 
+            flex-grow: 1; 
+            margin-left: var(--sidebar-width); 
+            width: 100%; 
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .main-wrapper.expanded { margin-left: 0; }
+
+        .top-nav { height: 70px; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 900; }
+
+        .toggle-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; }
+        
+        .header { margin-bottom: 40px; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { color: #666; font-size: 0.9rem; }
+
+        .survey-list { display: flex; flex-direction: column; gap: 15px; }
+        .survey-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .survey-item:hover { background: rgba(255,255,255,0.08); border-color: var(--pure-blue); }
+
+        .survey-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 5px; }
+        .survey-info span { font-size: 0.75rem; color: #555; text-transform: uppercase; font-weight: 800; }
+
+        .reward-pill { background: #fff; color: #000; padding: 8px 20px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; border: none; transition: 0.3s; pointer-events: none; }
+        .reward-pill:hover { background: var(--pure-green); }
+
+        /* --- SURVEY OVERLAY --- */
+        .survey-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .survey-overlay.active { display: flex; }
+        .survey-window {
+            background: var(--glass); border: 1px solid var(--border); border-radius: 30px;
+            padding: 40px; width: 100%; max-width: 600px; position: relative;
+        }
+        .q-progress { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-bottom: 30px; overflow: hidden; }
+        .q-bar { height: 100%; background: var(--survey-blue); width: 0%; transition: 0.4s; }
+        
+        .question-text { font-size: 1.3rem; font-weight: 800; margin-bottom: 25px; line-height: 1.3; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        
+        .opt-btn {
+            padding: 18px 25px; border-radius: 15px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border); color: #fff; font-size: 0.95rem; font-weight: 600;
+            text-align: left; cursor: pointer; transition: 0.2s;
+        }
+        .opt-btn:hover { transform: translateX(5px); background: rgba(255,255,255,0.05); }
+        
+        /* Option Colors */
+        .opt-blue { border-left: 4px solid var(--survey-blue); }
+        .opt-blue:hover { border-color: var(--survey-blue); color: var(--survey-blue); }
+        
+        .opt-green { border-left: 4px solid var(--survey-green); }
+        .opt-green:hover { border-color: var(--survey-green); color: var(--survey-green); }
+        
+        .opt-purple { border-left: 4px solid var(--survey-purple); }
+        .opt-purple:hover { border-color: var(--survey-purple); color: var(--survey-purple); }
+
+        .opt-red { border-left: 4px solid var(--survey-red); }
+        .opt-red:hover { border-color: var(--survey-red); color: var(--survey-red); }
+
+        .default-profile-avatar {
+            width: 35px; height: 35px; border-radius: 50%;
+            border: 2px solid var(--border);
+            background-color: #333; /* Fallback/base color */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-user'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0' /%3E%3Cpath d='M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2' /%3E%3C/svg%3E");
+            background-size: 60%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .close-survey { position: absolute; top: 20px; right: 20px; color: #444; cursor: pointer; font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <nav class="nav-links">
+            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
+            <a href="earning-hub.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> Earning Hub</a>
+            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> Write Blog</a>
+            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> Ad Rewards</a>
+            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> TikTok Tasks</a>
+            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> YouTube Tasks</a>
+            <a href="survey-earnings.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> Surveys</a>
+            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Blog Reading</a>
+            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> My Network</a>
+            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Membership</a>
+            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Withdrawals</a>
+            <a href="settings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> Settings</a>
+        </nav>
+        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> Logout</a>
+    </aside>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <header class="top-nav">
+            <button class="toggle-btn" id="toggleBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div style="font-weight: 800; color: #444; font-size: 0.8rem;">SURVEY_CORE_SYSTEM</div>
+            <div id="display-username" style="font-size: 0.85rem; color: #888;">Loading_User...</div>
+            <div class="default-profile-avatar"></div>
+        </header>
+
+        <main class="content-padding">
+            <div class="header">
+                <h1>Paid <span>Surveys</span></h1>
+                <p>Share your feedback with global brands and earn high-yield payouts.</p>
+            </div>
+            <div class="survey-list" id="surveyList">
+                <div style="color: #444; font-size: 0.85rem; letter-spacing: 1px;">INITIALIZING_DATABASE_LINK...</div>
+            </div>
+        </main>
+    </div>
+
+    <div class="survey-overlay" id="surveyOverlay">
+        <div class="survey-window">
+            <span class="close-survey" onclick="closeSurvey()">×</span>
+            <div class="q-progress"><div class="q-bar" id="progressBar"></div></div>
+            <div id="surveyContent">
+                <div class="question-text" id="questionText">Loading question...</div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '../login.html';
+
+        let currentSurvey = null;
+        let currentStep = 0;
+        const answers = [];
+
+        async function fetchSurveys() {
+            const container = document.getElementById('surveyList');
+            try {
+                const res = await fetch('/api/surveys/available', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const surveys = await res.json();
+                
+                if (!res.ok) throw new Error(surveys.error || 'Server error');
+                
+                if (surveys.length === 0) {
+                    container.innerHTML = '<div style="color:#666;">No active surveys found in DBeaver records.</div>';
+                    return;
+                }
+                container.innerHTML = '';
+
+                surveys.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'survey-item';
+                    div.onclick = () => startSurvey(s);
+                    div.innerHTML = `
+                        <div class="survey-info">
+                            <h3>${s.title}</h3>
+                            <span>Time: ${s.time_estimate} • Complexity: ${s.complexity}</span>
+                        </div>
+                        <button class="reward-pill">KSH. ${parseFloat(s.reward).toFixed(2)}</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('surveyList').innerHTML = '<div style="color:var(--pure-red); font-size:0.8rem;">CONNECTION_FAILED: Ensure your Express server is running and connected to DBeaver.</div>';
+            }
+        }
+
+        function startSurvey(survey) {
+            currentSurvey = survey;
+            currentStep = 0;
+            document.getElementById('surveyOverlay').classList.add('active');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const question = currentSurvey.questions[currentStep];
+            document.getElementById('questionText').innerText = question.text;
+            document.getElementById('progressBar').style.width = `${((currentStep + 1) / currentSurvey.questions.length) * 100}%`;
+            
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+            
+            const colors = ['opt-blue', 'opt-green', 'opt-purple', 'opt-red'];
+            const labels = ['A', 'B', 'C', 'D'];
+
+            question.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = `opt-btn ${colors[index % 4]}`;
+                btn.innerText = `${labels[index]}. ${opt}`;
+                btn.onclick = () => handleAnswer(index); // Send index for backend matching
+                grid.appendChild(btn);
+            });
+        }
+
+        async function handleAnswer(answerIndex) {
+            // UI Validation: Check if answer is correct before proceeding
+            const correctIndex = currentSurvey.questions[currentStep].correct_option;
+            
+            if (answerIndex !== correctIndex) {
+                alert("Incorrect answer. You must choose the correct option to proceed.");
+                return; // Block progression
+            }
+
+            answers.push(answerIndex);
+            if (currentStep < currentSurvey.questions.length - 1) {
+                currentStep++;
+                renderQuestion();
+            } else {
+                showClaimScreen();
+            }
+        }
+
+        function showClaimScreen() {
+            const content = document.getElementById('surveyContent');
+            document.getElementById('progressBar').style.width = '100%';
+            content.innerHTML = `
+                <div style="text-align: center; padding: 10px;">
+                    <div style="font-size: 4.5rem; margin-bottom: 20px;">💰</div>
+                    <div class="question-text">Validation Successful!</div>
+                    <p style="color: #888; margin-bottom: 30px; font-size: 0.95rem; line-height: 1.5;">
+                        You have completed the insights protocol with 100% accuracy. <br>
+                        Your reward is now ready for settlement.
+                    </p>
+                    <button id="claimBtn" class="opt-btn opt-green" style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;" onclick="claimToWallet()">
+                        CLAIM KSH. ${parseFloat(currentSurvey.reward).toFixed(2)} TO WALLET
+                    </button>
+                </div>
+            `;
+        }
+
+        async function claimToWallet() {
+            const btn = document.getElementById('claimBtn');
+            btn.innerText = "SETTLING FUNDS...";
+            btn.disabled = true;
+
+            const res = await fetch('/api/surveys/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ surveyId: currentSurvey.id, answers })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                // Simulate adding to balance in UI top-nav
+                const userDisplay = document.getElementById('display-username');
+                userDisplay.style.color = 'var(--pure-green)';
+                userDisplay.innerHTML = `${userDisplay.innerText} <span style="font-weight:800;">(+KSH ${parseFloat(currentSurvey.reward).toFixed(2)})</span>`;
+                
+                alert(data.message || "Success! Reward credited to your wallet.");
+                location.reload();
+            } else { 
+                alert(data.error || "Claim failed. Please try again.");
+                closeSurvey();
+            }
+        }
+
+        function closeSurvey() {
+            document.getElementById('surveyOverlay').classList.remove('active');
+        }
+        
+        async function loadProfile() {
+            try {
+                const res = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                if (res.ok) {
+                    document.getElementById('display-username').innerText = user.username;
+                }
+            } catch (err) { 
+                console.error(err);
+                document.getElementById('display-username').innerText = "OFFLINE_MODE";
+            }
+        }
+        loadProfile();
+
+        // Navigation UI Logic
+        const toggleBtn = document.getElementById('toggleBtn');
+        const sidebar = document.getElementById('sidebar');
+        const mainWrapper = document.getElementById('mainWrapper');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainWrapper.classList.toggle('expanded');
+            });
+        }
+
+        // Logout logic
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '../login.html';
+        });
+        fetchSurveys();
+    </script>
+</body>
+</html>

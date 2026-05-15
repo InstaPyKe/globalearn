@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Authority | GlobalEarn Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #000; 
+            color: #fff; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+        }
+        .login-box {
+            width: 400px;
+            padding: 50px;
+            background: #050505;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            text-align: center;
+        }
+        .logo { font-weight: 900; color: var(--pure-red); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 40px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { font-size: 0.65rem; color: #444; text-transform: uppercase; font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        input {
+            width: 100%;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #fff; }
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+        #error-msg { color: var(--pure-red); font-size: 0.75rem; margin-top: 20px; font-weight: 700; display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div class="logo">ADMIN_OS</div>
+        <form id="loginForm">
+            <div class="input-group">
+                <label>Access Identity</label>
+                <input type="text" id="username" placeholder="Enter Admin Username" required>
+            </div>
+            <div class="input-group">
+                <label>Authorization Key</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-login">Verify Identity</button>
+            <div id="error-msg">INVALID_AUTHORIZATION_KEY</div>
+        </form>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>

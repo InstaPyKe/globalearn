@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Manager | GlobalEarn Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-blue: #0000FF;
+            --pure-green: #00FF00;
+            --pure-red: #FF0000;
+            --gold: #FFD700;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- SIDEBAR (Consistent with Admin OS) --- */
+        .sidebar { width: 260px; background: #050505; border-right: 1px solid var(--border); padding: 40px 20px; flex-shrink: 0; transition: 0.3s; overflow: hidden; }
+        .sidebar.collapsed { width: 0; padding: 40px 0; border-right: none; opacity: 0; pointer-events: none; }
+        .nav-item { padding: 15px; color: #444; text-decoration: none; display: flex; gap: 12px; font-weight: 700; transition: 0.3s; }
+        .nav-item.active { color: #fff; background: var(--glass); border-radius: 12px; border: 1px solid var(--border); }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { flex-grow: 1; padding: 40px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        
+        .header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+        .header-flex h1 { font-size: 2.5rem; font-weight: 900; letter-spacing: -2px; }
+
+        /* --- UPLOADER SECTION --- */
+        .uploader-card { 
+            background: linear-gradient(145deg, #0a0a0a, #000); 
+            border: 1px solid var(--border); border-radius: 24px; padding: 30px; margin-bottom: 40px;
+        }
+
+        .upload-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 15px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.65rem; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input, select { 
+            background: #000; border: 1px solid var(--border); padding: 14px; border-radius: 12px; 
+            color: #fff; font-size: 0.9rem; outline: none; transition: 0.3s; 
+        }
+        input:focus { border-color: var(--pure-blue); }
+
+        .btn-add { 
+            background: var(--pure-blue); color: #fff; border: none; padding: 14px; 
+            border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: auto;
+        }
+
+        /* --- VIDEO INVENTORY --- */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
+        .ad-card { 
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; 
+            padding: 20px; transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .ad-card:hover { border-color: #333; transform: translateY(-5px); }
+
+        .thumbnail-mock { 
+            width: 100%; aspect-ratio: 16/9; background: #111; border-radius: 12px; 
+            margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #333;
+        }
+
+        .price-tag { 
+            position: absolute; top: 30px; right: 30px; background: var(--pure-green); 
+            color: #000; font-weight: 900; font-size: 0.7rem; padding: 4px 10px; border-radius: 6px; 
+        }
+
+        /* PROGRESS BAR FOR VIEW CAPS */
+        .cap-container { margin-top: 15px; }
+        .cap-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; margin-bottom: 5px; }
+        .progress-bg { width: 100%; height: 6px; background: #111; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--pure-blue); transition: 0.5s; }
+
+        .btn-action { background: none; border: 1px solid #222; color: #666; padding: 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%; }
+        .btn-action:hover { border-color: var(--pure-red); color: var(--pure-red); }
+
+        /* --- TOAST NOTIFICATIONS --- */
+        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { 
+            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--border); 
+            padding: 15px 25px; border-radius: 12px; color: #fff; font-size: 0.8rem; font-weight: 700;
+            min-width: 250px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: space-between;
+            animation: toastSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .toast.success { border-left: 4px solid var(--pure-green); }
+        .toast.error { border-left: 4px solid var(--pure-red); }
+        .toast.fade-out { animation: toastFadeOut 0.3s ease-in forwards; }
+
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toastFadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(20px); }
+        }
+
+        @media (max-width: 1000px) { .upload-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .upload-grid { grid-template-columns: 1fr; } .sidebar { display: none; } }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div style="font-weight:900; color:var(--pure-red);">GLOBAL_OS</div>
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:#444; cursor:pointer; font-size:1.2rem;">❮</button>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="admin-users.html" class="nav-item">👥 Users</a>
+            <a href="admin-membership.html" class="nav-item">⭐ Tier Manager</a>
+            <a href="admin-content.html" class="nav-item active">🎬 Content</a>
+            <a href="admin-finance.html" class="nav-item">💸 Financials</a>
+            <a href="admin-security.html" class="nav-item">🛡️ Security</a>
+            <a href="admin-support.html" class="nav-item">🎧 Support</a>
+            <a href="messages.html" class="nav-item">📬 Support Inbox</a>
+            <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="header-flex" style="align-items: center; gap: 20px;">
+            <button onclick="toggleSidebar()" id="openBtn" style="display: none; background:none; border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; cursor:pointer;">☰</button>
+            <div style="flex-grow: 1;">
+                <h1>AD_<span>MANAGER</span></h1>
+                <p style="color: #444;">Deploy tasks and control earning algorithms.</p>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.65rem; font-weight: 900; color: var(--pure-green);">SYSTEM STATUS</div>
+                <div style="font-size: 1.2rem; font-weight: 900;">ACTIVE</div>
+            </div>
+        </div>
+
+        <section class="uploader-card">
+            <span style="font-size: 0.7rem; font-weight: 900; color: var(--pure-blue); letter-spacing: 2px; display: block; margin-bottom: 20px;">NEW TASK DEPLOYMENT</span>
+            <form class="upload-grid" id="deployForm">
+                <input type="hidden" id="editTaskId" value="">
+                <div class="input-group">
+                    <label>Task Label / Title</label>
+                    <input type="text" id="taskTitle" placeholder="e.g. Crypto App Review #05" required>
+                </div>
+                <div class="input-group">
+                    <label>Video / Ad URL</label>
+                    <input type="text" id="taskUrl" placeholder="https://youtube.com/..." required>
+                </div>
+                <div class="input-group">
+                    <label>Reward Value (KSH)</label>
+                    <input type="number" id="taskReward" step="0.01" value="5.00" required>
+                </div>
+                <div class="input-group">
+                    <label>Daily View Cap</label>
+                    <input type="number" id="taskCap" value="1000" required>
+                </div>
+                <button type="submit" class="btn-add" id="submitBtn">Deploy Task</button>
+            </form>
+        </section>
+
+        <h2 style="font-size: 0.7rem; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Active Task Inventory</h2>
+        <div class="video-grid" id="taskGrid"></div>
+    </main>
+
+    <script src="admin-content.js"></script>
+</body>
+</html>

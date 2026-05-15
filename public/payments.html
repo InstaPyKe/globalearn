@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments | GlobalEarn Proof of Payouts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        body.light-mode {
+            --bg-color: #f8f9fa;
+            --text-color: #121212;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --glass: rgba(0, 0, 0, 0.05);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            padding-bottom: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Animated Glassy Background */
+        .bg-glow {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(155, 89, 182, 0.15) 0%, transparent 40%);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; text-decoration: none; color: var(--text-color); }
+        .logo span { color: var(--pure-green); }
+
+        .main-nav-group, .auth-group { display: flex; align-items: center; gap: 30px; }
+
+        .nav-link-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link-item:hover, .nav-link-item.active { color: var(--text-color); }
+
+        .nav-link-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--pure-green);
+            transition: 0.3s;
+        }
+
+        .nav-link-item:hover::after, .nav-link-item.active::after { width: 100%; }
+
+        .nav-cta {
+            padding: 10px 25px;
+            background: var(--pure-green);
+            color: #000 !important;
+            text-decoration: none;
+            font-weight: 800;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3); }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content Styling */
+        .container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .container h1 {
+            font-size: 3rem;
+            background: linear-gradient(to bottom, var(--text-color), var(--pure-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .hamburger-btn { display: block; }
+            .main-nav-group, .auth-group { display: none; }
+            nav { padding: 15px 8%; }
+            .container h1 { font-size: 2.2rem; }
+        }
+
+        .hamburger-btn { display: none; background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
+        body.light-mode .hamburger-btn { color: var(--text-color); }
+        .mobile-menu-overlay { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh; background: var(--bg-color); backdrop-filter: blur(35px); z-index: 2000; padding: 40px 25px; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+        .mobile-menu-overlay.open { right: 0; }
+        .menu-close-btn { background: var(--glass); width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--border); color: #fff; font-size: 1.2rem; cursor: pointer; align-self: flex-end; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        body.light-mode .menu-close-btn { color: var(--text-color); }
+        .menu-close-btn:hover { background: var(--pure-red); transform: rotate(90deg); }
+        .tree-container { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; overflow-y: auto; }
+        .tree-root { font-size: 0.7rem; font-weight: 800; color: var(--pure-blue); text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 10px 10px; opacity: 0.8; }
+        .tree-leaf { color: #ccc; text-decoration: none; font-weight: 600; font-size: 1.05rem; padding: 16px 20px; border-radius: 15px; transition: 0.3s; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; }
+        body.light-mode .tree-leaf { color: #555; }
+        .tree-leaf:hover { background: var(--glass); color: #fff; transform: translateX(8px); }
+        body.light-mode .tree-leaf:hover { color: var(--pure-blue); }
+        .tree-leaf.active { background: rgba(0, 255, 0, 0.05); color: var(--pure-green); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+    <nav>
+        <a href="homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <button class="hamburger-btn" id="menuOpen">☰ MENU</button>
+        <div class="main-nav-group">
+            <a href="homepage.html" class="nav-link-item">Home</a>
+            <a href="leaderboard.html" class="nav-link-item">Leaderboard</a>
+            <a href="payments.html" class="nav-link-item active">Payments</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link-item dropdown-trigger" style="display: flex; align-items: center; gap: 8px;">Resources <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+                <div class="dropdown-content">
+                    <a href="features.html" class="dropdown-item">Features</a>
+                    <a href="faq.html" class="dropdown-item">FAQ</a>
+                    <a href="legal.html" class="dropdown-item">Legal</a>
+                    <a href="contact.html" class="dropdown-item">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="auth-group">
+            <button id="themeToggle" class="theme-toggle">🌓</button>
+            <a href="login.html" class="nav-link-item">Login</a>
+            <a href="register.html" class="nav-cta">Register</a>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileDrawer">
+        <button class="menu-close-btn" id="menuClose">✕</button>
+        <div class="tree-container">
+            <div class="tree-root">PLATFORM_CORE</div>
+            <a href="homepage.html" class="tree-leaf"><span>🏠</span> Home</a>
+            <a href="leaderboard.html" class="tree-leaf"><span>📊</span> Leaderboard</a>
+            <a href="payments.html" class="tree-leaf active"><span>💸</span> Payments</a>
+            <a href="features.html" class="tree-leaf"><span>🚀</span> Features</a>
+            <div class="tree-root">RESOURCES</div>
+            <a href="faq.html" class="tree-leaf"><span>❓</span> FAQ</a>
+            <a href="legal.html" class="tree-leaf"><span>⚖️</span> Legal</a>
+            <div class="tree-root" style="margin-top: 30px;">AUTHENTICATION</div>
+            <a href="login.html" class="tree-leaf"><span>🔑</span> Login</a>
+            <a href="register.html" class="tree-leaf"><span>✨</span> Register Now</a>
+        </div>
+    </div>
+
+    <script src="payments.js"></script>
+
+    <main class="container">
+        <h1>Proof of <span>Payouts</span></h1>
+        <p>Transparency is key. See our recent payouts to users worldwide.</p>
+        <!-- Placeholder for a dynamic list/table of recent payouts -->
+        <div style="background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 50px; color: #aaa; font-size: 1.1rem;">
+            [Dynamic Payout Feed Coming Soon]
+            <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">This section will display real-time, anonymized payout data to demonstrate platform credibility.</p>
+        </div>
+    </main>
+
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <div class="footer-logo">GLOBAL<span>EARN</span></div>
+            <div class="footer-copyright">
+                <span>GLOBALEARN PLATFORMS</span> all rights reserved.
+            </div>
+            <div style="font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; margin-top: 10px;">
+                Developed by: <span style="color: #666;">JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
+    <style>
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: 1px solid var(--border); position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
+    </style>
+</body>
+</html>

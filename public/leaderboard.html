@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | GlobalEarn Rankings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-thick: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --nav-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        body.light-mode {
+            --bg-color: #f8f9fa;
+            --text-color: #121212;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --glass: rgba(0, 0, 0, 0.05);
+            --glass-thick: rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 100px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; text-decoration: none; color: var(--text-color); }
+        .logo span { color: var(--pure-green); }
+
+        .main-nav-group { display: flex; align-items: center; gap: 30px; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .auth-group { display: flex; align-items: center; gap: 30px; }
+
+        .nav-link-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link-item:hover, .nav-link-item.active { color: var(--text-color); }
+        .nav-link-item::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--pure-green); transition: 0.3s;
+        }
+        .nav-link-item:hover::after, .nav-link-item.active::after { width: 100%; }
+
+        /* --- DROPDOWN NAVIGATION --- */
+        .dropdown { position: relative; display: flex; align-items: center; }
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            min-width: 200px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            z-index: 1100;
+        }
+        .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .dropdown-content::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: rgba(10, 10, 10, 0.95); border-left: 1px solid var(--border); border-top: 1px solid var(--border); }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .dropdown-item:hover { background: var(--glass); color: var(--text-color); padding-left: 20px; }
+        .dropdown-trigger svg { transition: 0.3s; }
+        .dropdown:hover .dropdown-trigger svg { transform: rotate(180deg); color: var(--pure-green); }
+
+        .nav-cta {
+            padding: 10px 25px; background: var(--pure-green); color: #000 !important;
+            text-decoration: none; font-weight: 800; border-radius: 8px; font-size: 0.8rem;
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3); }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Background Glows */
+        .bg-glow {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(0, 0, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 0, 0.1) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .header-area {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header-area h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(to bottom, var(--text-color), #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-area p { color: #888; letter-spacing: 1px; }
+
+        /* Tabs for Toggling */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: var(--pure-blue);
+            border-color: #5555ff;
+            box-shadow: 0 0 20px rgba(0, 0, 255, 0.3);
+        }
+
+        /* Leaderboard Table Wrapper */
+        .leaderboard-wrap {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 20px;
+            background: var(--glass-thick);
+            color: #aaa;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 1rem;
+        }
+
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+        /* Ranking Special Icons */
+        .rank-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .rank-1 { background: var(--gold); color: #000; box-shadow: 0 0 15px var(--gold); }
+        .rank-2 { background: var(--silver); color: #000; }
+        .rank-3 { background: var(--bronze); color: #000; }
+        .rank-other { border: 1px solid var(--border); color: #888; }
+
+        .user-cell { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { 
+            width: 40px; height: 40px; border-radius: 50%; 
+            background: linear-gradient(45deg, var(--pure-purple), var(--pure-blue)); 
+        }
+
+        .amount { color: var(--pure-green); font-weight: 700; font-family: monospace; font-size: 1.1rem; }
+        .referrals { color: var(--pure-purple); font-weight: 600; }
+
+        /* --- MOBILE TREE MENU --- */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100vh;
+            background: var(--bg-color);
+            backdrop-filter: blur(25px);
+            z-index: 2000;
+            padding: 50px 30px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .mobile-menu-overlay.open { right: 0; }
+
+        .menu-close-btn { background: none; border: none; color: var(--text-color); font-size: 1.5rem; cursor: pointer; align-self: flex-end; }
+        body.light-mode .menu-close-btn { color: var(--text-color); }
+
+        .tree-container { display: flex; flex-direction: column; gap: 8px; }
+        .tree-root { font-size: 0.65rem; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 2px; margin: 20px 0 10px 10px; }
+        .tree-leaf { 
+            color: #888; text-decoration: none; font-weight: 700; font-size: 0.95rem; 
+            padding: 12px 20px; border-radius: 12px; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px;
+        }
+        body.light-mode .tree-leaf { color: #555; }
+        .tree-leaf:hover, .tree-leaf.active { background: var(--glass); color: var(--text-color); transform: translateX(5px); }
+        body.light-mode .tree-leaf:hover { color: var(--pure-blue); }
+        .tree-leaf.active { border-left: 3px solid var(--pure-green); }
+
+        .hamburger-btn { display: none; background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px; }
+        body.light-mode .hamburger-btn { color: var(--text-color); }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .hamburger-btn { display: block; }
+            .main-nav-group, .auth-group { display: none; }
+            .nav-right { gap: 10px; }
+            .theme-toggle { padding: 6px 10px; font-size: 1rem; }
+            
+            nav { padding: 15px 5%; }
+
+            .container { margin: 30px auto; padding: 0 15px; }
+            .header-area h1 { font-size: 2rem; }
+            .header-area p { font-size: 0.75rem; letter-spacing: 0.5px; }
+            
+            .tabs { gap: 10px; padding: 0; }
+            .tab-btn { flex: 1; padding: 12px 10px; font-size: 0.8rem; text-align: center; }
+            
+            table { min-width: 500px; }
+            th { padding: 15px 10px; font-size: 0.65rem; }
+            td { padding: 15px 10px; font-size: 0.85rem; }
+            
+            .rank-circle { width: 28px; height: 28px; font-size: 0.75rem; }
+            .user-avatar { width: 30px; height: 30px; }
+            .user-cell { gap: 10px; }
+            .amount { font-size: 0.95rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <nav>
+        <a href="homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <div class="main-nav-group">
+            <a href="homepage.html" class="nav-link-item">Home</a>
+            <a href="leaderboard.html" class="nav-link-item active">Leaderboard</a>
+            <a href="payments.html" class="nav-link-item">Payments</a>
+            <div class="dropdown">
+                <a href="#" class="nav-link-item dropdown-trigger" style="display: flex; align-items: center; gap: 8px;">Resources <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+                <div class="dropdown-content">
+                    <a href="features.html" class="dropdown-item">Features</a>
+                    <a href="faq.html" class="dropdown-item">FAQ</a>
+                    <a href="legal.html" class="dropdown-item">Legal</a>
+                    <a href="contact.html" class="dropdown-item">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="auth-group">
+            <button id="themeToggle" class="theme-toggle">🌓</button>
+            <div class="nav-right">
+                <a href="login.html" class="nav-link-item">Login</a>
+                <a href="register.html" class="nav-cta">Register</a>
+            </div>
+            <button class="hamburger-btn" id="menuOpen">☰ MENU</button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-overlay" id="mobileDrawer">
+        <button class="menu-close-btn" id="menuClose">✕</button>
+        
+        <div class="tree-container">
+            <div class="tree-root">PLATFORM_CORE</div>
+            <a href="homepage.html" class="tree-leaf"><span>🏠</span> Home</a>
+            <a href="leaderboard.html" class="tree-leaf active"><span>📊</span> Leaderboard</a>
+            <a href="payments.html" class="tree-leaf"><span>💸</span> Payments</a>
+            <a href="features.html" class="tree-leaf"><span>🚀</span> Features</a>
+            
+            <div class="tree-root">RESOURCES</div>
+            <a href="faq.html" class="tree-leaf"><span>❓</span> FAQ</a>
+            <a href="legal.html" class="tree-leaf"><span>⚖️</span> Legal</a>
+            <a href="contact.html" class="tree-leaf"><span>📧</span> Contact</a>
+
+            <div class="tree-root" style="margin-top: 30px;">AUTHENTICATION</div>
+            <a href="login.html" class="tree-leaf"><span>🔑</span> Login</a>
+            <a href="register.html" class="tree-leaf" style="color: var(--pure-green);"><span>✨</span> Register Now</a>
+        </div>
+    </div>
+
+    <script src="leaderboard.js"></script>
+
+    <div class="container">
+        <div class="header-area">
+            <h1>Global Rankings</h1>
+            <p>THE TOP 1% OF OUR WORLDWIDE COMMUNITY</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active">Top Earners</button>
+            <button class="tab-btn">Top Referrers</button>
+        </div>
+
+        <div class="leaderboard-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Earnings</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="rank-circle rank-1">1</div></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <span>Alex_Crypto99</span>
+                            </div>
+                        </td>
+                        <td><span class="amount">KSH. 14,250.00</span></td>
+                        <td><span style="color:var(--pure-blue)">Elite Member</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-circle rank-2">2</div></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar" style="background: linear-gradient(45deg, var(--pure-red), var(--pure-purple))"></div>
+                                <span>Sarah_WebDev</span>
+                            </div>
+                        </td>
+                        <td><span class="amount">KSH. 11,890.50</span></td>
+                        <td><span style="color:var(--pure-blue)">Elite Member</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-circle rank-3">3</div></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar" style="background: linear-gradient(45deg, var(--pure-green), var(--pure-blue))"></div>
+                                <span>Global_King</span>
+                            </div>
+                        </td>
+                        <td><span class="amount">KSH. 9,400.20</span></td>
+                        <td><span style="color:var(--pure-purple)">Pro Member</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-circle rank-other">4</div></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <span>TechMaven</span>
+                            </div>
+                        </td>
+                        <td><span class="amount">KSH. 7,120.00</span></td>
+                        <td><span style="color:#888">Verified</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-circle rank-other">5</div></td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"></div>
+                                <span>Infinite_Earning</span>
+                            </div>
+                        </td>
+                        <td><span class="amount">KSH. 5,500.00</span></td>
+                        <td><span style="color:#888">Verified</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <div class="footer-logo">GLOBAL<span>EARN</span></div>
+            <div class="footer-copyright">
+                <span>GLOBALEARN PLATFORMS</span> all rights reserved.
+            </div>
+            <div style="font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; margin-top: 10px;">
+                Developed by: <span style="color: #666;">JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
+    <style>
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: 1px solid var(--border); position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
+    </style>
+</body>
+</html>

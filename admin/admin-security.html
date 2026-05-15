@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Monitor | GlobalEarn Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --gold: #FFD700;
+            --alert-bg: rgba(255, 0, 0, 0.05);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 260px; background: #050505; border-right: 1px solid var(--border); padding: 40px 20px; flex-shrink: 0; transition: 0.3s; overflow: hidden; }
+        .sidebar.collapsed { width: 0; padding: 40px 0; border-right: none; opacity: 0; pointer-events: none; }
+        .nav-item { padding: 15px; color: #444; text-decoration: none; display: flex; gap: 12px; font-weight: 700; transition: 0.3s; }
+        .nav-item.active { color: #fff; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); }
+
+        /* --- MAIN --- */
+        .main-content { flex-grow: 1; padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+
+        /* --- THREAT DASHBOARD --- */
+        .threat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .stat-card { background: #050505; border: 1px solid var(--border); padding: 25px; border-radius: 20px; text-align: center; }
+        .stat-val { font-size: 2rem; font-weight: 900; display: block; margin-top: 10px; }
+
+        /* --- CONFLICT LIST --- */
+        .alert-section { background: #020202; border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+        .section-header { padding: 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        
+        .alert-row { 
+            padding: 20px 25px; border-bottom: 1px solid var(--border); 
+            display: grid; grid-template-columns: 2fr 2fr 1.5fr 1fr; align-items: center;
+            transition: 0.3s;
+        }
+        .alert-row.critical { background: var(--alert-bg); border-left: 4px solid var(--pure-red); }
+        .alert-row:hover { background: rgba(255,255,255,0.02); }
+
+        .conflict-tag { 
+            font-size: 0.6rem; font-weight: 900; padding: 4px 8px; 
+            border-radius: 4px; background: #111; color: #666; 
+            display: inline-block; margin-bottom: 5px; text-transform: uppercase;
+        }
+        .critical .conflict-tag { color: var(--pure-red); background: rgba(255,0,0,0.1); }
+
+        .btn-ban { 
+            background: transparent; border: 1px solid var(--pure-red); color: var(--pure-red); 
+            padding: 8px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer;
+        }
+        .btn-ban:hover { background: var(--pure-red); color: #fff; }
+
+        /* --- MOBILE --- */
+        @media (max-width: 1100px) {
+            .threat-grid { grid-template-columns: 1fr; }
+            .alert-row { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div style="font-weight:900; color:var(--pure-red);">GLOBAL_OS</div>
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:#444; cursor:pointer; font-size:1.2rem;">❮</button>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-item">📊 Dashboard</a>
+            <a href="admin-users.html" class="nav-item">👥 Users</a>
+            <a href="admin-membership.html" class="nav-item">⭐ Tier Manager</a>
+            <a href="admin-content.html" class="nav-item">🎬 Content</a>
+            <a href="admin-finance.html" class="nav-item">💸 Financials</a>
+            <a href="admin-security.html" class="nav-item active">🛡️ Security</a>
+            <a href="admin-support.html" class="nav-item">🎧 Support</a>
+            <a href="messages.html" class="nav-item">📬 Support Inbox</a>
+            <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="header" style="display: flex; align-items: center; gap: 20px;">
+            <button onclick="toggleSidebar()" id="openBtn" style="display: none; background:none; border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; cursor:pointer;">☰</button>
+            <h1 style="font-weight: 900; letter-spacing: -2px;">SECURITY<span>_MONITOR</span></h1>
+            <p style="color: #444; font-size: 0.8rem;">Real-time fraud detection and multi-account flagging.</p>
+        </div>
+
+        <div class="threat-grid">
+            <div class="stat-card">
+                <span style="font-size: 0.7rem; color: #555; font-weight: 800; letter-spacing: 1px;">IP CONFLICTS</span>
+                <span id="ip-conflicts" class="stat-val" style="color: var(--gold);">0</span>
+            </div>
+            <div class="stat-card">
+                <span style="font-size: 0.7rem; color: #555; font-weight: 800; letter-spacing: 1px;">DEVICE CLUSTERS</span>
+                <span id="device-clusters" class="stat-val" style="color: var(--pure-red);">0</span>
+            </div>
+            <div class="stat-card">
+                <span style="font-size: 0.7rem; color: #555; font-weight: 800; letter-spacing: 1px;">VPN DETECTED</span>
+                <span id="vpn-detected" class="stat-val">0</span>
+            </div>
+        </div>
+
+        <section class="alert-section">
+            <div class="section-header">
+                <h3 style="font-size: 0.8rem; font-weight: 900;">LIVE_INCIDENT_FEED</h3>
+                <span id="scan-indicator" style="color: var(--pure-green); font-size: 0.6rem; font-weight: 900;">SCANNING...</span>
+            </div>
+            <div id="incident-list">
+                <!-- Incidents will load here -->
+            </div>
+        </section>
+    </main>
+
+    <script src="admin-security.js"></script>
+</body>
+</html>

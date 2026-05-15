@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Command Center | GlobalEarn Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 260px; background: #050505; border-right: 1px solid var(--border); padding: 40px 20px; flex-shrink: 0; transition: 0.3s; overflow: hidden; }
+        .sidebar.collapsed { width: 0; padding: 40px 0; border-right: none; opacity: 0; pointer-events: none; }
+        .nav-item { padding: 15px; color: #444; text-decoration: none; display: flex; gap: 12px; font-weight: 700; transition: 0.3s; }
+        .nav-item.active { color: #fff; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); }
+
+        /* --- MAIN ANALYTICS --- */
+        .admin-main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .kpi-card h4 { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .kpi-card .val { font-size: 1.8rem; font-weight: 900; }
+
+        /* --- THE PROFIT MATRIX --- */
+        .matrix-row {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 30px;
+        }
+
+        .system-health {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 24px;
+        }
+
+        .health-item {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .health-item span { font-size: 0.8rem; color: #555; }
+        .health-item div { font-weight: 700; margin-top: 5px; }
+
+        .alert-glow {
+            color: var(--pure-red);
+            text-shadow: 0 0 10px var(--pure-red);
+        }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1100px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .matrix-row { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px;">
+            <div style="font-weight:900; color:var(--pure-red);">GLOBAL_OS</div>
+            <button onclick="toggleSidebar()" style="background:none; border:none; color:#444; cursor:pointer; font-size:1.2rem;">❮</button>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-item active">📊 Dashboard</a>
+            <a href="admin-users.html" class="nav-item">👥 Users</a>
+            <a href="admin-membership.html" class="nav-item">⭐ Tier Manager</a>
+            <a href="admin-content.html" class="nav-item">🎬 Content</a>
+            <a href="admin-finance.html" class="nav-item">💸 Financials</a>
+            <a href="admin-security.html" class="nav-item">🛡️ Security</a>
+            <a href="admin-support.html" class="nav-item">🎧 Support</a>
+            <a href="messages.html" class="nav-item">📬 Support Inbox</a>
+            <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <div style="margin-bottom: 40px; display: flex; align-items: center; gap: 20px;">
+            <button onclick="toggleSidebar()" id="openBtn" style="display: none; background:none; border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; cursor:pointer;">☰</button>
+            <h1 style="font-size: 2.2rem; letter-spacing: -1.5px;">Global KPI <span>Monitoring</span></h1>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <h4>Total User Network</h4>
+                <div id="total-users" class="val" style="color: #fff;">0</div>
+                <div id="users-today" style="color: var(--pure-green); font-size: 0.7rem; font-weight: 800; text-transform: uppercase;">+0 Today</div>
+            </div>
+            <div class="kpi-card">
+                <h4>Platform Gross Revenue</h4>
+                <div id="revenue" class="val" style="color: var(--pure-blue);">KSH. 0.00</div>
+                <div style="color: #444; font-size: 0.75rem;">Membership + Ads</div>
+            </div>
+            <div class="kpi-card">
+                <h4>Payout Liability</h4>
+                <div id="liability" class="val" style="color: var(--pure-red);">KSH. 0.00</div>
+                <div style="color: #444; font-size: 0.75rem;">Current User Balances</div>
+            </div>
+            <div class="kpi-card">
+                <h4>Net Profit (Liquid)</h4>
+                <div id="profit" class="val" style="color: var(--pure-green);">KSH. 0.00</div>
+                <div id="margin" style="color: var(--pure-blue); font-size: 0.75rem;">0% Margin</div>
+            </div>
+        </div>
+
+        <div class="matrix-row">
+            <div class="system-health" style="min-height: 400px; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 25px; font-size: 0.8rem; color: #555; text-transform: uppercase;">Platform Activity Trend</h3>
+                <div style="flex-grow: 1; position: relative;">
+                    <canvas id="adminTaskTrendChart"></canvas>
+                </div>
+            </div>
+
+            <div class="system-health" style="min-height: 400px; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 25px; font-size: 0.8rem; color: #555; text-transform: uppercase;">Task Distribution</h3>
+                <div style="flex-grow: 1; position: relative;">
+                    <canvas id="adminTaskDistChart"></canvas>
+                </div>
+            </div>
+
+            <div class="system-health" style="min-height: 400px; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 25px; font-size: 0.8rem; color: #555; text-transform: uppercase;">Membership Composition</h3>
+                <div style="flex-grow: 1; position: relative;">
+                    <canvas id="membershipTierChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="matrix-row" style="margin-top: 30px;">
+            <div class="system-health">
+                <h3 style="margin-bottom: 25px; font-size: 1rem;">System Vital Signs</h3>
+                <div class="health-item">
+                    <span>Active Fraud Flags</span>
+                    <div id="fraud-flags" class="alert-glow">0 Accounts Flagged</div>
+                </div>
+                <div class="health-item">
+                    <span>Server Load</span>
+                    <div id="server-load" style="color: var(--pure-green);">Optimal (0%)</div>
+                </div>
+                <div class="health-item">
+                    <span>Pending Withdrawals</span>
+                    <div id="pending-withdrawals" style="color: var(--pure-purple);">0 Requests</div>
+                </div>
+                <div class="health-item">
+                    <span>Database Sync</span>
+                    <div style="color: var(--pure-blue);">Stable</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

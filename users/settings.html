@@ -1,0 +1,503 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile & Security | GlobalEarn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --sidebar-width: 260px;
+            --sidebar-mini: 80px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-mini);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 15px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-width);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+        }
+
+        .sidebar.collapsed { transform: translateX(-100%); }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 15px;
+        }
+
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            text-decoration: none; 
+            color: inherit; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 30px;
+            transition: 0.3s;
+        }
+        .logo span { color: var(--pure-green); }
+
+        .sidebar:not(:hover) .logo { font-size: 0; opacity: 0; }
+        .sidebar:not(:hover) .logo::before { content: 'G'; font-size: 22px; opacity: 1; color: var(--pure-green); }
+
+        .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+
+        .nav-link {
+            padding: 14px 15px;
+            text-decoration: none;
+            color: #888;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .nav-text {
+            transition: 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar:hover .nav-text {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--glass);
+            color: #fff;
+            border-color: var(--border);
+        }
+
+        .nav-link.active { border-left: 4px solid var(--pure-blue); }
+
+        /* --- MAIN CONTENT --- */
+        .main-wrapper {
+            flex-grow: 1;
+            margin-left: var(--sidebar-mini);
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .main-wrapper.expanded { margin-left: 0; }
+
+        .top-nav {
+            height: 70px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        /* --- Integrated Toggle Button System --- */
+        #topNavToggle {
+            display: none; /* Hidden by default when sidebar is open */
+        }
+
+        .toggle-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border);
+            color: var(--pure-blue);
+            transform: scale(1.05);
+        }
+
+        /* --- BOTTOM NAVIGATION (Mobile) --- */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 75px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            z-index: 2000;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        .bottom-nav-link {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .bottom-nav-link span:first-child { font-size: 1.4rem; }
+        .bottom-nav-link.active { color: var(--pure-blue); }
+        .bottom-nav-link.active-green { color: var(--pure-green); }
+
+        /* Reveal top-nav toggle only when sidebar is hidden */
+        .sidebar.collapsed ~ .main-wrapper #topNavToggle {
+            display: flex !important;
+        }
+
+        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { margin-bottom: 40px; }
+        .header h1 { font-size: 2rem; }
+
+        .settings-grid { display: flex; flex-direction: column; gap: 30px; }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 35px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title svg { color: var(--pure-blue); }
+
+        /* --- Form Elements --- */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 8px; font-weight: 600; }
+        
+        select, input {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .save-btn {
+            background: var(--pure-blue);
+            color: #fff;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* --- 2FA Toggle --- */
+        .two-fa-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px dashed var(--pure-blue);
+        }
+
+        .status-badge {
+            background: var(--pure-red);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        /* --- KYC Upload --- */
+        .upload-area {
+            border: 2px dashed var(--border);
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-area:hover { border-color: var(--pure-purple); background: rgba(155, 89, 182, 0.05); }
+
+        .kyc-status {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* --- RESPONSIVE MOBILE --- */
+        @media (max-width: 992px) {
+            .sidebar { 
+                transform: translateX(-100%); 
+                width: 280px;
+                z-index: 2000;
+            }
+            .sidebar.active { transform: translateX(0); }
+            .top-nav .toggle-btn { display: flex !important; }
+            .bottom-nav { display: flex; }
+            .main-wrapper { margin-left: 0 !important; }
+            .top-nav { padding: 0 20px; }
+            .content-padding { padding: 20px 20px 100px 20px; }
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            z-index: 999;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .default-profile-avatar {
+            width: 35px; height: 35px; border-radius: 50%;
+            border: 2px solid var(--border);
+            background-color: #333; /* Fallback/base color */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-user'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0' /%3E%3Cpath d='M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2' /%3E%3C/svg%3E");
+            background-size: 60%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+            <button class="toggle-btn" id="toggleBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+        </div>
+        <nav class="nav-links">
+            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span class="nav-text">Dashboard</span></a>
+            <a href="earning-hub.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> <span class="nav-text">Earning Hub</span></a>
+            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> <span class="nav-text">Write Blog</span></a>
+            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> <span class="nav-text">Ad Rewards</span></a>
+            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> <span class="nav-text">TikTok Tasks</span></a>
+            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> <span class="nav-text">YouTube Tasks</span></a>
+            <a href="survey-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> <span class="nav-text">Surveys</span></a>
+            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> <span class="nav-text">Blog Reading</span></a>
+            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span class="nav-text">My Network</span></a>
+            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span class="nav-text">Membership</span></a>
+            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> <span class="nav-text">Withdrawals</span></a>
+            <a href="settings.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span class="nav-text">Settings</span></a>
+        </nav>
+        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> <span class="nav-text">Logout</span></a>
+    </aside>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+        <a href="earning-hub.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg><span>Earn</span></a>
+        <a href="membership.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Tiers</span></a>
+        <a href="withdrawals.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg><span>Cash</span></a>
+        <a href="settings.html" class="bottom-nav-link active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span>Setup</span></a>
+    </nav>
+
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <header class="top-nav">
+            <button class="toggle-btn" id="topNavToggle">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div style="font-weight: 800; font-size: 0.8rem; color: #444; letter-spacing: 1px;">PREFERENCES_VAULT_v3.0</div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="display-username" style="font-size: 0.85rem; color: #888;">Alex_Trader</span>
+                <div class="default-profile-avatar"></div>
+            </div>
+        </header>
+
+        <main class="content-padding">
+            <div class="container">
+        <header class="header">
+            <h1>Account <span>Settings</span></h1>
+        </header>
+
+        <div class="settings-grid">
+            
+            <div class="card">
+                <div class="card-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Localization</div>
+                <div class="form-group">
+                    <label>Preferred Language</label>
+                    <select id="prefLang">
+                        <option>English (US)</option>
+                        <option>Spanish (ES)</option>
+                        <option>French (FR)</option>
+                        <option>Hindi (IN)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Timezone</label>
+                    <select id="prefTimezone">
+                        <option>(GMT+00:00) UTC</option>
+                        <option>(GMT-05:00) Eastern Time</option>
+                    </select>
+                </div>
+                <button class="save-btn" onclick="savePreferences()">SAVE PREFERENCES</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Security Layer</div>
+                <div class="two-fa-box">
+                    <div>
+                        <div style="font-weight: 700; margin-bottom: 5px;">Google Authenticator</div>
+                        <div style="font-size: 0.8rem; color: #777;">Secure your withdrawals with 2FA</div>
+                    </div>
+                    <span class="status-badge" id="2fa-status">DISABLED</span>
+                </div>
+                <p style="font-size: 0.8rem; color: #555; margin-top: 15px;">
+                    Enabling 2FA is required for all withdrawals over **KSH. 10,000.00**.
+                </p>
+                <button class="save-btn" id="toggle2faBtn" style="margin-top: 20px; background: transparent; border: 1px solid var(--pure-blue); color: var(--pure-blue);">TOGGLE 2FA</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Identity Verification (KYC)</div>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 20px;">
+                    Upload a government-issued ID (Passport, Driver's License, or National ID) to unlock higher payout tiers.
+                </p>
+                <div class="upload-area" id="kycDropZone" onclick="document.getElementById('kycInput').click()">
+                    <input type="file" id="kycInput" style="display:none" accept="image/*,.pdf" onchange="handleKYCUpload(this)">
+                    <div style="margin-bottom: 10px; display: flex; justify-content: center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    <div style="font-weight: 700;" id="upload-text">Click to upload document</div>
+                    <div style="font-size: 0.75rem; color: #555;">JPG, PNG or PDF (Max 5MB)</div>
+                </div>
+                <div class="kyc-status">Status: <span id="kyc-status-text" style="color: var(--pure-red); font-weight: 700;">Unverified</span></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/></svg> Change Password</div>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPass" placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPass" placeholder="••••••••">
+                </div>
+                <button class="save-btn" onclick="updatePassword()">UPDATE PASSWORD</button>
+            </div>
+        </div>
+    </div>
+        </main>
+    </div>
+
+    <script src="settings.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mainWrapper = document.getElementById('mainWrapper');
+            const overlay = document.getElementById('overlay');
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            const toggleSidebar = () => {
+                if (window.innerWidth > 992) {
+                    sidebar.classList.toggle('collapsed');
+                    if (mainWrapper) mainWrapper.classList.toggle('expanded');
+                } else {
+                    sidebar.classList.toggle('active');
+                    if (overlay) overlay.classList.toggle('show');
+                }
+            };
+
+            document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
+            document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
+            overlay?.addEventListener('click', toggleSidebar);
+
+            async function loadUserData() {
+                try {
+                    const res = await fetch('/api/user/profile', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const user = await res.json();
+                    if (res.ok) {
+                        document.getElementById('display-username').innerText = user.username;
+                    }
+                } catch (err) { console.error(err); }
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    window.location.href = '../login.html';
+                });
+            }
+
+            loadUserData();
+        });
+    </script>
+</body>
+</html>

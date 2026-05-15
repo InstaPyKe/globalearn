@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earning Hub | GlobalEarn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- SIDEBAR --- */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: rgba(10, 10, 10, 0.8); 
+            backdrop-filter: blur(25px); 
+            border-right: 1px solid var(--border); 
+            height: 100vh; 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            z-index: 1000; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Sleek Sidebar Scrollbar */
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .logo { font-size: 22px; font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: -1px; text-decoration: none; color: inherit; display: block; }
+        .logo span { color: var(--pure-green); }
+        .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .nav-link { padding: 14px 18px; text-decoration: none; color: #888; border-radius: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; transition: 0.3s; border: 1px solid transparent; }
+        .nav-link:hover, .nav-link.active { background: var(--glass); color: #fff; }
+        .nav-link.active { border-left: 4px solid var(--pure-blue); }
+
+        /* --- MAIN --- */
+        .main-wrapper { flex-grow: 1; margin-left: var(--sidebar-width); transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
+        .main-wrapper.expanded { margin-left: 0; }
+
+        .top-nav {
+            height: 70px;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .toggle-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; }
+        
+        .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 30px; }
+        
+        /* --- SPIN WHEEL --- */
+        .spin-container { text-align: center; }
+        .wheel-box { position: relative; width: 300px; height: 300px; margin: 20px auto; border: 12px solid #1a1a1a; border-radius: 50%; box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(0, 255, 0, 0.05); background: #000; overflow: visible; }
+        /* Sector Colors: 0:Navy, 5:Crimson, 10:Amethyst, 20:Lux Gold, 50:Emerald, 100:Deep Orange */
+        .wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#1e293b 0deg 60deg, #be123c 60deg 120deg, #7e22ce 120deg 180deg, #b45309 180deg 240deg, #047857 240deg 300deg, #ea580c 300deg 360deg); position: relative; border: 4px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 80px rgba(0,0,0,0.8); }
+
+        .wheel-label { position: absolute; top: 50%; left: 50%; transform-origin: center; font-weight: 900; font-size: 1.2rem; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); pointer-events: none; }
+
+        /* Center Pin Mechanism */
+        .wheel::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; background: radial-gradient(circle at 30% 30%, #444, #000); border: 4px solid #222; border-radius: 50%; z-index: 10; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        /* Pointer triangle */
+        .wheel-box::after { content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 35px solid #fff; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        .spin-btn { background: var(--pure-green); color: #000; border: none; padding: 15px 40px; border-radius: 50px; font-weight: 800; cursor: pointer; margin-top: 20px; width: 100%; transition: 0.3s; }
+        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* --- VIDEO AREA --- */
+        .video-player { width: 100%; aspect-ratio: 16/9; background: #0a0a0a; border-radius: 15px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); }
+        .timer-overlay { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 8px; color: var(--pure-blue); font-weight: 700; z-index: 10; }
+        
+        .task-list { display: flex; flex-direction: column; gap: 12px; }
+        .task-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+        .task-item:hover { border-color: var(--pure-blue); background: var(--glass); }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.active { transform: translateX(0); }
+            .main-wrapper { margin-left: 0 !important; }
+            .top-nav { padding: 0 20px; }
+            .content-padding { padding: 20px; }
+            .hub-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 999; }
+        .sidebar-overlay.show { display: block; }
+
+        .default-profile-avatar {
+            width: 35px; height: 35px; border-radius: 50%;
+            border: 2px solid var(--border);
+            background-color: #333; /* Fallback/base color */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-user'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0' /%3E%3Cpath d='M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2' /%3E%3C/svg%3E");
+            background-size: 60%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <nav class="nav-links">
+            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
+            <a href="earning-hub.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> Earning Hub</a>
+            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> Write Blog</a>
+            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> Ad Rewards</a>
+            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> TikTok Tasks</a>
+            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> YouTube Tasks</a>
+            <a href="survey-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> Surveys</a>
+            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Blog Reading</a>
+            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> My Network</a>
+            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Membership</a>
+            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Withdrawals</a>
+            <a href="settings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> Settings</a>
+        </nav>
+        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> Logout</a>
+    </aside>
+
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <header class="top-nav">
+            <button class="toggle-btn" id="toggleBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="display-username" style="font-size: 0.85rem; color: #888;">Loading...</span>
+                <div class="default-profile-avatar"></div>
+            </div>
+        </header>
+
+        <main class="content-padding">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">Earning Hub</h2>
+            <p style="color: #888; margin-bottom: 40px;">Complete activities to increase your balance.</p>
+
+            <div class="hub-grid">
+                <!-- Lucky Spin Section -->
+                <section class="card spin-container">
+                    <h3 style="color: var(--pure-green);">Lucky Spin</h3>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Win up to KSH. 100 instantly!</p>
+                    <div class="wheel-box">
+                        <div class="wheel" id="wheel">
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(30deg) translateY(-100px);">0</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(90deg) translateY(-100px);">5</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(150deg) translateY(-100px);">10</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(210deg) translateY(-100px);">20</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(270deg) translateY(-100px);">50</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(330deg) translateY(-100px);">100</span>
+                        </div>
+                    </div>
+                    <button class="spin-btn" id="spinBtn" onclick="playSpin()">SPIN THE WHEEL</button>
+                    <div id="spinMessage" style="margin-top: 15px; font-weight: 600;"></div>
+                </section>
+
+                <!-- Video Tasks Section -->
+                <section class="card">
+                    <h3 style="color: var(--pure-blue); margin-bottom: 20px;">Video Lounge</h3>
+                    <div class="video-player" id="player">
+                        <div class="timer-overlay" id="timer">00:00</div>
+                        <span id="playerMsg" style="color: #444; font-weight: 800; text-align: center; padding: 20px;">SELECT A VIDEO BELOW</span>
+                    </div>
+                    <div class="task-list" id="taskList">
+                        <!-- Tasks populated by JS -->
+                        <div style="color: #444;">Loading available tasks...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '../login.html';
+
+        let activeTaskId = null;
+        let timerInterval = null;
+
+        // Helper to format seconds into HH:MM:SS
+        function startResetCountdown(elementId, seconds) {
+            let remaining = seconds;
+            const el = document.getElementById(elementId);
+            const timer = setInterval(() => {
+                const h = Math.floor(remaining / 3600);
+                const m = Math.floor((remaining % 3600) / 60);
+                const s = remaining % 60;
+                el.innerText = `Come back in: ${h}h ${m}m ${s}s`;
+                remaining--;
+                if (remaining < 0) { clearInterval(timer); location.reload(); }
+            }, 1000);
+        }
+
+        // --- LUCKY SPIN LOGIC ---
+        async function playSpin() {
+            const btn = document.getElementById('spinBtn');
+            const wheel = document.getElementById('wheel');
+            const msg = document.getElementById('spinMessage');
+            
+            btn.disabled = true;
+            msg.innerText = "Good luck...";
+
+            try {
+                const res = await fetch('/api/spin/play', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Sector indexing logic:
+                    // Indices [0, 1, 2, 3, 4, 5] correspond to sectors [0, 60, 120, 180, 240, 300] deg
+                    // To land on a sector, rotate: Full Spins + (360 - sectorStartDegree - halfSectorWidth)
+                    const sectorWidth = 60;
+                    const fullSpins = 360 * 8; // More rotations for a high-velocity "run"
+                    const targetDegree = fullSpins + (360 - (data.prizeIndex * sectorWidth) - (sectorWidth / 2));
+                    
+                    wheel.style.transform = `rotate(${targetDegree}deg)`;
+
+                    setTimeout(() => {
+                        msg.style.color = "var(--pure-green)";
+                        msg.innerText = data.message;
+                        btn.disabled = false;
+                    }, 5000); // Match updated transition duration
+                } else {
+                    msg.style.color = "var(--pure-red)";
+                    if (data.secondsLeft) {
+                        startResetCountdown('spinMessage', data.secondsLeft);
+                    } else {
+                        msg.innerText = data.error || "Spin failed.";
+                    }
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                msg.innerText = "Connection error.";
+                btn.disabled = false;
+            }
+        }
+
+        // --- VIDEO TASKS LOGIC ---
+        async function loadVideos() {
+            try {
+                const res = await fetch('/api/tasks/available', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const tasks = await res.json();
+
+                if (tasks.limitReached) {
+                    document.getElementById('timer').style.background = "var(--pure-red)";
+                    startResetCountdown('timer', tasks.secondsLeft);
+                    document.getElementById('taskList').innerHTML = `<div style="color:var(--pure-red); font-size: 0.85rem; padding: 10px;">Cooldown active. Resets in: <span id="list-timer"></span></div>`;
+                    startResetCountdown('list-timer', tasks.secondsLeft);
+                    return;
+                }
+
+                const list = document.getElementById('taskList');
+                list.innerHTML = '';
+
+                tasks.filter(t => t.task_type === 'video').forEach(task => {
+                    const div = document.createElement('div');
+                    div.className = 'task-item';
+                    div.onclick = () => selectVideo(task);
+                    div.innerHTML = `
+                        <div>
+                            <div style="font-weight:600;">${task.title}</div>
+                            <div style="font-size:0.75rem; color:#666;">${task.duration_seconds} seconds</div>
+                        </div>
+                        <div style="color:var(--pure-green); font-weight:800;">+ KSH. ${task.reward}</div>
+                    `;
+                    list.appendChild(div);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        function selectVideo(task) {
+            if (timerInterval) clearInterval(timerInterval);
+            activeTaskId = task.id;
+            
+            let embedUrl = task.url;
+            try {
+                if (embedUrl.includes('youtube.com/watch?v=')) {
+                    const videoId = embedUrl.split('v=')[1].split('&')[0];
+                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                } else if (embedUrl.includes('youtu.be/')) {
+                    const videoId = embedUrl.split('youtu.be/')[1].split('?')[0];
+                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                }
+            } catch (e) {
+                console.error("URL Parsing failed", e);
+            }
+            
+            document.getElementById('player').innerHTML = `
+                <div class="timer-overlay" id="timer">00:00</div>
+                <iframe width="100%" height="100%" src="${embedUrl}?autoplay=1&mute=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            `;
+
+            startTimer(task.duration_seconds, task.reward);
+        }
+
+        function startTimer(seconds, rewardAmount) {
+            let left = seconds;
+            const display = document.getElementById('timer');
+            
+            timerInterval = setInterval(() => {
+                left--;
+                const m = Math.floor(left / 60);
+                const s = left % 60;
+                display.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                
+                if (left <= 0) {
+                    clearInterval(timerInterval);
+                    const rewardText = parseFloat(rewardAmount).toFixed(2);
+                    display.innerText = `CLAIM KSH. ${rewardText}`;
+                    display.style.background = "var(--pure-green)";
+                    display.style.color = "#000";
+                    display.style.cursor = "pointer";
+                    display.onclick = claimVideoReward;
+                }
+            }, 1000);
+        }
+
+        async function claimVideoReward() {
+            try {
+                const res = await fetch('/api/tasks/complete', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ taskId: activeTaskId })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(`Success: ${data.message}`);
+                    location.reload();
+                } else {
+                    if (data.secondsLeft) {
+                        document.getElementById('timer').style.background = "var(--pure-red)";
+                        startResetCountdown('timer', data.secondsLeft);
+                    } else {
+                        alert(data.error);
+                    }
+                }
+            } catch (err) { alert("Error claiming reward."); }
+        }
+
+        document.getElementById('logoutBtn').onclick = () => {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        };
+
+        async function loadUserData() {
+            try {
+                const res = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                if (res.ok) {
+                    document.getElementById('display-username').innerText = user.username;
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        const toggleBtn = document.getElementById('toggleBtn');
+        const sidebar = document.getElementById('sidebar');
+        const mainWrapper = document.getElementById('mainWrapper');
+        const overlay = document.getElementById('overlay');
+
+        function toggleSidebar() {
+            if (window.innerWidth > 992) {
+                sidebar.classList.toggle('collapsed');
+                mainWrapper.classList.toggle('expanded');
+            } else {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('show');
+            }
+        }
+
+        toggleBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('show');
+            }
+        });
+
+        window.onload = () => {
+            loadVideos();
+            loadUserData();
+        };
+    </script>
+</body>
+</html>

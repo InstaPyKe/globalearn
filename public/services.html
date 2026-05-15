@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earning Features | GlobalEarn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pure-red: #FF0000;
+            --pure-green: #00FF00;
+            --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #000000;
+            --text-color: #ffffff;
+        }
+
+        body.light-mode {
+            --bg-color: #f8f9fa;
+            --text-color: #121212;
+            --glass: rgba(0, 0, 0, 0.05);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 60px 5%;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Feature Sections */
+        .feature-container {
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .feature-row.reverse {
+            direction: rtl;
+        }
+        .feature-row.reverse .text-box {
+            direction: ltr;
+        }
+
+        .glass-visual {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Unique Glows for each feature */
+        .glow-red { box-shadow: 0 0 50px rgba(255, 0, 0, 0.15); border-color: rgba(255, 0, 0, 0.3); }
+        .glow-blue { box-shadow: 0 0 50px rgba(0, 0, 255, 0.15); border-color: rgba(0, 0, 255, 0.3); }
+        .glow-purple { box-shadow: 0 0 50px rgba(155, 89, 182, 0.15); border-color: rgba(155, 89, 182, 0.3); }
+
+        .text-box h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .text-box p {
+            color: #aaa;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .benefit-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .benefit-tag span { color: var(--pure-green); }
+
+        /* Animated Elements Mockup */
+        .ad-mockup { width: 80%; height: 60px; background: #222; border-radius: 10px; border-left: 5px solid var(--pure-red); }
+        .video-mockup { width: 70%; height: 150px; background: #111; border: 2px solid var(--pure-blue); border-radius: 15px; position: relative; }
+        .video-mockup::after { content: '▶'; color: var(--pure-blue); font-size: 2rem; position: absolute; top: 35%; left: 45%; }
+        .spin-mockup { width: 180px; height: 180px; border: 5px dashed var(--pure-purple); border-radius: 50%; animation: rotate 10s linear infinite; }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Global <span>Earning</span> Ecosystem</h1>
+        <p>Multiple streams of income powered by a single professional dashboard.</p>
+    </div>
+
+    <div class="feature-container">
+        
+        <div class="feature-row">
+            <div class="glass-visual glow-red">
+                <div class="ad-mockup"></div>
+            </div>
+            <div class="text-box">
+                <h2 style="color: var(--pure-red);">Premium Ad-Watching</h2>
+                <p>Monetize your spare time by viewing high-quality advertisements from our global partners. Simple, fast, and refreshed every 24 hours.</p>
+                <div class="benefit-tag"><span>$</span> High CPM Rates</div>
+                <div class="benefit-tag"><span>✓</span> Instant Credit</div>
+                <div class="benefit-tag"><span>∞</span> Daily Reset</div>
+            </div>
+        </div>
+
+        <div class="feature-row reverse">
+            <div class="glass-visual glow-blue">
+                <div class="video-mockup"></div>
+            </div>
+            <div class="text-box">
+                <h2 style="color: var(--pure-blue);">Video Engagement</h2>
+                <p>Get paid to watch YouTube and TikTok content. Help creators grow while earning rewards for every second of watch time completed.</p>
+                <div class="benefit-tag"><span>▶</span> YouTube / TikTok</div>
+                <div class="benefit-tag"><span>⏱</span> 30s - 60s Tasks</div>
+                <div class="benefit-tag"><span>★</span> Bonus Earnings</div>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="glass-visual glow-purple">
+                <div class="spin-mockup"></div>
+            </div>
+            <div class="text-box">
+                <h2 style="color: var(--pure-purple);">The Lucky Spin</h2>
+                <p>Test your luck with our daily prize wheel. From micro-rewards to massive jackpots, every spin is a guaranteed chance to boost your balance.</p>
+                <div class="benefit-tag"><span>⚡</span> Daily Free Spins</div>
+                <div class="benefit-tag"><span>💎</span> Jackpot Prizes</div>
+                <div class="benefit-tag"><span>G</span> Gamified UI</div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <div class="footer-logo">GLOBAL<span>EARN</span></div>
+            <div class="footer-copyright">
+                <span>GLOBALEARN PLATFORMS</span> all rights reserved.
+            </div>
+            <div style="font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; margin-top: 10px;">
+                Developed by: <span style="color: #666;">JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
+    <style>
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: 1px solid var(--border); position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
+    </style>
+</body>
+</html>
