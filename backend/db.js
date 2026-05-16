@@ -30,7 +30,15 @@ if (connectionString && connectionString.trim().length > 0) {
 }
 
 // Test the connection immediately on startup
-pool.query('SELECT NOW()', (err, res) => {
+const startupQuery = `
+    SELECT 
+        NOW(), 
+        current_database(), 
+        current_user,
+        EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'users') as table_exists
+`;
+
+pool.query(startupQuery, (err, res) => {
     if (err) {
         console.error('DATABASE_CRITICAL_ERROR: Connection failed during startup test!');
         console.error('Environment:', process.env.NODE_ENV || 'development');
@@ -38,7 +46,23 @@ pool.query('SELECT NOW()', (err, res) => {
         console.error('Error Details:', err.message);
     } else {
         const mode = process.env.DATABASE_URL ? "PRODUCTION" : "LOCAL";
-        console.log(`DATABASE_SUCCESS: [${mode}] Connection verified at`, res.rows[0].now);
+        const { current_database, current_user, table_exists, now } = res.rows[0];
+        
+        console.log(`DATABASE_SUCCESS: [${mode}] Connected to "${current_database}" as "${current_user}"`);
+        console.log(`DATABASE_TIME: ${now}`);
+
+        if (table_exists) {
+            // Check if the current user has required privileges
+            pool.query("SELECT has_table_privilege(current_user, 'users', 'SELECT, INSERT, UPDATE') as can_access", (pErr, pRes) => {
+                if (!pErr && pRes.rows[0].can_access) {
+                    console.log('DATABASE_PERMISSIONS: Verified [SELECT, INSERT, UPDATE] on "users" table.');
+                } else {
+                    console.error('DATABASE_PERMISSION_ERROR: User lacks necessary privileges on "users" table.');
+                }
+            });
+        } else {
+            console.warn('DATABASE_SCHEMA_WARNING: "users" table does not exist. Please run your migration/schema scripts.');
+        }
     }
 });
 
