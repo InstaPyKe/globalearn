@@ -3,24 +3,28 @@ require('dotenv').config(); // Load environment variables from .env
 
 let pool;
 
-if (process.env.DATABASE_URL) {
-    // This block runs on Railway
-    console.log("DATABASE_INFO: Connecting via DATABASE_URL (Production Mode)");
+const connectionString = process.env.DATABASE_URL;
+
+if (connectionString && connectionString.trim().length > 0) {
+    // This block runs on Railway/Production
+    console.log(`DATABASE_INFO: Production environment detected. Connection string found (length: ${connectionString.length}).`);
     pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
+        connectionString: connectionString.trim(),
         ssl: {
-            rejectUnauthorized: false // Necessary for Railway managed databases
+            // Required for Railway and most cloud providers
+            // rejectUnauthorized: false allows self-signed certificates used by cloud providers
+            rejectUnauthorized: false 
         }
     });
 } else {
-    // This block runs on your Localhost
-    console.log("DATABASE_INFO: Connecting via individual credentials (Local Mode)");
+    // Fallback for Localhost
+    console.warn("DATABASE_WARNING: DATABASE_URL not found. Falling back to local credentials...");
     pool = new Pool({
-        user: process.env.DB_USER,
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-        port: process.env.DB_PORT,
+        user: process.env.DB_USER || 'postgres',
+        host: process.env.DB_HOST || 'localhost',
+        database: process.env.DB_NAME || 'globalearn',
+        password: process.env.DB_PASSWORD || 'password',
+        port: process.env.DB_PORT || 5432,
         ssl: false
     });
 }
@@ -28,9 +32,13 @@ if (process.env.DATABASE_URL) {
 // Test the connection immediately on startup
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
-        console.error('DATABASE_ERROR: Connection failed!', err.stack);
+        console.error('DATABASE_CRITICAL_ERROR: Connection failed during startup test!');
+        console.error('Environment:', process.env.NODE_ENV || 'development');
+        console.error('Target Host:', pool.options.host || 'Connection String used');
+        console.error('Error Details:', err.message);
     } else {
-        console.log('DATABASE_SUCCESS: Connection established at', res.rows[0].now);
+        const mode = process.env.DATABASE_URL ? "PRODUCTION" : "LOCAL";
+        console.log(`DATABASE_SUCCESS: [${mode}] Connection verified at`, res.rows[0].now);
     }
 });
 
