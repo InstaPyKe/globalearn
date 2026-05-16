@@ -9,6 +9,10 @@ const bcrypt = require('bcryptjs');
 
 // Import existing controllers for other routes
 const authController = require('./backend/controllers/authController');
+// Import API Routers (Ensure these files exist in your backend/routes folder)
+const surveyRoutes = require('./backend/routes/surveyRoutes');
+// If you have other route files like referralRoutes, taskRoutes, add them here:
+// const referralRoutes = require('./backend/routes/referralRoutes');
 
 dotenv.config();
 
@@ -22,6 +26,10 @@ app.post('/api/auth/register', authController.registerUser);
 app.post('/api/auth/login', authController.loginUser);
 // REFERRER CHECK ROUTE - Added missing route used by register.js
 app.get('/api/auth/referrer/:code', authController.getReferrer);
+
+// --- API ROUTE MOUNTING ---
+app.use('/api/surveys', surveyRoutes);
+// app.use('/api/referrals', referralRoutes);
 
 // --- CLEAN URL ROUTING FOR PUBLIC PAGES ---
 // These must be defined BEFORE the express.static middleware
