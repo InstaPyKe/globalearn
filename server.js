@@ -9,10 +9,18 @@ const bcrypt = require('bcryptjs');
 
 // Import existing controllers for other routes
 const authController = require('./backend/controllers/authController');
-// Import API Routers (Ensure these files exist in your backend/routes folder)
+
+// API Route Imports
+const authRoutes = require('./backend/routes/authRoutes');
+const transactionRoutes = require('./backend/routes/transactionRoutes');
+const userRoutes = require('./backend/routes/userRoutes');
+const taskRoutes = require('./backend/routes/taskRoutes');
+const mpesaRoutes = require('./backend/routes/mpesaRoutes');
+const referralRoutes = require('./backend/routes/referralRoutes');
+const settingsRoutes = require('./backend/routes/settingsRoutes');
 const surveyRoutes = require('./backend/routes/surveyRoutes');
-// If you have other route files like referralRoutes, taskRoutes, add them here:
-// const referralRoutes = require('./backend/routes/referralRoutes');
+const membershipRoutes = require('./backend/routes/membershipRoutes');
+const adminRoutes = require('./backend/routes/adminRoutes');
 
 dotenv.config();
 
@@ -20,16 +28,21 @@ const app = express();
 app.use(cors()); // Enable CORS to prevent "Connection Error" on cross-origin requests
 app.use(express.json());
 
-// REGISTRATION ROUTE - Now handled by authController
-app.post('/api/auth/register', authController.registerUser);
-// LOGIN ROUTE - Now handled by authController
+// --- API ROUTE MOUNTING ---
+app.use('/api/auth', authRoutes);
+// Explicit override for login to ensure authController logic is used
 app.post('/api/auth/login', authController.loginUser);
-// REFERRER CHECK ROUTE - Added missing route used by register.js
 app.get('/api/auth/referrer/:code', authController.getReferrer);
 
-// --- API ROUTE MOUNTING ---
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/mpesa', mpesaRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/referrals', referralRoutes);
 app.use('/api/surveys', surveyRoutes);
-// app.use('/api/referrals', referralRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/membership', membershipRoutes);
+app.use('/api/admin', adminRoutes);
 
 // --- CLEAN URL ROUTING FOR PUBLIC PAGES ---
 // These must be defined BEFORE the express.static middleware
