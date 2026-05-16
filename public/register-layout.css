@@ -1,0 +1,72 @@
+/* Register Page Appearance Overhaul */
+:root {
+    --primary-green: #00FF00;
+    --bg-dark: #000000;
+    --input-bg: rgba(255, 255, 255, 0.03);
+}
+
+.reg-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0px; /* Sharp corners for the container */
+    backdrop-filter: blur(10px);
+}
+
+.reg-container h2 {
+    font-size: 2.2rem; /* Nice large size font */
+    font-weight: 900;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #aaaaaa;
+    text-transform: uppercase;
+}
+
+/* High visibility green borders and sharp corners */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--input-bg);
+    border: 2px solid var(--primary-green) !important; /* Visible green border */
+    border-radius: 0px !important; /* Sharp corners */
+    color: #ffffff;
+    font-size: 1.15rem; /* Large input text */
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+}
+
+input:focus {
+    background: rgba(0, 255, 0, 0.05);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+#submitBtn {
+    width: 100%;
+    padding: 20px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    border-radius: 0px; /* Matching sharp corners */
+}
