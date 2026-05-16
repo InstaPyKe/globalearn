@@ -94,6 +94,6 @@ process.on('uncaughtException', (err) => {
     process.exit(1); // Exit to allow nodemon to restart the clean process
 });
 
-app.listen(PORT, () => {
-  console.log(`GlobalEarn API running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`GlobalEarn API operational on port ${PORT} (0.0.0.0)`);
 });
