@@ -61,13 +61,16 @@ app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, '../public/c
 // Health Check / DB Test Route
 app.get('/api/health', async (req, res) => {
   try {
-    const result = await db.query('SELECT NOW()');
+    const dbTime = await db.query('SELECT NOW()');
+    const userCount = await db.query('SELECT COUNT(*)::INT as count FROM users');
     res.json({ 
       status: 'online', 
-      db_time: result.rows[0].now 
+      db_time: dbTime.rows[0].now,
+      users_table: 'accessible',
+      total_users: userCount.rows[0].count
     });
   } catch (err) {
-    console.error('Database connection error:', err);
+    console.error('Health Check Failure:', err.message);
     res.status(500).json({ status: 'offline', error: err.message });
   }
 });

@@ -44,6 +44,20 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/membership', membershipRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Health Check / DB Diagnostic Route
+app.get('/api/health', async (req, res) => {
+    try {
+        const userCount = await db.query('SELECT COUNT(*)::INT as count FROM users');
+        res.json({ 
+            status: 'online', 
+            users_table: 'connected', 
+            total_users: userCount.rows[0].count 
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'error', error: err.message });
+    }
+});
+
 // --- CLEAN URL ROUTING FOR PUBLIC PAGES ---
 // These must be defined BEFORE the express.static middleware
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));

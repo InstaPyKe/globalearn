@@ -1,23 +1,38 @@
 const db = require('../db');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 exports.adminLogin = async (req, res) => {
-    const { username, password } = req.body;
-    
     try {
-        // Query the dedicated admins table
-        const result = await db.query("SELECT * FROM admins WHERE username = $1", [username]);
+        const { username, password } = req.body;
+
+        // Allow login via Username OR Email for better UX
+        const result = await db.query("SELECT * FROM admins WHERE username = $1 OR email = $1", [username]);
         const admin = result.rows[0];
 
-        if (admin && admin.password_hash === password) {
+        if (!admin) {
+            console.warn(`ADMIN_AUTH_FAILURE: Account not found for identifier: ${username}`);
+            return res.status(401).json({ error: 'Invalid Admin Credentials' });
+        }
+
+        // Verify hashed password using bcrypt
+        const isMatch = await bcrypt.compare(password, admin.password_hash);
+        
+        if (isMatch) {
             const token = jwt.sign(
                 { id: admin.id, username: admin.username, role: 'admin' }, 
                 process.env.JWT_SECRET, 
                 { expiresIn: '24h' }
             );
             return res.json({ token });
+        } else {
+            console.warn(`ADMIN_AUTH_FAILURE: Incorrect password for user: ${admin.username}`);
         }
-    } catch (err) { console.error(err); }
+
+    } catch (err) { 
+        console.error('Admin Login Error:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
 
     res.status(401).json({ error: 'Invalid Admin Credentials' });
 };
@@ -352,11 +367,10 @@ exports.getUsers = async (req, res) => {
                 u.id, u.username, u.email, u.balance, u.kyc_status, u.status, u.phone, 
                 u.last_login_ip, u.created_at, u.wallet_address,
                 inviter.username as referrer_name,
-                COALESCE(s.total_earned, 0) as total_earned,
-                (SELECT COUNT(*) FROM users WHERE invited_by = u.id) as referral_count
+                COALESCE((SELECT SUM(amount) FROM transactions WHERE user_id = u.id AND type != 'withdrawal'), 0) as total_earned,
+                (SELECT COUNT(*) FROM users WHERE referred_by_id = u.id) as referral_count
             FROM users u
-            LEFT JOIN users inviter ON u.invited_by = inviter.id
-            LEFT JOIN user_earning_stats s ON u.id = s.user_id
+            LEFT JOIN users inviter ON u.referred_by_id = inviter.id
         `;
         const params = [];
 
@@ -500,5 +514,39 @@ exports.deleteBlog = async (req, res) => {
         res.json({ message: 'Article deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: 'Deletion failed' });
+    }
+};
+
+exports.createAdmin = async (req, res) => {
+    const { username, email, password } = req.body;
+
+    try {
+        if (!username || !email || !password) {
+            return res.status(400).json({ error: 'Username, email, and password are required' });
+        }
+
+        // Check if admin already exists to prevent duplicates
+        const checkResult = await db.query("SELECT id FROM admins WHERE username = $1 OR email = $2", [username, email]);
+        if (checkResult.rows.length > 0) {
+            return res.status(409).json({ error: 'Admin with this username or email already exists' });
+        }
+
+        // Generate salt and hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Insert the new admin with the hashed password
+        const result = await db.query(
+            "INSERT INTO admins (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
+            [username, email, hashedPassword]
+        );
+
+        res.status(201).json({
+            message: 'Admin account created successfully',
+            admin: result.rows[0]
+        });
+    } catch (err) {
+        console.error('Create Admin Error:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };

@@ -8,38 +8,38 @@ const adminController = require('../controllers/adminController');
 router.post('/login', adminController.adminLogin);
 
 // @route GET /api/admin/stats
-router.get('/stats', auth, adminAuth, adminController.getDashboardStats);
+router.get('/stats', adminController.getDashboardStats);
 
 // Membership Tier Management
-router.get('/tiers', auth, adminAuth, adminController.getMembershipTiers);
-router.post('/tiers', auth, adminAuth, adminController.createMembershipTier);
-router.delete('/tiers/:id', auth, adminAuth, adminController.deleteMembershipTier);
+router.get('/tiers', adminController.getMembershipTiers);
+router.post('/tiers', adminController.createMembershipTier);
+router.delete('/tiers/:id', adminController.deleteMembershipTier);
 
 // Task Management
-router.get('/tasks', auth, adminAuth, adminController.getAdminTasks);
-router.post('/tasks', auth, adminAuth, adminController.createTask);
-router.patch('/tasks/:id/status', auth, adminAuth, adminController.toggleTaskStatus);
-router.delete('/tasks/:id', auth, adminAuth, adminController.deleteTask);
-router.put('/tasks/:id', auth, adminAuth, adminController.updateTask);
+router.get('/tasks', adminController.getAdminTasks);
+router.post('/tasks', adminController.createTask);
+router.patch('/tasks/:id/status', adminController.toggleTaskStatus);
+router.delete('/tasks/:id', adminController.deleteTask);
+router.put('/tasks/:id', adminController.updateTask);
 
 // Financial Management
-router.get('/payouts', auth, adminAuth, adminController.getPayoutQueue);
-router.patch('/payouts/:id', auth, adminAuth, adminController.updateWithdrawalStatus);
-router.get('/settings', auth, adminAuth, adminController.getSystemSettings);
-router.post('/settings', auth, adminAuth, adminController.updateSystemSettings);
+router.get('/payouts', adminController.getPayoutQueue);
+router.patch('/payouts/:id', adminController.updateWithdrawalStatus);
+router.get('/settings', adminController.getSystemSettings);
+router.post('/settings', adminController.updateSystemSettings);
 
 // Security Monitor
-router.get('/security/stats', auth, adminAuth, adminController.getSecurityStats);
-router.get('/security/incidents', auth, adminAuth, adminController.getSecurityIncidents);
-router.patch('/security/resolve/:id', auth, adminAuth, adminController.resolveIncident);
+router.get('/security/stats', adminController.getSecurityStats);
+router.get('/security/incidents', adminController.getSecurityIncidents);
+router.patch('/security/resolve/:id', adminController.resolveIncident);
 
 // Support Ticketing
-router.get('/support/stats', auth, adminAuth, adminController.getSupportStats);
-router.get('/support/tickets', auth, adminAuth, adminController.getSupportTickets);
-router.patch('/support/tickets/:id', auth, adminAuth, adminController.updateTicketStatus);
+router.get('/support/stats', adminController.getSupportStats);
+router.get('/support/tickets', adminController.getSupportTickets);
+router.patch('/support/tickets/:id', adminController.updateTicketStatus);
 
 // User Core Management
-router.get('/users', auth, adminAuth, adminController.getUsers);
-router.post('/users/:id/action', auth, adminAuth, adminController.manageUser);
+router.get('/users', adminController.getUsers);
+router.post('/users/:id/action', adminController.manageUser);
 
 module.exports = router;
