@@ -1,9 +1,11 @@
+const dotenv = require('dotenv');
+dotenv.config(); // Initialize environment variables before any other imports
+
 const express = require('express');
 const path = require('path');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const db = require('./backend/db');
 const bcrypt = require('bcryptjs');
 
@@ -21,8 +23,6 @@ const settingsRoutes = require('./backend/routes/settingsRoutes');
 const surveyRoutes = require('./backend/routes/surveyRoutes');
 const membershipRoutes = require('./backend/routes/membershipRoutes');
 const adminRoutes = require('./backend/routes/adminRoutes');
-
-dotenv.config();
 
 const app = express();
 app.use(cors()); // Enable CORS to prevent "Connection Error" on cross-origin requests

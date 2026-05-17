@@ -3,11 +3,17 @@ require('dotenv').config(); // Load environment variables from .env
 
 let pool;
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || process.env.DATABASE_PRIVATE_URL;
 
 if (connectionString && connectionString.trim().length > 0) {
     // This block runs on Railway/Production
-    console.log(`DATABASE_INFO: Production environment detected. Connection string found (length: ${connectionString.length}).`);
+    console.log(`DATABASE_INFO: Cloud environment detected. Using Connection String (Length: ${connectionString.length})`);
+    
+    // Security Check: Ensure we aren't using a public URL in a production environment
+    if (connectionString.includes('.railway.app') && !connectionString.includes('.internal')) {
+        console.warn("DATABASE_ADVISORY: App is using a PUBLIC Railway URL. Internal networking is recommended for better performance.");
+    }
+
     pool = new Pool({
         connectionString: connectionString.trim(),
         ssl: {
@@ -24,7 +30,7 @@ if (connectionString && connectionString.trim().length > 0) {
         host: process.env.DB_HOST || 'localhost',
         database: process.env.DB_NAME || 'globalearn',
         password: process.env.DB_PASSWORD || 'password',
-        port: process.env.DB_PORT || 5432,
+        port: parseInt(process.env.DB_PORT || '5432'),
         ssl: false
     });
 }
@@ -45,7 +51,7 @@ pool.query(startupQuery, (err, res) => {
         console.error('Target Host:', pool.options.host || 'Connection String used');
         console.error('Error Details:', err.message);
     } else {
-        const mode = process.env.DATABASE_URL ? "PRODUCTION" : "LOCAL";
+        const mode = connectionString ? "CLOUD" : "LOCAL";
         const { current_database, current_user, table_exists, now } = res.rows[0];
         
         console.log(`DATABASE_SUCCESS: [${mode}] Connected to "${current_database}" as "${current_user}"`);
