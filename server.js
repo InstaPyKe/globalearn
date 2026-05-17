@@ -30,8 +30,6 @@ app.use(express.json());
 
 // --- API ROUTE MOUNTING ---
 app.use('/api/auth', authRoutes);
-// Explicit override for login to ensure authController logic is used
-app.post('/api/auth/login', authController.loginUser);
 app.get('/api/auth/referrer/:code', authController.getReferrer);
 
 app.use('/api/transactions', transactionRoutes);

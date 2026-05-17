@@ -1,30 +1,39 @@
 const { Pool } = require('pg');
-require('dotenv').config(); // Load environment variables from .env
+const path = require('path');
+const fs = require('fs');
+
+// Try loading from current directory or one level up (root)
+require('dotenv').config(); 
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 let pool;
 
-const connectionString = process.env.DATABASE_URL || process.env.DATABASE_PRIVATE_URL;
+const connectionString = process.env.DATABASE_URL || process.env.DATABASE_PRIVATE_URL || process.env.PGURL;
 
 if (connectionString && connectionString.trim().length > 0) {
-    // This block runs on Railway/Production
-    console.log(`DATABASE_INFO: Cloud environment detected. Using Connection String (Length: ${connectionString.length})`);
+    const url = new URL(connectionString.trim());
+    const isInternal = url.hostname.includes('.internal');
     
-    // Security Check: Ensure we aren't using a public URL in a production environment
-    if (connectionString.includes('.railway.app') && !connectionString.includes('.internal')) {
-        console.warn("DATABASE_ADVISORY: App is using a PUBLIC Railway URL. Internal networking is recommended for better performance.");
-    }
+    console.log(`DATABASE_INFO: Cloud environment detected.`);
+    console.log(`DATABASE_HOST: ${url.hostname} (${isInternal ? 'Internal Network' : 'Public Network'})`);
 
     pool = new Pool({
         connectionString: connectionString.trim(),
-        ssl: {
-            // Required for Railway and most cloud providers
-            // rejectUnauthorized: false allows self-signed certificates used by cloud providers
-            rejectUnauthorized: false 
-        }
+        // SSL is usually not required for internal Railway connections
+        ssl: isInternal ? false : { rejectUnauthorized: false }
     });
 } else {
-    // Fallback for Localhost
-    console.warn("DATABASE_WARNING: DATABASE_URL not found. Falling back to local credentials...");
+    // Fallback logic with enhanced debugging
+    const envPath = path.resolve(__dirname, '../.env');
+    const envExists = fs.existsSync(envPath);
+
+    console.warn("---------------------------------------------------------");
+    console.warn(`DATABASE_CRITICAL_WARNING: DATABASE_URL is not set.`);
+    console.log(`.env file found at root: ${envExists ? 'YES' : 'NO'}`);
+    console.log("Current NODE_ENV:", process.env.NODE_ENV || 'development');
+    console.log("Action: Falling back to local credentials (localhost).");
+    console.warn("---------------------------------------------------------");
+    
     pool = new Pool({
         user: process.env.DB_USER || 'postgres',
         host: process.env.DB_HOST || 'localhost',
