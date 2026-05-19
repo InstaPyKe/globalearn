@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | GlobalEarn Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         /* Global Reset to ensure elements fit within containers */
         * { 
@@ -187,32 +187,30 @@
 
         /* Message and Error Alert Interface */
         #message {
-            font-size: 0.82rem;
+            font-size: 0.58rem;
             text-align: center;
-            margin-top: 15px;
-            font-weight: 700;
-            padding: 15px;
-            border-radius: 0px; /* Sharp corners */
-            display: none; /* Hidden by default, shown by JS */
-            border: 1px solid transparent;
-            backdrop-filter: blur(10px);
-            letter-spacing: 0.5px;
-            background: var(--glass); /* Base glassy background */
-            color: var(--text-color); /* Default text color */
+            margin-top: 20px;
+            font-weight: 300;
+            font-style: italic;
+            padding: 18px 25px;
+            display: none;
+            background: rgba(0, 15, 0, 0.95);
+            backdrop-filter: blur(15px);
+            color: #fff;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+            border: none;
+            clip-path: polygon(2% 0%, 100% 10%, 98% 100%, 0% 90%);
         }
 
         #message.error {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: rgba(255, 0, 0, 0.2);
-            color: #ff4d4d;
-            border-left: 4px solid var(--pure-red);
+            color: #ffb3b3;
+            border-right: 3px solid var(--pure-red);
         }
 
         #message.success {
-            background: rgba(0, 255, 0, 0.1);
-            border-color: rgba(0, 255, 0, 0.2);
             color: var(--pure-green);
-            border-left: 4px solid var(--pure-green);
+            border-right: 3px solid var(--pure-green);
         }
 
         @media (max-width: 900px) {

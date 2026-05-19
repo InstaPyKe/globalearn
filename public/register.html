@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join GlobalEarn | Secure Registration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://ipapi.co/js/ipapi.js"></script>
     <style>
@@ -302,20 +302,24 @@
 
         /* --- INTERACTIVE NOTIFICATIONS --- */
         #message {
-            font-size: 0.82rem;
+            font-size: 0.4rem;
             text-align: center;
-            margin-top: 15px;
-            font-weight: 700;
-            padding: 15px;
-            border-radius: 0px;
+            margin-top: 20px;
+            font-weight: 300;
+            font-style: italic;
+            padding: 18px 25px;
             display: none;
-            border: 1px solid transparent;
-            backdrop-filter: blur(10px);
-            letter-spacing: 0.5px;
+            background: rgba(0, 15, 0, 0.95);
+            backdrop-filter: blur(15px);
+            color: #fff;
+            text-transform: lowercase;
+            letter-spacing: 1px;
+            border: none;
+            clip-path: polygon(2% 0%, 100% 10%, 98% 100%, 0% 90%);
         }
 
-        #message.error { background: rgba(255, 0, 0, 0.1); border-color: rgba(255, 0, 0, 0.2); color: #ff4d4d; border-left: 4px solid var(--pure-red); }
-        #message.success { background: rgba(0, 255, 0, 0.1); border-color: rgba(0, 255, 0, 0.2); color: var(--pure-green); border-left: 4px solid var(--pure-green); }
+        #message.error { color: #ffb3b3; border-right: 3px solid var(--pure-red); }
+        #message.success { color: var(--pure-green); border-right: 3px solid var(--pure-green); }
 
         .shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake {
