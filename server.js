@@ -11,6 +11,7 @@ const bcrypt = require('bcryptjs');
 
 // Import existing controllers for other routes
 const authController = require('./backend/controllers/authController');
+const mpesaController = require('./backend/controllers/mpesaController');
 
 // API Route Imports
 const authRoutes = require('./backend/routes/authRoutes');
@@ -30,6 +31,8 @@ app.use(express.json());
 
 // --- API ROUTE MOUNTING ---
 app.use('/api/auth', authRoutes);
+// Explicit override for login to ensure authController logic is used if needed
+app.post('/api/auth/login', authController.loginUser);
 app.get('/api/auth/referrer/:code', authController.getReferrer);
 
 app.use('/api/transactions', transactionRoutes);

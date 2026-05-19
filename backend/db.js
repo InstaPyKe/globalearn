@@ -11,17 +11,20 @@ let pool;
 const connectionString = process.env.DATABASE_URL || process.env.DATABASE_PRIVATE_URL || process.env.PGURL;
 
 if (connectionString && connectionString.trim().length > 0) {
-    const url = new URL(connectionString.trim());
-    const isInternal = url.hostname.includes('.internal');
+    const trimmedConfig = connectionString.trim();
+    const isInternal = trimmedConfig.includes('.internal');
     
-    console.log(`DATABASE_INFO: Cloud environment detected.`);
-    console.log(`DATABASE_HOST: ${url.hostname} (${isInternal ? 'Internal Network' : 'Public Network'})`);
-
     pool = new Pool({
-        connectionString: connectionString.trim(),
-        // SSL is usually not required for internal Railway connections
-        ssl: isInternal ? false : { rejectUnauthorized: false }
+        connectionString: trimmedConfig,
+        ssl: {
+            // rejectUnauthorized: false is required for most cloud providers
+            // even on internal networks, it prevents certificate depth errors
+            rejectUnauthorized: false
+        }
     });
+    
+    const url = new URL(trimmedConfig);
+    console.log(`DATABASE_INFO: Cloud environment detected (${isInternal ? 'Internal' : 'Public'}). Connecting to ${url.hostname}`);
 } else {
     // Fallback logic with enhanced debugging
     const envPath = path.resolve(__dirname, '../.env');
