@@ -27,6 +27,7 @@ const adminRoutes = require('./backend/routes/adminRoutes');
 
 const app = express();
 app.use(cors()); // Enable CORS to prevent "Connection Error" on cross-origin requests
+app.set('trust proxy', 1); // Trust first proxy (e.g., Railway's load balancer) to get real client IP
 app.use(express.json());
 
 // --- API ROUTE MOUNTING ---

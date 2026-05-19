@@ -2,6 +2,48 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../db'); // Assuming db.js is in the backend folder
 
+// --- Rate Limiting Configuration ---
+const attempts = new Map(); // Stores { ip: { count: number, firstAttempt: Date } }
+const MAX_ATTEMPTS = 4;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+/**
+ * Simple in-memory rate limiting middleware.
+ * Blocks an IP if it exceeds MAX_ATTEMPTS within WINDOW_MS.
+ * Note: This is an in-memory solution and resets on server restart.
+ * For production, consider a persistent store like Redis.
+ */
+const rateLimitMiddleware = (req, res, next) => {
+    const ip = req.ip; // Get client IP address (requires 'trust proxy' setting in server.js)
+
+    if (!attempts.has(ip)) {
+        attempts.set(ip, { count: 1, firstAttempt: Date.now() });
+        console.log(`Rate Limit: IP ${ip} - Attempt 1`);
+        return next();
+    }
+
+    const clientAttempts = attempts.get(ip);
+    const timeElapsed = Date.now() - clientAttempts.firstAttempt;
+
+    if (timeElapsed > WINDOW_MS) {
+        // Window expired, reset count
+        attempts.set(ip, { count: 1, firstAttempt: Date.now() });
+        console.log(`Rate Limit: IP ${ip} - Window reset, Attempt 1`);
+        return next();
+    }
+
+    if (clientAttempts.count >= MAX_ATTEMPTS) {
+        const timeLeftMinutes = Math.ceil((clientAttempts.firstAttempt + WINDOW_MS - Date.now()) / (1000 * 60));
+        console.warn(`Rate Limit: IP ${ip} - BLOCKED. Too many attempts.`);
+        return res.status(429).json({ error: `Too many attempts from this IP. Please try again in ${timeLeftMinutes} minutes.` });
+    }
+
+    clientAttempts.count++;
+    attempts.set(ip, clientAttempts); // Update count
+    console.log(`Rate Limit: IP ${ip} - Attempt ${clientAttempts.count}`);
+    next();
+};
+
 /**
  * Checks if a referrer exists by their code.
  */
@@ -23,7 +65,7 @@ exports.getReferrer = async (req, res, next) => {
  * Registers a new user.
  * Handles username, email, and password validation, hashing, and database insertion.
  */
-exports.registerUser = async (req, res, next) => {
+exports.registerUser = [rateLimitMiddleware, async (req, res, next) => {
     try {
         // Sanitize and normalize inputs
         const username = req.body.username?.trim();
@@ -80,12 +122,12 @@ exports.registerUser = async (req, res, next) => {
         console.error("Registration Error:", error);
         next(error); // Pass error to global error handler
     }
-};
+}];
 
 /**
  * Handles user login request and issues JWT immediately.
  */
-exports.loginUser = async (req, res, next) => {
+exports.loginUser = [rateLimitMiddleware, async (req, res, next) => {
     try {
         // Sanitize and normalize inputs to match registration data
         const email = req.body.email?.trim().toLowerCase();
@@ -124,4 +166,4 @@ exports.loginUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+}];
