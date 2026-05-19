@@ -303,23 +303,37 @@
         /* --- INTERACTIVE NOTIFICATIONS --- */
         #message {
             font-size: 0.8rem;
-            text-align: center;
+            text-align: left;
             margin-top: 20px;
             font-weight: 300;
             font-style: italic;
-            padding: 18px 25px;
-            display: none;
+            padding: 15px 25px;
+            display: none; /* Controlled by JS */
             background: rgba(0, 15, 0, 0.95);
             backdrop-filter: blur(15px);
-            color: #fff;
+            color: var(--pure-green);
             text-transform: lowercase;
             letter-spacing: 1px;
             border: none;
             clip-path: polygon(2% 0%, 100% 10%, 98% 100%, 0% 90%);
+            position: relative;
+            transition: 0.3s ease;
         }
 
-        #message.error { color: #ffb3b3; border-right: 3px solid var(--pure-red); }
-        #message.success { color: var(--pure-green); border-right: 3px solid var(--pure-green); }
+        #message::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background-color: currentColor;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E") no-repeat center;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E") no-repeat center;
+            vertical-align: middle;
+            margin-right: 12px;
+        }
+
+        #message.error { border-right: 3px solid var(--pure-red); }
+        #message.success { border-right: 3px solid var(--pure-green); }
 
         .shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake {
