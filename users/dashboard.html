@@ -220,11 +220,42 @@
         .card.blog::before { background: #888; }
         .card.youtube::before { background: #FF4500; }
 
+        /* Generic icon styling for task cards */
+        .card-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; /* Larger for better visibility */
+            height: 60px;
+            background-color: currentColor; /* Inherits color from parent (e.g., #FFD700 for spin) */
+            opacity: 0.15; /* Subtle transparency */
+            pointer-events: none; /* Ensure it doesn't interfere with clicks */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Specific SVG masks for each card type */
+        .spin-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2v6h-6'%3E%3C/path%3E%3Cpath d='M2.5 22v-6h6'%3E%3C/path%3E%3Cpath d='M22 11.5A10 10 0 0 0 12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 9.5 10'%3E%3C/path%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2v6h-6'%3E%3C/path%3E%3Cpath d='M2.5 22v-6h6'%3E%3C/path%3E%3Cpath d='M22 11.5A10 10 0 0 0 12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 9.5 10'%3E%3C/path%3E%3C/svg%3E") no-repeat center; }
+        .survey-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'%3E%3C/path%3E%3Cpath d='M12 11h4'%3E%3C/path%3E%3Cpath d='M12 16h4'%3E%3C/path%3E%3Cpath d='M8 11h.01'%3E%3C/path%3E%3Cpath d='M8 16h.01'%3E%3C/path%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'%3E%3C/rect%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'%3E%3C/path%3E%3Cpath d='M12 11h4'%3E%3C/path%3E%3Cpath d='M12 16h4'%3E%3C/path%3E%3Cpath d='M8 11h.01'%3E%3C/path%3E%3Cpath d='M8 16h.01'%3E%3C/path%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'%3E%3C/rect%3E%3C/svg%3E") no-repeat center; }
+        .blog-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20'%3E%3C/path%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20'%3E%3C/path%3E%3C/svg%3E") no-repeat center; }
+        .youtube-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m22 8-6 4 6 4V8Z'%3E%3C/path%3E%3Crect width='14' height='12' x='2' y='6' rx='2' ry='2'%3E%3C/rect%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m22 8-6 4 6 4V8Z'%3E%3C/path%3E%3Crect width='14' height='12' x='2' y='6' rx='2' ry='2'%3E%3C/rect%3E%3C/svg%3E") no-repeat center; }
+
         .card.ads { background: rgba(0, 255, 0, 0.05); }
         .card.spin { background: rgba(255, 215, 0, 0.05); }
         .card.survey { background: rgba(0, 102, 255, 0.05); }
         .card.blog { background: rgba(128, 128, 128, 0.05); }
         .card.youtube { background: rgba(255, 69, 0, 0.05); }
+
+        /* Footer Styles */
+        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: none; position: relative; }
+        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
+        .footer-copyright span { color: #666; }
 
         .card h4 { font-size: 0.8rem; color: #777; text-transform: uppercase; margin-bottom: 10px; }
         .card .amount { font-size: 2rem; font-weight: 800; }
@@ -271,11 +302,11 @@
             }
             .sidebar:hover .nav-text { opacity: 1; visibility: visible; }
             .sidebar.active { transform: translateX(0); }
-            .top-nav .toggle-btn { display: flex !important; }
+            .top-nav .toggle-btn { display: flex !important; } /* Ensure toggle button is visible on mobile */
             .bottom-nav { display: flex; }
             .main-wrapper { margin-left: 0 !important; }
             .top-nav { padding: 0 20px; justify-content: space-between; }
-            .content-padding { padding: 20px 20px 100px 20px; } /* Space for bottom nav */
+            .content-padding { padding: 20px; } /* Adjusted padding after removing bottom nav */
         }
 
         /* --- WELCOME BANNER --- */
