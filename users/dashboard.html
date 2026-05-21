@@ -256,42 +256,12 @@
         .footer-logo span { color: var(--pure-green); }
         .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
         .footer-copyright span { color: #666; }
+        .footer-policies { margin: 10px 0; display: flex; gap: 15px; justify-content: center; }
+        .footer-policies a { color: #444; text-decoration: none; font-size: 0.65rem; transition: 0.3s; }
+        .footer-policies a:hover { color: var(--pure-green); }
 
         .card h4 { font-size: 0.8rem; color: #777; text-transform: uppercase; margin-bottom: 10px; }
         .card .amount { font-size: 2rem; font-weight: 800; }
-
-        /* --- BOTTOM NAVIGATION (Mobile) --- */
-        .bottom-nav {
-            display: none;
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 75px;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            z-index: 2000;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 5px;
-        }
-
-        .bottom-nav-link {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            text-decoration: none;
-            color: #666;
-            font-size: 0.6rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .bottom-nav-link span:first-child { font-size: 1.4rem; }
-        .bottom-nav-link.active { color: var(--pure-blue); }
-        .bottom-nav-link.active-green { color: var(--pure-green); }
 
         /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 992px) {
@@ -303,7 +273,6 @@
             .sidebar:hover .nav-text { opacity: 1; visibility: visible; }
             .sidebar.active { transform: translateX(0); }
             .top-nav .toggle-btn { display: flex !important; } /* Ensure toggle button is visible on mobile */
-            .bottom-nav { display: flex; }
             .main-wrapper { margin-left: 0 !important; }
             .top-nav { padding: 0 20px; justify-content: space-between; }
             .content-padding { padding: 20px; } /* Adjusted padding after removing bottom nav */
@@ -376,14 +345,6 @@
         <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> <span class="nav-text">Logout</span></a>
     </aside>
 
-    <nav class="bottom-nav">
-        <a href="dashboard.html" class="bottom-nav-link active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
-        <a href="earning-hub.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg><span>Earn</span></a>
-        <a href="membership.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Tiers</span></a>
-        <a href="withdrawals.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg><span>Cash</span></a>
-        <a href="settings.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span>Setup</span></a>
-    </nav>
- 
     <div class="sidebar-overlay" id="overlay"></div>
 
     <div class="main-wrapper" id="mainWrapper">
@@ -459,6 +420,20 @@
 
         </main>
     </div>
+
+    <footer class="global-footer">
+        <div class="footer-wrap">
+            <div class="footer-logo">GLOBAL<span>EARN</span></div>
+            <div class="footer-copyright">
+                &copy; 2023 GLOBALEARN. All Rights Reserved.
+                <div class="footer-policies">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                </div>
+                Managed by: <span>JASPER-BREVIN TECHNOLOGIES</span>
+            </div>
+        </div>
+    </footer>
 
     <script src="dashboard.js"></script>
     <script>
