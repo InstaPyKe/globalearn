@@ -248,17 +248,45 @@
         .card.blog { background: rgba(128, 128, 128, 0.05); }
         .card.youtube { background: rgba(255, 69, 0, 0.05); }
 
-        /* Footer Styles */
-        .global-footer { margin-top: 100px; padding: 60px 20px; background: #000; border-top: none; position: relative; }
-        .global-footer::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 150px; height: 1px; background: linear-gradient(90deg, transparent, var(--pure-green), transparent); }
-        .footer-wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        .footer-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        /* --- PROFESSIONAL PRODUCTION FOOTER --- */
+        .global-footer { 
+            margin-top: 80px; 
+            padding: 80px 40px 40px; 
+            background: #050505; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            position: relative; 
+        }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; }
+        .footer-top { 
+            display: flex; 
+            justify-content: space-between; 
+            gap: 60px; 
+            margin-bottom: 60px; 
+            flex-wrap: wrap;
+        }
+        .footer-brand { flex: 1; min-width: 200px; }
+        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
         .footer-logo span { color: var(--pure-green); }
-        .footer-copyright { font-size: 0.7rem; color: #444; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; }
-        .footer-copyright span { color: #666; }
-        .footer-policies { margin: 10px 0; display: flex; gap: 15px; justify-content: center; }
-        .footer-policies a { color: #444; text-decoration: none; font-size: 0.65rem; transition: 0.3s; }
-        .footer-policies a:hover { color: var(--pure-green); }
+
+        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
+        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .footer-column a:hover { color: var(--pure-green); }
+
+        .footer-bottom { 
+            border-top: 1px solid rgba(255,255,255,0.03); 
+            padding-top: 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 20px; 
+            flex-wrap: wrap;
+        }
+        .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed span { color: #555; }
 
         .card h4 { font-size: 0.8rem; color: #777; text-transform: uppercase; margin-bottom: 10px; }
         .card .amount { font-size: 2rem; font-weight: 800; }
@@ -448,14 +476,35 @@
 
     <footer class="global-footer">
         <div class="footer-wrap">
-            <div class="footer-logo">GLOBAL<span>EARN</span></div>
-            <div class="footer-copyright">
-                &copy; 2023 GLOBALEARN. All Rights Reserved.
-                <div class="footer-policies">
-                    <a href="/privacy">Privacy Policy</a>
-                    <a href="/terms">Terms of Service</a>
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">GLOBAL<span>EARN</span></div>
+                    <p>The ultimate high-velocity earning ecosystem.</p>
                 </div>
-                Managed by: <span>JASPER-BREVIN TECHNOLOGIES</span>
+                <div class="footer-links-grid">
+                    <div class="footer-column">
+                        <h5>Platform</h5>
+                        <a href="dashboard.html">Overview</a>
+                        <a href="earning-hub.html">Earn Hub</a>
+                        <a href="membership.html">Tiers</a>
+                    </div>
+                    <div class="footer-column">
+                        <h5>Account</h5>
+                        <a href="withdrawals.html">Cashout</a>
+                        <a href="refferals.html">Network</a>
+                        <a href="settings.html">Security</a>
+                    </div>
+                    <div class="footer-column">
+                        <h5>Legal</h5>
+                        <a href="/privacy">Privacy</a>
+                        <a href="/terms">Terms</a>
+                        <a href="/support">Support</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
+                <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
             </div>
         </div>
     </footer>
