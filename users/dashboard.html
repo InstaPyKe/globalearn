@@ -203,6 +203,7 @@
             border-radius: 20px;
             position: relative;
             overflow: hidden;
+            transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.7s ease, border-color 0.7s ease;
         }
 
         .card::before {
@@ -219,6 +220,13 @@
         .card.survey::before { background: var(--pure-blue); }
         .card.blog::before { background: #888; }
         .card.youtube::before { background: #FF4500; }
+
+        /* Moon Glow Effect Triggered on Scroll */
+        .card.glow-active {
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0 45px rgba(255, 255, 255, 0.12), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            transform: translateY(-10px) scale(1.01);
+        }
 
         /* Generic icon styling for task cards */
         .card-icon {
@@ -552,6 +560,26 @@
 
         backToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Moon Glow Intersection Observer Logic
+        const glowOptions = {
+            threshold: 0.3,
+            rootMargin: "0px 0px -10% 0px"
+        };
+
+        const glowObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('glow-active');
+                } else {
+                    entry.target.classList.remove('glow-active');
+                }
+            });
+        }, glowOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            glowObserver.observe(card);
         });
     </script>
 </body>
