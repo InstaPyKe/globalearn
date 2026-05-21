@@ -648,6 +648,9 @@
             return;
         }
 
+        // Preload "Win" sound effect for the spin reveal
+        const winSound = new Audio('https://cdn.freesound.org/previews/511/511484_10852029-lq.mp3');
+
         // Helper to format seconds into HH:MM:SS
         function startResetCountdown(elementId, seconds) {
             let remaining = seconds;
@@ -689,6 +692,10 @@
                     wheel.style.transform = `rotate(${targetDegree}deg)`;
 
                     setTimeout(() => {
+                        // Trigger sound on stop
+                        winSound.currentTime = 0; 
+                        winSound.play().catch(e => console.warn("Audio playback inhibited by browser policy."));
+
                         msg.style.color = "var(--pure-green)";
                         msg.innerText = data.message;
                         btn.disabled = false;
