@@ -650,6 +650,8 @@
 
         // Preload "Win" sound effect for the spin reveal
         const winSound = new Audio('https://cdn.freesound.org/previews/511/511484_10852029-lq.mp3');
+        // Preload continuous ticking sound for the rotation phase
+        const tickSound = new Audio('https://www.soundjay.com/clock/sounds/clock-ticking-2.mp3');
 
         // Helper to format seconds into HH:MM:SS
         function startResetCountdown(elementId, seconds) {
@@ -674,6 +676,10 @@
             btn.disabled = true;
             msg.innerText = "Good luck...";
 
+            // Start continuous ticking during rotation
+            tickSound.loop = true;
+            tickSound.play().catch(e => console.warn("Tick audio inhibited."));
+
             try {
                 const res = await fetch('/api/spin/play', {
                     method: 'POST',
@@ -692,6 +698,10 @@
                     wheel.style.transform = `rotate(${targetDegree}deg)`;
 
                     setTimeout(() => {
+                        // Stop ticking exactly when wheel stops
+                        tickSound.pause();
+                        tickSound.currentTime = 0;
+
                         // Trigger sound on stop
                         winSound.currentTime = 0; 
                         winSound.play().catch(e => console.warn("Audio playback inhibited by browser policy."));
@@ -701,6 +711,9 @@
                         btn.disabled = false;
                     }, 5000); // Match updated transition duration
                 } else {
+                    // Stop ticking if request fails
+                    tickSound.pause();
+                    tickSound.currentTime = 0;
                     msg.style.color = "var(--pure-red)";
                     if (data.secondsLeft) {
                         startResetCountdown('spinMessage', data.secondsLeft);
@@ -710,6 +723,9 @@
                     btn.disabled = false;
                 }
             } catch (err) {
+                // Stop ticking if connection error occurs
+                tickSound.pause();
+                tickSound.currentTime = 0;
                 msg.innerText = "Connection error.";
                 btn.disabled = false;
             }

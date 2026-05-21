@@ -17,6 +17,7 @@
             --survey-purple: #9B59B6;
             --survey-red: #FF0055;
             --sidebar-width: 260px;
+            --sidebar-mini: 80px; /* Collapsed width */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
@@ -127,6 +128,35 @@
 
         .opt-red { border-left: 4px solid var(--survey-red); }
         .opt-red:hover { border-color: var(--survey-red); color: var(--survey-red); }
+
+        /* --- PROFESSIONAL PRODUCTION FOOTER --- */
+        .global-footer { 
+            margin-top: 80px; 
+            padding: 80px 40px 40px; 
+            background: #050505; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            position: relative; 
+        }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; }
+        .footer-top { display: flex; justify-content: space-between; gap: 60px; margin-bottom: 60px; flex-wrap: wrap; }
+        .footer-brand { flex: 1; min-width: 200px; }
+        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
+        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .footer-column a:hover { color: var(--pure-green); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.03); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed span { color: #555; }
+
+        /* --- BACK TO TOP BUTTON --- */
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--pure-green); opacity: 0; visibility: hidden; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--pure-green); transform: translateY(-5px); }
 
         .default-profile-avatar {
             width: 35px; height: 35px; border-radius: 50%;

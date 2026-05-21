@@ -12,7 +12,8 @@
             --pure-blue: #0000FF;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
-            --sidebar-width: 260px;
+            --sidebar-width: 260px; /* Expanded width */
+            --sidebar-mini: 80px; /* Collapsed width */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
@@ -32,7 +33,12 @@
             flex-direction: column; 
             overflow-y: auto;
             overflow-x: hidden;
+            white-space: nowrap; /* Prevent text wrapping */
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar:hover {
+            width: var(--sidebar-width);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
 
         /* Sleek Sidebar Scrollbar */
@@ -40,24 +46,78 @@
         .sidebar::-webkit-scrollbar-track { background: transparent; }
         .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 15px;
+            transition: 0.3s;
+        }
 
+        .sidebar.collapsed { transform: translateX(-100%); }
         .logo { font-size: 22px; font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: -1px; text-decoration: none; color: inherit; display: block; }
         .logo span { color: var(--pure-green); }
+
+        .sidebar:not(:hover) .logo { font-size: 0; opacity: 0; }
+        .sidebar:not(:hover) .logo::before { content: 'G'; font-size: 22px; opacity: 1; color: var(--pure-green); }
+
         .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
-        .nav-link { padding: 14px 18px; text-decoration: none; color: #888; border-radius: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
+        .nav-link { padding: 14px 15px; text-decoration: none; color: #888; border-radius: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 20px; transition: 0.3s; border: 1px solid transparent; }
+        .nav-text {
+            transition: 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .sidebar:hover .nav-text {
+            opacity: 1;
+            visibility: visible;
+        }
         .nav-link:hover, .nav-link.active { background: var(--glass); color: #fff; }
         .nav-link.active { border-left: 4px solid var(--pure-blue); }
 
-        .main-wrapper { 
-            flex-grow: 1; 
-            margin-left: var(--sidebar-width); 
-            width: 100%; 
+        .main-wrapper {
+            flex-grow: 1;
+            margin-left: var(--sidebar-mini);
             transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            display: flex; /* For sticky footer */
+            flex-direction: column; /* For sticky footer */
+            min-height: 100vh; /* For sticky footer */
         }
         .main-wrapper.expanded { margin-left: 0; }
 
-        .top-nav { height: 70px; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 900; }
+        /* --- PRODUCTION CLASS HEADER --- */
+        .top-nav {
+            height: 75px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1500;
+        }
+
+        .nav-left-group { display: flex; align-items: center; gap: 20px; }
+        .nav-right-group { display: flex; align-items: center; gap: 15px; }
+
+        .portal-id {
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #444;
+            text-transform: uppercase;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .user-meta { text-align: right; }
+        .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .user-meta .status { display: block; font-size: 0.6rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
         .toggle-btn {
             background: var(--glass);
@@ -70,10 +130,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border);
+            color: var(--pure-blue);
+            transform: scale(1.05);
         }
 
-        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; }
+        /* Reveal top-nav toggle only when sidebar is hidden */
+        .sidebar.collapsed ~ .main-wrapper #topNavToggle { display: flex !important; }
         
+        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; } /* flex:1 for sticky footer */
         .header { margin-bottom: 40px; }
         .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
         .header p { color: #666; font-size: 0.9rem; }
@@ -87,6 +156,35 @@
         .blog-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; }
         .read-time { font-size: 0.75rem; color: #555; }
         .reward-val { color: var(--pure-green); font-weight: 800; font-size: 0.9rem; }
+
+        /* --- PROFESSIONAL PRODUCTION FOOTER --- */
+        .global-footer { 
+            margin-top: 80px; 
+            padding: 80px 40px 40px; 
+            background: #050505; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            position: relative; 
+        }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; }
+        .footer-top { display: flex; justify-content: space-between; gap: 60px; margin-bottom: 60px; flex-wrap: wrap; }
+        .footer-brand { flex: 1; min-width: 200px; }
+        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
+        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .footer-column a:hover { color: var(--pure-green); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.03); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed span { color: #555; }
+
+        /* --- BACK TO TOP BUTTON --- */
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--pure-green); opacity: 0; visibility: hidden; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--pure-green); transform: translateY(-5px); }
 
         .status-badge {
             font-size: 0.6rem;
