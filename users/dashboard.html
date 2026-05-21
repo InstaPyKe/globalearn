@@ -278,6 +278,31 @@
             .content-padding { padding: 20px; } /* Adjusted padding after removing bottom nav */
         }
 
+        /* --- BACK TO TOP BUTTON --- */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            color: var(--pure-green);
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--pure-green); transform: translateY(-5px); }
+
         /* --- WELCOME BANNER --- */
         .welcome-banner {
             background: linear-gradient(135deg, rgba(0, 30, 0, 0.8), rgba(0, 15, 0, 0.6));
@@ -435,6 +460,10 @@
         </div>
     </footer>
 
+    <button class="back-to-top" id="backToTop" title="Back to Top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+
     <script src="dashboard.js"></script>
     <script>
         // Dual-toggle Logic: Handles both sidebar header and top-nav buttons
@@ -460,6 +489,20 @@
             document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
             
             overlay?.addEventListener('click', toggleSidebar);
+        });
+
+        // Back to Top Logic
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
 </body>
