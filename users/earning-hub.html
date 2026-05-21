@@ -13,14 +13,15 @@
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
             --sidebar-width: 260px;
+            --sidebar-mini: 80px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* --- SIDEBAR --- */
         .sidebar { 
-            width: var(--sidebar-width); 
-            background: rgba(10, 10, 10, 0.8); 
+            width: var(--sidebar-mini);
+            background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(25px); 
             border-right: 1px solid var(--border); 
             height: 100vh; 
@@ -28,12 +29,18 @@
             left: 0; 
             top: 0; 
             z-index: 1000; 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            padding: 30px 20px; 
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 15px; 
             display: flex; 
             flex-direction: column;
             overflow-y: auto;
             overflow-x: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-width);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
 
         /* Sleek Sidebar Scrollbar */
@@ -42,47 +49,147 @@
         .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
         .sidebar.collapsed { transform: translateX(-100%); }
-        .logo { font-size: 22px; font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: -1px; text-decoration: none; color: inherit; display: block; }
-        .logo span { color: var(--pure-green); }
-        .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
-        .nav-link { padding: 14px 18px; text-decoration: none; color: #888; border-radius: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; transition: 0.3s; border: 1px solid transparent; }
-        .nav-link:hover, .nav-link.active { background: var(--glass); color: #fff; }
-        .nav-link.active { border-left: 4px solid var(--pure-blue); }
 
-        /* --- MAIN --- */
-        .main-wrapper { flex-grow: 1; margin-left: var(--sidebar-width); transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
-        .main-wrapper.expanded { margin-left: 0; }
-
-        .top-nav {
-            height: 70px;
-            padding: 0 40px;
+        .sidebar-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 900;
+            margin-bottom: 40px;
+            gap: 15px;
+            transition: 0.3s;
         }
 
-        .toggle-btn {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            text-decoration: none; 
+            color: inherit; 
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 30px;
+            transition: 0.3s;
+        }
+        .logo span { color: var(--pure-green); }
+
+        .sidebar:not(:hover) .logo { font-size: 0; opacity: 0; }
+        .sidebar:not(:hover) .logo::before { content: 'G'; font-size: 22px; opacity: 1; color: var(--pure-green); }
+
+        .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+
+        .nav-link {
+            padding: 14px 15px;
+            text-decoration: none;
+            color: #888;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: 0.3s;
+            border: 1px solid transparent;
         }
 
-        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; }
+        .nav-text {
+            transition: 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sidebar:hover .nav-text {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--glass);
+            color: #fff;
+            border-color: var(--border);
+        }
+
+        .nav-link.active { border-left: 4px solid var(--pure-blue); }
+
+        /* --- MAIN --- */
+        .main-wrapper {
+            flex-grow: 1;
+            margin-left: var(--sidebar-mini);
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-wrapper.expanded { margin-left: 0; }
+
+        /* --- PRODUCTION CLASS HEADER --- */
+        .top-nav {
+            height: 75px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1500;
+        }
+
+        .nav-left-group { display: flex; align-items: center; gap: 20px; }
+        .nav-right-group { display: flex; align-items: center; gap: 15px; }
+
+        .portal-id {
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #444;
+            text-transform: uppercase;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .user-meta { text-align: right; }
+        .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .user-meta .status { display: block; font-size: 0.6rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+        .toggle-btn {
+            background: var(--glass);
+            border: 1px solid transparent;
+            color: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border);
+            color: var(--pure-blue);
+            transform: scale(1.05);
+        }
+
+        .default-profile-avatar {
+            width: 35px; height: 35px; border-radius: 50%;
+            border: 2px solid var(--border);
+            background-color: #333; /* Fallback/base color */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-user'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0' /%3E%3Cpath d='M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2' /%3E%3C/svg%3E");
+            background-size: 60%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Reveal top-nav toggle only when sidebar is hidden */
+        .sidebar.collapsed ~ .main-wrapper #topNavToggle {
+            display: flex !important;
+        }
         
-        .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; }
+        .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 20px; }
         .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 30px; }
         
         /* --- SPIN WHEEL --- */
@@ -99,22 +206,91 @@
         .wheel-box::after { content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 35px solid #fff; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
         .spin-btn { background: var(--pure-green); color: #000; border: none; padding: 15px 40px; border-radius: 50px; font-weight: 800; cursor: pointer; margin-top: 20px; width: 100%; transition: 0.3s; }
         .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* --- VIDEO AREA --- */
-        .video-player { width: 100%; aspect-ratio: 16/9; background: #0a0a0a; border-radius: 15px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); }
-        .timer-overlay { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 8px; color: var(--pure-blue); font-weight: 700; z-index: 10; }
         
-        .task-list { display: flex; flex-direction: column; gap: 12px; }
-        .task-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-        .task-item:hover { border-color: var(--pure-blue); background: var(--glass); }
+        /* --- PROFESSIONAL PRODUCTION FOOTER --- */
+        .global-footer { 
+            margin-top: 80px; 
+            padding: 80px 40px 40px; 
+            background: #050505; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            position: relative; 
+        }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; }
+        .footer-top { 
+            display: flex; 
+            justify-content: space-between; 
+            gap: 60px; 
+            margin-bottom: 60px; 
+            flex-wrap: wrap;
+        }
+        .footer-brand { flex: 1; min-width: 200px; }
+        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
+        .footer-logo span { color: var(--pure-green); }
+
+        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
+        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .footer-column a:hover { color: var(--pure-green); }
+
+        .footer-bottom { 
+            border-top: 1px solid rgba(255,255,255,0.03); 
+            padding-top: 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 20px; 
+            flex-wrap: wrap;
+        }
+        .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed span { color: #555; }
+
+        /* --- BACK TO TOP BUTTON --- */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            color: var(--pure-green);
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--pure-green); transform: translateY(-5px); }
 
         @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar { 
+                transform: translateX(-100%); 
+                width: 280px !important; /* Override hover width */
+                z-index: 2000;
+            }
             .sidebar.active { transform: translateX(0); }
             .main-wrapper { margin-left: 0 !important; }
             .top-nav { padding: 0 20px; }
             .content-padding { padding: 20px; }
             .hub-grid { grid-template-columns: 1fr; }
+        }
+        /* --- MOBILE FOOTER REFINEMENTS --- */
+        @media (max-width: 768px) {
+            .global-footer { padding: 60px 20px 40px; }
+            .footer-top { flex-direction: column; text-align: center; gap: 40px; }
+            .footer-brand { min-width: 100%; }
+            .footer-links-grid { justify-content: center; gap: 30px; width: 100%; }
+            .footer-bottom { flex-direction: column; text-align: center; gap: 15px; }
         }
 
         /* Overlay for mobile */
@@ -134,32 +310,44 @@
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
-        <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <div class="sidebar-header">
+            <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+            <button class="toggle-btn" id="toggleBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+        </div>
         <nav class="nav-links">
-            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
-            <a href="earning-hub.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> Earning Hub</a>
-            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> Write Blog</a>
-            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> Ad Rewards</a>
-            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> TikTok Tasks</a>
-            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> YouTube Tasks</a>
-            <a href="survey-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> Surveys</a>
-            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Blog Reading</a>
-            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> My Network</a>
-            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Membership</a>
-            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Withdrawals</a>
-            <a href="settings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> Settings</a>
+            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span class="nav-text">Dashboard</span></a>
+            <a href="earning-hub.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> <span class="nav-text">Earning Hub</span></a>
+            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> <span class="nav-text">Write Blog</span></a>
+            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> <span class="nav-text">Ad Rewards</span></a>
+            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> <span class="nav-text">TikTok Tasks</span></a>
+            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> <span class="nav-text">YouTube Tasks</span></a>
+            <a href="survey-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> <span class="nav-text">Surveys</span></a>
+            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> <span class="nav-text">Blog Reading</span></a>
+            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span class="nav-text">My Network</span></a>
+            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span class="nav-text">Membership</span></a>
+            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> <span class="nav-text">Withdrawals</span></a>
+            <a href="settings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span class="nav-text">Settings</span></a>
         </nav>
-        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> Logout</a>
+        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> <span class="nav-text">Logout</span></a>
     </aside>
 
     <div class="sidebar-overlay" id="overlay"></div>
 
     <div class="main-wrapper" id="mainWrapper">
         <header class="top-nav">
-            <button class="toggle-btn" id="toggleBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-            <div id="display-username" style="font-size: 0.85rem; color: #888; font-weight: 800;">Loading...</div>
+            <div class="nav-left-group">
+                <button class="toggle-btn" id="topNavToggle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="portal-id">EARNING_HUB // ACTIVITIES</div>
+            </div>
+            <div class="nav-right-group">
+                <div class="user-meta">
+                    <span id="display-username" class="name">Loading...</span>
+                    <span class="status">● System_Active</span>
+                </div>
                 <div class="default-profile-avatar"></div>
             </div>
         </header>
@@ -187,28 +375,54 @@
                     <div id="spinMessage" style="margin-top: 15px; font-weight: 600;"></div>
                 </section>
 
-                <!-- Video Tasks Section -->
-                <section class="card">
-                    <h3 style="color: var(--pure-blue); margin-bottom: 20px;">Video Lounge</h3>
-                    <div class="video-player" id="player">
-                        <div class="timer-overlay" id="timer">00:00</div>
-                        <span id="playerMsg" style="color: #444; font-weight: 800; text-align: center; padding: 20px;">SELECT A VIDEO BELOW</span>
-                    </div>
-                    <div class="task-list" id="taskList">
-                        <!-- Tasks populated by JS -->
-                        <div style="color: #444;">Loading available tasks...</div>
-                    </div>
+                <!-- Removed Video Tasks Section -->
+                <section class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.2;">🚧</div>
+                    <h3 style="font-size: 1.5rem; letter-spacing: -1px; margin-bottom: 10px;">Video Lounge <span>Offline</span></h3>
+                    <p style="color: #666; max-width: 300px; font-size: 0.9rem;">The video task module is currently undergoing maintenance for performance upgrades.</p>
                 </section>
             </div>
         </main>
+
+        <footer class="global-footer">
+            <div class="footer-wrap">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <div class="footer-logo">GLOBAL<span>EARN</span></div>
+                    </div>
+                    <div class="footer-links-grid">
+                        <div class="footer-column">
+                            <h5>Platform</h5>
+                            <a href="dashboard.html">Overview</a>
+                            <a href="earning-hub.html">Earn Hub</a>
+                            <a href="membership.html">Tiers</a>
+                        </div>
+                        <div class="footer-column">
+                            <h5>Account</h5>
+                            <a href="withdrawals.html">Cashout</a>
+                            <a href="refferals.html">Network</a>
+                            <a href="settings.html">Security</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
+                    <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
+                </div>
+            </div>
+        </footer>
     </div>
+
+    <button class="back-to-top" id="backToTop" title="Back to Top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
 
     <script>
         const token = localStorage.getItem('token');
-        if (!token) window.location.href = '../login.html';
-
-        let activeTaskId = null;
-        let timerInterval = null;
+        if (!token) {
+            window.location.href = '../login.html';
+            return;
+        }
 
         // Helper to format seconds into HH:MM:SS
         function startResetCountdown(elementId, seconds) {
@@ -270,117 +484,55 @@
             }
         }
 
-        // --- VIDEO TASKS LOGIC ---
-        async function loadVideos() {
-            try {
-                const res = await fetch('/api/tasks/available', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const tasks = await res.json();
+        // --- VIDEO TASKS LOGIC (REMOVED) ---
+        // The video task section has been removed from the HTML.
+        // Corresponding JavaScript functions (loadVideos, selectVideo, startTimer, claimVideoReward) are no longer needed.
 
-                if (tasks.limitReached) {
-                    document.getElementById('timer').style.background = "var(--pure-red)";
-                    startResetCountdown('timer', tasks.secondsLeft);
-                    document.getElementById('taskList').innerHTML = `<div style="color:var(--pure-red); font-size: 0.85rem; padding: 10px;">Cooldown active. Resets in: <span id="list-timer"></span></div>`;
-                    startResetCountdown('list-timer', tasks.secondsLeft);
-                    return;
-                }
-
-                const list = document.getElementById('taskList');
-                list.innerHTML = '';
-
-                tasks.filter(t => t.task_type === 'video').forEach(task => {
-                    const div = document.createElement('div');
-                    div.className = 'task-item';
-                    div.onclick = () => selectVideo(task);
-                    div.innerHTML = `
-                        <div>
-                            <div style="font-weight:600;">${task.title}</div>
-                            <div style="font-size:0.75rem; color:#666;">${task.duration_seconds} seconds</div>
-                        </div>
-                        <div style="color:var(--pure-green); font-weight:800;">+ KSH. ${task.reward}</div>
-                    `;
-                    list.appendChild(div);
-                });
-            } catch (err) { console.error(err); }
-        }
-
-        function selectVideo(task) {
-            if (timerInterval) clearInterval(timerInterval);
-            activeTaskId = task.id;
-            
-            let embedUrl = task.url;
-            try {
-                if (embedUrl.includes('youtube.com/watch?v=')) {
-                    const videoId = embedUrl.split('v=')[1].split('&')[0];
-                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                } else if (embedUrl.includes('youtu.be/')) {
-                    const videoId = embedUrl.split('youtu.be/')[1].split('?')[0];
-                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                }
-            } catch (e) {
-                console.error("URL Parsing failed", e);
-            }
-            
-            document.getElementById('player').innerHTML = `
-                <div class="timer-overlay" id="timer">00:00</div>
-                <iframe width="100%" height="100%" src="${embedUrl}?autoplay=1&mute=1&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            `;
-
-            startTimer(task.duration_seconds, task.reward);
-        }
-
-        function startTimer(seconds, rewardAmount) {
-            let left = seconds;
-            const display = document.getElementById('timer');
-            
-            timerInterval = setInterval(() => {
-                left--;
-                const m = Math.floor(left / 60);
-                const s = left % 60;
-                display.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                
-                if (left <= 0) {
-                    clearInterval(timerInterval);
-                    const rewardText = parseFloat(rewardAmount).toFixed(2);
-                    display.innerText = `CLAIM KSH. ${rewardText}`;
-                    display.style.background = "var(--pure-green)";
-                    display.style.color = "#000";
-                    display.style.cursor = "pointer";
-                    display.onclick = claimVideoReward;
-                }
-            }, 1000);
-        }
-
-        async function claimVideoReward() {
-            try {
-                const res = await fetch('/api/tasks/complete', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` 
-                    },
-                    body: JSON.stringify({ taskId: activeTaskId })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    alert(`Success: ${data.message}`);
-                    location.reload();
-                } else {
-                    if (data.secondsLeft) {
-                        document.getElementById('timer').style.background = "var(--pure-red)";
-                        startResetCountdown('timer', data.secondsLeft);
-                    } else {
-                        alert(data.error);
-                    }
-                }
-            } catch (err) { alert("Error claiming reward."); }
-        }
-
-        document.getElementById('logoutBtn').onclick = () => {
+        // Logout logic
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
             localStorage.removeItem('token');
-            window.location.href = '/login.html';
-        };
+            window.location.href = '../login.html';
+        });
+
+        // Dual-toggle Logic: Handles both sidebar header and top-nav buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mainWrapper = document.getElementById('mainWrapper');
+            const overlay = document.getElementById('overlay');
+            
+            const toggleSidebar = () => {
+                if (window.innerWidth > 992) {
+                    // Desktop behavior: slide and expand content
+                    sidebar.classList.toggle('collapsed');
+                    mainWrapper.classList.toggle('expanded');
+                } else {
+                    // Mobile behavior: overlay drawer
+                    sidebar.classList.toggle('active');
+                    if (overlay) overlay.classList.toggle('show');
+                }
+            };
+
+            // Listen for clicks on BOTH buttons
+            document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
+            document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
+            
+            overlay?.addEventListener('click', toggleSidebar);
+        });
+
+        // Back to Top Logic
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
         async function loadUserData() {
             try {
@@ -394,33 +546,227 @@
             } catch (err) { console.error(err); }
         }
 
-        const toggleBtn = document.getElementById('toggleBtn');
-        const sidebar = document.getElementById('sidebar');
-        const mainWrapper = document.getElementById('mainWrapper');
-        const overlay = document.getElementById('overlay');
+        window.onload = () => {
+            loadUserData();
+        };
+    </script>
+</body>
+</html>
+    <aside class="sidebar" id="sidebar">
+        <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
+        <nav class="nav-links">
+            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
+            <a href="earning-hub.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> Earning Hub</a>
+            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> Write Blog</a>
+            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> Ad Rewards</a>
+            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> TikTok Tasks</a>
+            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> YouTube Tasks</a>
+            <a href="survey-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> Surveys</a>
+            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Blog Reading</a>
+            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> My Network</a>
+            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Membership</a>
+            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> Withdrawals</a>
+            <a href="settings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> Settings</a>
+        </nav>
+        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> Logout</a>
+    </aside>
 
-        function toggleSidebar() {
-            if (window.innerWidth > 992) {
-                sidebar.classList.toggle('collapsed');
-                mainWrapper.classList.toggle('expanded');
-            } else {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('show');
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <div class="main-wrapper" id="mainWrapper">
+        <header class="top-nav">
+            <button class="toggle-btn" id="toggleBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div id="display-username" style="font-size: 0.85rem; color: #888; font-weight: 800;">Loading...</div>
+                <div class="default-profile-avatar"></div>
+            </div>
+        </header>
+
+        <main class="content-padding">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">Earning Hub</h2>
+            <p style="color: #888; margin-bottom: 40px;">Complete activities to increase your balance.</p>
+
+            <div class="hub-grid">
+                <!-- Lucky Spin Section -->
+                <section class="card spin-container">
+                    <h3 style="color: var(--pure-green);">Lucky Spin</h3>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Win up to KSH. 100 instantly!</p>
+                    <div class="wheel-box">
+                        <div class="wheel" id="wheel">
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(30deg) translateY(-100px);">0</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(90deg) translateY(-100px);">5</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(150deg) translateY(-100px);">10</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(210deg) translateY(-100px);">20</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(270deg) translateY(-100px);">50</span>
+                            <span class="wheel-label" style="transform: translate(-50%, -50%) rotate(330deg) translateY(-100px);">100</span>
+                        </div>
+                    </div>
+                    <button class="spin-btn" id="spinBtn" onclick="playSpin()">SPIN THE WHEEL</button>
+                    <div id="spinMessage" style="margin-top: 15px; font-weight: 600;"></div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="global-footer">
+            <div class="footer-wrap">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <div class="footer-logo">GLOBAL<span>EARN</span></div>
+                    </div>
+                    <div class="footer-links-grid">
+                        <div class="footer-column">
+                            <h5>Platform</h5>
+                            <a href="dashboard.html">Overview</a>
+                            <a href="earning-hub.html">Earn Hub</a>
+                            <a href="membership.html">Tiers</a>
+                        </div>
+                        <div class="footer-column">
+                            <h5>Account</h5>
+                            <a href="withdrawals.html">Cashout</a>
+                            <a href="refferals.html">Network</a>
+                            <a href="settings.html">Security</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
+                    <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <button class="back-to-top" id="backToTop" title="Back to Top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '../login.html';
+            return;
+        }
+
+        // Helper to format seconds into HH:MM:SS
+        function startResetCountdown(elementId, seconds) {
+            let remaining = seconds;
+            const el = document.getElementById(elementId);
+            const timer = setInterval(() => {
+                const h = Math.floor(remaining / 3600);
+                const m = Math.floor((remaining % 3600) / 60);
+                const s = remaining % 60;
+                el.innerText = `Come back in: ${h}h ${m}m ${s}s`;
+                remaining--;
+                if (remaining < 0) { clearInterval(timer); location.reload(); }
+            }, 1000);
+        }
+
+        // --- LUCKY SPIN LOGIC ---
+        async function playSpin() {
+            const btn = document.getElementById('spinBtn');
+            const wheel = document.getElementById('wheel');
+            const msg = document.getElementById('spinMessage');
+            
+            btn.disabled = true;
+            msg.innerText = "Good luck...";
+
+            try {
+                const res = await fetch('/api/spin/play', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Sector indexing logic:
+                    // Indices [0, 1, 2, 3, 4, 5] correspond to sectors [0, 60, 120, 180, 240, 300] deg
+                    // To land on a sector, rotate: Full Spins + (360 - sectorStartDegree - halfSectorWidth)
+                    const sectorWidth = 60;
+                    const fullSpins = 360 * 8; // More rotations for a high-velocity "run"
+                    const targetDegree = fullSpins + (360 - (data.prizeIndex * sectorWidth) - (sectorWidth / 2));
+                    
+                    wheel.style.transform = `rotate(${targetDegree}deg)`;
+
+                    setTimeout(() => {
+                        msg.style.color = "var(--pure-green)";
+                        msg.innerText = data.message;
+                        btn.disabled = false;
+                    }, 5000); // Match updated transition duration
+                } else {
+                    msg.style.color = "var(--pure-red)";
+                    if (data.secondsLeft) {
+                        startResetCountdown('spinMessage', data.secondsLeft);
+                    } else {
+                        msg.innerText = data.error || "Spin failed.";
+                    }
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                msg.innerText = "Connection error.";
+                btn.disabled = false;
             }
         }
 
-        toggleBtn.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', toggleSidebar);
+        // Logout logic
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '../login.html';
+        });
 
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 992) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('show');
+        async function loadUserData() {
+            try {
+                const res = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await res.json();
+                if (res.ok) {
+                    document.getElementById('display-username').innerText = user.username;
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // Dual-toggle Logic: Handles both sidebar header and top-nav buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mainWrapper = document.getElementById('mainWrapper');
+            const overlay = document.getElementById('overlay');
+            
+            const toggleSidebar = () => {
+                if (window.innerWidth > 992) {
+                    // Desktop behavior: slide and expand content
+                    sidebar.classList.toggle('collapsed');
+                    mainWrapper.classList.toggle('expanded');
+                } else {
+                    // Mobile behavior: overlay drawer
+                    sidebar.classList.toggle('active');
+                    if (overlay) overlay.classList.toggle('show');
+                }
+            };
+
+            // Listen for clicks on BOTH buttons
+            document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
+            document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
+            
+            overlay?.addEventListener('click', toggleSidebar);
+        });
+
+        // Back to Top Logic
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
             }
         });
 
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
         window.onload = () => {
-            loadVideos();
             loadUserData();
         };
     </script>
