@@ -30,14 +30,48 @@
         .nav-link.active { border-left: 4px solid var(--pure-blue); }
 
         /* --- MAIN --- */
-        .main-wrapper { flex-grow: 1; margin-left: var(--sidebar-width); transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
+        .main-wrapper { 
+            flex-grow: 1; 
+            margin-left: var(--sidebar-width); 
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
         .main-wrapper.expanded { margin-left: 0; }
         .top-nav { height: 70px; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 900; }
         .toggle-btn { background: var(--glass); border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
 
-        .content-padding { padding: 40px; max-width: 1100px; margin: 0 auto; }
+        .content-padding { padding: 40px; max-width: 1100px; margin: 0 auto; flex: 1; width: 100%; }
         .header { margin-bottom: 40px; }
         .header h1 { font-size: 2rem; letter-spacing: -1px; }
+
+        /* --- PROFESSIONAL PRODUCTION FOOTER --- */
+        .global-footer { margin-top: 80px; padding: 80px 40px 40px; background: #050505; border-top: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .footer-wrap { max-width: 1200px; margin: 0 auto; }
+        .footer-top { display: flex; justify-content: space-between; gap: 60px; margin-bottom: 60px; flex-wrap: wrap; }
+        .footer-brand { flex: 1; min-width: 200px; }
+        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
+        .footer-logo span { color: var(--pure-green); }
+        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
+        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .footer-column a:hover { color: var(--pure-green); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.03); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .footer-managed span { color: #555; }
+
+        @media (max-width: 768px) {
+            .global-footer { padding: 60px 20px 40px; }
+            .footer-top { flex-direction: column; text-align: center; gap: 40px; }
+            .footer-brand { min-width: 100%; }
+            .footer-links-grid { justify-content: center; gap: 30px; width: 100%; }
+            .footer-bottom { flex-direction: column; text-align: center; gap: 15px; }
+        }
 
         /* --- Balance Cards --- */
         .wallet-grid {
@@ -237,6 +271,41 @@
             </table>
         </div>
         </main>
+
+        <footer class="global-footer">
+            <div class="footer-wrap">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <div class="footer-logo">GLOBAL<span>EARN</span></div>
+                        <p>The ultimate high-velocity earning ecosystem.</p>
+                    </div>
+                    <div class="footer-links-grid">
+                        <div class="footer-column">
+                            <h5>Platform</h5>
+                            <a href="dashboard.html">Overview</a>
+                            <a href="earning-hub.html">Earn Hub</a>
+                            <a href="membership.html">Tiers</a>
+                        </div>
+                        <div class="footer-column">
+                            <h5>Account</h5>
+                            <a href="withdrawals.html">Cashout</a>
+                            <a href="refferals.html">Network</a>
+                            <a href="settings.html">Security</a>
+                        </div>
+                        <div class="footer-column">
+                            <h5>Legal</h5>
+                            <a href="/privacy">Privacy</a>
+                            <a href="/terms">Terms</a>
+                            <a href="/support">Support</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
+                    <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="wallet.js"></script>
