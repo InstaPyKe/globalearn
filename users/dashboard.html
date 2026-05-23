@@ -172,6 +172,23 @@
         .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
         .user-meta .status { display: block; font-size: 0.6rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
+        /* --- TIER BADGE IN HEADER --- */
+        .header-tier-badge {
+            font-size: 0.55rem;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+            border: 1px solid transparent;
+            display: none; /* Populated by JS */
+            vertical-align: middle;
+        }
+        .header-tier-badge.tier-basic { color: #888; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+        .header-tier-badge.tier-gold { color: var(--gold); border-color: var(--gold); background: rgba(241, 196, 15, 0.1); }
+        .header-tier-badge.tier-platinum { color: var(--platinum); border-color: var(--platinum); background: rgba(255, 69, 0, 0.1); }
+
         /* --- Integrated Toggle Button --- */
         .toggle-btn {
             background: var(--glass);
@@ -476,7 +493,10 @@
             </div>
             <div class="nav-right-group">
                 <div class="user-meta">
-                    <span id="display-username" class="name">Checking...</span>
+                    <span class="name">
+                        <span id="display-username">Checking...</span>
+                        <span id="display-tier" class="header-tier-badge"></span>
+                    </span>
                     <span class="status">● System_Active</span>
                 </div>
                 <div class="default-profile-avatar"></div>

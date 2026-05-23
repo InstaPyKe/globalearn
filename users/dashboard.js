@@ -79,6 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('welcome-text').innerText = `Welcome Back, ${profile.username}`;
             document.getElementById('display-balance').innerText = `KSH. ${parseFloat(profile.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
+            // Populate Tier Badge in Header
+            const tierBadge = document.getElementById('display-tier');
+            if (tierBadge && profile.membership_tier) {
+                const tier = profile.membership_tier.toLowerCase();
+                tierBadge.innerText = tier;
+                tierBadge.className = `header-tier-badge tier-${tier}`;
+                tierBadge.style.display = 'inline-block';
+            }
+
             // 2. Fetch Network Stats (Team Count)
             const networkRes = await fetch('/api/referrals/network', {
                 headers: { 'Authorization': `Bearer ${token}` }
