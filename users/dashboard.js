@@ -121,11 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         tasks.forEach(task => {
             const div = document.createElement('div');
-            div.style.cssText = 'background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); cursor: pointer;';
+            div.className = 'task-action-btn';
             div.onclick = () => window.location.href = 'earning-hub.html';
             div.innerHTML = `
                 <span>${task.title}</span>
-                <span style="color: var(--pure-green); font-weight: 700;">+ KSH. ${parseFloat(task.reward).toFixed(2)}</span>
+                <span style="color: var(--pure-green); font-weight: 900; font-size: 1rem;">+ KSH. ${parseFloat(task.reward).toFixed(2)}</span>
             `;
             container.appendChild(div);
         });

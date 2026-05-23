@@ -62,7 +62,13 @@
         }
         .main-wrapper.expanded { margin-left: 0; }
 
-        .top-nav { height: 70px; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 900; }
+        .top-nav { height: 75px; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); position: sticky; top: 0; z-index: 1500; }
+        .nav-left-group { display: flex; align-items: center; gap: 20px; }
+        .nav-right-group { display: flex; align-items: center; gap: 15px; }
+        .portal-id { font-size: 1.1rem; font-weight: 900; letter-spacing: 3px; color: #FFFF00; text-transform: uppercase; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px; }
+        .user-meta { text-align: right; }
+        .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .user-meta .status { display: block; font-size: 0.6rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
         .toggle-btn {
             background: var(--glass);
@@ -193,11 +199,19 @@
 
     <div class="main-wrapper" id="mainWrapper">
         <header class="top-nav">
-            <button class="toggle-btn" id="toggleBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-            <div id="display-username" style="font-size: 0.85rem; color: #888; font-weight: 800;">SURVEY_CORE_SYSTEM</div>
-            <div class="default-profile-avatar"></div>
+            <div class="nav-left-group">
+                <button class="toggle-btn" id="toggleBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="portal-id">SURVEY CORE_SYSTEM</div>
+            </div>
+            <div class="nav-right-group">
+                <div class="user-meta">
+                    <span id="display-username" class="name">Loading...</span>
+                    <span class="status">● System_Active</span>
+                </div>
+                <div class="default-profile-avatar"></div>
+            </div>
         </header>
 
         <main class="content-padding">
