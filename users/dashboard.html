@@ -99,14 +99,16 @@
         .nav-link {
             padding: 14px 15px;
             text-decoration: none;
-            color: #888;
+            color: #666;
             border-radius: 12px;
-            font-size: 0.95rem;
+            font-size: 0.75rem; 
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 20px;
             transition: 0.3s;
             border: 1px solid transparent;
+            letter-spacing: 0.3px;
         }
 
         .nav-text {
@@ -120,14 +122,33 @@
             visibility: visible;
         }
 
+        /* Dynamic Coloring for Navigation */
+        .nav-link[href="dashboard.html"], .bottom-nav-link[href="dashboard.html"] { --nc: var(--emerald); }
+        .nav-link[href="earning-hub.html"], .bottom-nav-link[href="earning-hub.html"] { --nc: var(--pure-blue); }
+        .nav-link[href="blogwritting.html"] { --nc: var(--pure-purple); }
+        .nav-link[href="ads-earnings.html"] { --nc: var(--pure-green); }
+        .nav-link[href="tiktok-earnings.html"] { --nc: #00f2ea; }
+        .nav-link[href="youtube-earnings.html"] { --nc: var(--platinum); }
+        .nav-link[href="survey-earnings.html"] { --nc: var(--pure-blue); }
+        .nav-link[href="blog-earnings.html"] { --nc: var(--bronze); }
+        .nav-link[href="refferals.html"], .bottom-nav-link[href="refferals.html"] { --nc: var(--pure-purple); }
+        .nav-link[href="membership.html"] { --nc: var(--gold); }
+        .nav-link[href="withdrawals.html"], .bottom-nav-link[href="withdrawals.html"] { --nc: var(--pure-red); }
+        .nav-link[href="settings.html"], .bottom-nav-link[href="settings.html"] { --nc: #888; }
+
+        .nav-link svg { color: var(--nc); opacity: 0.6; transition: 0.3s; }
+
         .nav-link:hover, .nav-link.active {
             background: var(--glass);
-            color: #fff;
-            border-color: var(--border);
+            color: var(--nc);
+            border-color: rgba(255,255,255,0.05);
         }
 
+        .nav-link:hover svg, .nav-link.active svg { opacity: 1; filter: drop-shadow(0 0 5px var(--nc)); }
+
         .nav-link.active {
-            border-left: 4px solid var(--pure-blue);
+            border-left: 3px solid var(--nc);
+            background: rgba(255,255,255,0.02);
         }
 
         /* --- MAIN CONTENT --- */
@@ -247,11 +268,6 @@
             background-position: center;
         }
 
-        /* Reveal top-nav toggle only when sidebar is hidden */
-        .sidebar.collapsed ~ .main-wrapper #topNavToggle {
-            display: flex !important;
-        }
-
         /* --- DASHBOARD WIDGETS --- */
         .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; }
 
@@ -362,9 +378,16 @@
         .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
         .footer-managed span { color: #555; }
 
-        .card h4 { font-size: 0.8rem; color: #777; text-transform: uppercase; margin-bottom: 10px; }
+        .card h4 { 
+            font-size: 0.65rem; 
+            color: #555; 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            font-weight: 900; 
+            letter-spacing: 1px;
+        }
         .card .amount { 
-            font-size: 2.2rem; 
+            font-size: 1.8rem; /* Refined amount size */
             font-weight: 900; 
             letter-spacing: -1px; 
             text-shadow: 0 0 20px rgba(255,255,255,0.1);
@@ -374,7 +397,7 @@
         .task-action-btn {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border);
-            padding: 20px;
+            padding: 15px 20px;
             border-radius: 16px;
             display: flex;
             justify-content: space-between;
@@ -383,6 +406,7 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            font-size: 0.8rem; 
         }
 
         .task-action-btn:hover {
@@ -650,7 +674,6 @@
                 }
             };
 
-            document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
             document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
             
             overlay?.addEventListener('click', () => {

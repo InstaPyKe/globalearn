@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             div.onclick = () => window.location.href = 'earning-hub.html';
             div.innerHTML = `
                 <span>${task.title}</span>
-                <span style="color: var(--pure-green); font-weight: 900; font-size: 1rem;">+ KSH. ${parseFloat(task.reward).toFixed(2)}</span>
+                <span style="color: var(--pure-green); font-weight: 900; font-size: 0.8rem;">+ KSH. ${parseFloat(task.reward).toFixed(2)}</span>
             `;
             container.appendChild(div);
         });
