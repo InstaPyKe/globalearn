@@ -155,17 +155,44 @@
             z-index: 1500;
         }
 
-        .nav-left-group { display: flex; align-items: center; gap: 20px; }
+        .nav-left-group { display: flex; align-items: center; gap: 15px; }
         .nav-right-group { display: flex; align-items: center; gap: 15px; }
 
+        /* Toggle Button Refinement */
+        .toggle-btn {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--pure-blue);
+            color: var(--pure-blue);
+            transform: scale(1.05);
+        }
+
+        /* Adaptive Breadcrumb */
         .portal-id {
-            font-size: 1.1rem;
+            font-size: clamp(0.7rem, 2vw, 1.1rem);
             font-weight: 900;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: #FFFF00;
             text-transform: uppercase;
             border-left: 1px solid rgba(255,255,255,0.1);
             padding-left: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .portal-id { border-left: none; padding-left: 0; }
+            .user-meta .name { font-size: 0.75rem; }
         }
 
         .user-meta { text-align: right; }
@@ -298,15 +325,33 @@
         /* --- PROFESSIONAL PRODUCTION FOOTER --- */
         .global-footer { 
             margin-top: 80px; 
-            padding: 30px 40px; 
+            padding: 80px 40px 40px; 
             background: #050505; 
             border-top: 1px solid rgba(255,255,255,0.05); 
             position: relative; 
         }
         .footer-wrap { max-width: 1200px; margin: 0 auto; }
+        .footer-top { 
+            display: flex; 
+            justify-content: space-between; 
+            gap: 60px; 
+            margin-bottom: 60px; 
+            flex-wrap: wrap;
+        }
+        .footer-brand { flex: 1; min-width: 200px; }
+        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
+        .footer-logo span { color: var(--pure-green); }
+
+        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
+        .footer-column { display: flex; flex-direction: column; gap: 12px; }
+        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
+        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
+        .footer-column a:hover { color: var(--pure-green); }
+
         .footer-bottom { 
-            border-top: none; 
-            padding-top: 0; 
+            border-top: 1px solid rgba(255,255,255,0.03); 
+            padding-top: 30px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
@@ -315,7 +360,7 @@
         }
         .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
         .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
-        .footer-managed span { color: #FFFF00; }
+        .footer-managed span { color: #555; }
 
         .card h4 { font-size: 0.8rem; color: #777; text-transform: uppercase; margin-bottom: 10px; }
         .card .amount { 
@@ -351,20 +396,25 @@
         @media (max-width: 992px) {
             .sidebar { 
                 transform: translateX(-100%); 
-                width: 280px !important;
+                width: 260px !important;
                 z-index: 2000;
             }
-            .sidebar:hover .nav-text { opacity: 1; visibility: visible; }
             .sidebar.active { transform: translateX(0); }
-            .top-nav .toggle-btn { display: flex !important; } /* Ensure toggle button is visible on mobile */
+            .sidebar:hover { box-shadow: none; }
+            .sidebar .nav-text { opacity: 1; visibility: visible; }
+            
             .main-wrapper { margin-left: 0 !important; }
             .top-nav { padding: 0 20px; justify-content: space-between; }
-            .content-padding { padding: 20px; } /* Adjusted padding after removing bottom nav */
+            .content-padding { padding: 20px 20px 100px 20px; } 
+            .bottom-nav { display: flex; }
         }
 
         /* --- MOBILE FOOTER REFINEMENTS --- */
         @media (max-width: 768px) {
-            .global-footer { padding: 30px 20px; }
+            .global-footer { padding: 60px 20px 40px; }
+            .footer-top { flex-direction: column; text-align: center; gap: 40px; }
+            .footer-brand { min-width: 100%; }
+            .footer-links-grid { justify-content: center; gap: 30px; width: 100%; }
             .footer-bottom { flex-direction: column; text-align: center; gap: 15px; }
         }
 
@@ -439,9 +489,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
-
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
+            <!-- Sidebar header toggle for desktop expansion -->
         </div>
         <nav class="nav-links">
             <a href="dashboard.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span class="nav-text">Dashboard</span></a>
@@ -459,6 +507,15 @@
         </nav>
         <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> <span class="nav-text">Logout</span></a>
     </aside>
+
+    <!-- Bottom Navigation for Mobile Devices -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-link active"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+        <a href="earning-hub.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg><span>Earn</span></a>
+        <a href="refferals.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Network</span></a>
+        <a href="withdrawals.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg><span>Cash</span></a>
+        <a href="settings.html" class="bottom-nav-link"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1  1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9  19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0 2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span>Setup</span></a>
+    </nav>
 
     <div class="sidebar-overlay" id="overlay"></div>
 
@@ -543,8 +600,27 @@
 
             <footer class="global-footer">
                 <div class="footer-wrap">
+                    <div class="footer-top">
+                        <div class="footer-brand">
+                            <div class="footer-logo">GLOBAL<span>EARN</span></div>
+                        </div>
+                        <div class="footer-links-grid">
+                            <div class="footer-column">
+                                <h5>Platform</h5>
+                                <a href="dashboard.html">Overview</a>
+                                <a href="earning-hub.html">Earn Hub</a>
+                                <a href="membership.html">Tiers</a>
+                            </div>
+                            <div class="footer-column">
+                                <h5>Account</h5>
+                                <a href="withdrawals.html">Cashout</a>
+                                <a href="refferals.html">Network</a>
+                                <a href="settings.html">Security</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="footer-bottom">
-                        <div class="footer-copyright">&copy; 2023 GLOBALEARN PLATFORMS. ALL RIGHTS RESERVED.</div>
+                        <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
                         <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
                     </div>
                 </div>
@@ -566,21 +642,21 @@
             
             const toggleSidebar = () => {
                 if (window.innerWidth > 992) {
-                    // Desktop behavior: slide and expand content
                     sidebar.classList.toggle('collapsed');
                     mainWrapper.classList.toggle('expanded');
                 } else {
-                    // Mobile behavior: overlay drawer
                     sidebar.classList.toggle('active');
-                    if (overlay) overlay.classList.toggle('show');
+                    overlay.classList.toggle('show');
                 }
             };
 
-            // Listen for clicks on BOTH buttons
             document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
             document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
             
-            overlay?.addEventListener('click', toggleSidebar);
+            overlay?.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('show');
+            });
         });
 
         // Back to Top Logic
