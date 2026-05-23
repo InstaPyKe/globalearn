@@ -140,31 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Navigation UI Logic
-    const toggleBtn = document.getElementById('toggleBtn');
-    const sidebar = document.getElementById('sidebar');
-    const mainWrapper = document.getElementById('mainWrapper');
-    const overlay = document.getElementById('overlay');
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            if (window.innerWidth > 992) {
-                sidebar.classList.toggle('collapsed');
-                mainWrapper.classList.toggle('expanded');
-            } else {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('show');
-            }
-        });
-    }
-
-    if (overlay) {
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('show');
-        });
-    }
-
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
         e.preventDefault();
         localStorage.removeItem('token');
