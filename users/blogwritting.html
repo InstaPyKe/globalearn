@@ -603,6 +603,7 @@
                 if (res.ok) {
                     showMessage("Success! Your article has been published and is pending review.", "var(--pure-green)");
                     blogForm.reset();
+                    localStorage.removeItem('globalearn_blog_draft');
                 } else {
                     // Handle mock success if backend route isn't ready yet for your testing
                     if (res.status === 404) {
@@ -644,24 +645,72 @@
         const fontSizeSelect = document.getElementById('fontSize');
         const boldToggle = document.getElementById('boldToggle');
         const italicToggle = document.getElementById('italicToggle');
+        const titleInput = document.getElementById('title');
+
+        const AUTO_SAVE_KEY = 'globalearn_blog_draft';
+
+        function saveDraft() {
+            const draft = {
+                title: titleInput.value,
+                content: contentInput.value,
+                fontFamily: fontFamilySelect.value,
+                fontSize: fontSizeSelect.value,
+                isBold: boldToggle.classList.contains('active'),
+                isItalic: italicToggle.classList.contains('active')
+            };
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(draft));
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem(AUTO_SAVE_KEY);
+            if (!saved) return;
+
+            const draft = JSON.parse(saved);
+            titleInput.value = draft.title || '';
+            contentInput.value = draft.content || '';
+
+            if (draft.fontFamily) {
+                fontFamilySelect.value = draft.fontFamily;
+                contentInput.style.fontFamily = draft.fontFamily;
+            }
+            if (draft.fontSize) {
+                fontSizeSelect.value = draft.fontSize;
+                contentInput.style.fontSize = draft.fontSize;
+            }
+            if (draft.isBold) {
+                boldToggle.classList.add('active');
+                contentInput.style.fontWeight = '700';
+            }
+            if (draft.isItalic) {
+                italicToggle.classList.add('active');
+                contentInput.style.fontStyle = 'italic';
+            }
+            contentInput.dispatchEvent(new Event('input'));
+        }
 
         fontFamilySelect?.addEventListener('change', (e) => {
             contentInput.style.fontFamily = e.target.value;
+            saveDraft();
         });
 
         fontSizeSelect?.addEventListener('change', (e) => {
             contentInput.style.fontSize = e.target.value;
+            saveDraft();
         });
 
         boldToggle?.addEventListener('click', () => {
             boldToggle.classList.toggle('active');
             contentInput.style.fontWeight = boldToggle.classList.contains('active') ? '700' : '400';
+            saveDraft();
         });
 
         italicToggle?.addEventListener('click', () => {
             italicToggle.classList.toggle('active');
             contentInput.style.fontStyle = italicToggle.classList.contains('active') ? 'italic' : 'normal';
+            saveDraft();
         });
+
+        titleInput?.addEventListener('input', saveDraft);
 
         contentInput?.addEventListener('input', () => {
             const text = contentInput.value.trim();
@@ -675,7 +724,10 @@
             
             if (wordCountEl) wordCountEl.innerText = `${words} word${words !== 1 ? 's' : ''}`;
             if (readingTimeEl) readingTimeEl.innerText = `${readMins} min read`;
+            saveDraft();
         });
+
+        loadDraft();
 
         // --- PREVIEW MODE LOGIC ---
         function openPreview() {
