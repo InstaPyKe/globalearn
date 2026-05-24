@@ -54,7 +54,7 @@
             white-space: nowrap;
         }
 
-        .sidebar:hover {
+        .sidebar.expanded {
             width: var(--sidebar-width);
             box-shadow: 30px 0 70px rgba(0,0,0,0.8);
         }
@@ -91,7 +91,7 @@
         }
         .logo span { color: var(--pure-green); }
 
-        .sidebar:not(:hover) .logo { font-size: 0; opacity: 0; }
+        .sidebar:not(.expanded) .logo { font-size: 0; opacity: 0; }
         .sidebar:not(:hover) .logo::before { content: 'G'; font-size: 24px; opacity: 1; color: var(--pure-green); font-weight: 900; }
 
         .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
@@ -116,7 +116,7 @@
             opacity: 1;
         }
 
-        .sidebar:not(:hover) .nav-text { opacity: 0; pointer-events: none; }
+        .sidebar:not(.expanded) .nav-text { opacity: 0; pointer-events: none; }
 
         /* Dynamic Coloring for Navigation */
         [data-page="dashboard"] { --nc: var(--emerald); }
@@ -146,6 +146,17 @@
             border-left: 2px solid var(--nc);
         }
 
+        /* Mobile Sidebar width adjustment */
+        @media (max-width: 992px) {
+            .sidebar { 
+                width: var(--sidebar-width); /* Full width on mobile when visible */
+                transform: translateX(-100%); 
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar .nav-text { opacity: 1 !important; visibility: visible !important; }
+            .sidebar .logo { font-size: 24px !important; opacity: 1 !important; }
+        }
+
         /* Sidebar responsiveness for extremely small screens */
         @media (max-width: 300px) {
             .sidebar { width: 100% !important; transform: translateX(-100%); }
@@ -162,7 +173,8 @@
             width: 100%;
         }
 
-        .main-wrapper.expanded { margin-left: 0; }
+        .main-wrapper.expanded { margin-left: 0; } /* For hiding sidebar entirely */
+        .main-wrapper.shifted { margin-left: var(--sidebar-width); } /* For expanding sidebar width */
 
         /* --- PRODUCTION CLASS HEADER --- */
         .top-nav {
@@ -664,8 +676,8 @@
             
             const toggleSidebar = () => {
                 if (window.innerWidth > 992) {
-                    sidebar.classList.toggle('collapsed');
-                    mainWrapper.classList.toggle('expanded');
+                    sidebar.classList.toggle('expanded');
+                    mainWrapper.classList.toggle('shifted');
                 } else {
                     sidebar.classList.toggle('active');
                     overlay.classList.toggle('show');
