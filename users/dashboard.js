@@ -104,11 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Task Progress Logic
             if (tasksData.limitReached) {
-                document.getElementById('task-progress').innerText = `100%`;
+                updateProgressBar(100);
                 document.getElementById('priority-tasks-list').innerHTML = `<div style="color:var(--pure-red); font-size: 0.85rem;">Daily limit reached. Resets in ${Math.floor(tasksData.secondsLeft / 3600)}h.</div>`;
             } else {
                 // If not at limit, progress is partial. (Example logic)
-                document.getElementById('task-progress').innerText = `0%`; 
+                updateProgressBar(0);
                 renderPriorityTasks(tasksData.filter(t => t.task_type === 'video').slice(0, 3));
             }
 
@@ -119,6 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error("Dashboard Load Error:", err);
         }
+    }
+
+    function updateProgressBar(percent) {
+        const bar = document.getElementById('task-progress-bar');
+        const text = document.getElementById('task-progress');
+        if (bar) bar.style.width = `${percent}%`;
+        if (text) text.innerText = `${percent}%`;
     }
 
     function renderPriorityTasks(tasks) {
