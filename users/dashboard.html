@@ -171,6 +171,9 @@
             margin-left: var(--sidebar-mini);
             transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .main-wrapper.expanded { margin-left: 0; } /* For hiding sidebar entirely */
@@ -651,16 +654,16 @@
                     <div style="color: #444;">Scanning for available tasks...</div>
                 </div>
             </div>
-
-            <footer class="global-footer">
-                <div class="footer-content">
-                    <span class="grey">copyright globalearn platforms</span>
-                    <a href="#" class="blue">privacy policy</a>
-                    <span class="yellow">managed by: jasper-brevin Technologies</span>
-                    <span class="grey">All rights reserved</span>
-                </div>
-            </footer>
         </main>
+
+        <footer class="global-footer">
+            <div class="footer-content">
+                <span class="grey">copyright globalearn platforms</span>
+                <a href="#" class="blue">privacy policy</a>
+                <span class="yellow">managed by: jasper-brevin Technologies</span>
+                <span class="grey">All rights reserved</span>
+            </div>
+        </footer>
     </div>
 
     <button class="back-to-top" id="backToTop" title="Back to Top">
