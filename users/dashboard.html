@@ -332,23 +332,32 @@
             transform: translateY(-10px) scale(1.01);
         }
 
-        /* Generic icon styling for task cards */
+git add users/shared-layout.js users/dashboard.html
+git commit -m "style: centralized layout JS, lowercase footer, and improved widget SVG alignment"
+git push
+        /* --- ALIGNED & COLORED WIDGET ICONS --- */
         .card-icon {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px; /* Larger for better visibility */
-            height: 60px;
-            background-color: currentColor; /* Inherits color from parent (e.g., #FFD700 for spin) */
-            opacity: 0.15; /* Subtle transparency */
-            pointer-events: none; /* Ensure it doesn't interfere with clicks */
+            bottom: 20px; /* Aligned to corner to avoid text overlap */
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            opacity: 0.25; 
+            pointer-events: none;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        /* Specific SVG masks for each card type */
+        /* Respective Coloring */
+        .card.ads .card-icon { background-color: var(--pure-green); }
+        .card.spin .card-icon { background-color: var(--gold); }
+        .card.survey .card-icon { background-color: var(--pure-blue); }
+        .card.blog .card-icon { background-color: var(--bronze); }
+        .card.youtube .card-icon { background-color: var(--platinum); }
+
+        /* Icon Masks */
+        .ads-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='14' x='2' y='3' rx='2'%3E%3C/rect%3E%3Cpath d='M12 17v4'%3E%3C/path%3E%3Cpath d='M8 21h8'%3E%3C/path%3E%3Cpath d='m10 8 5 3-5 3z'%3E%3C/path%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='14' x='2' y='3' rx='2'%3E%3C/rect%3E%3Cpath d='M12 17v4'%3E%3C/path%3E%3Cpath d='M8 21h8'%3E%3C/path%3E%3Cpath d='m10 8 5 3-5 3z'%3E%3C/path%3E%3C/svg%3E") no-repeat center; }
         .spin-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2v6h-6'%3E%3C/path%3E%3Cpath d='M2.5 22v-6h6'%3E%3C/path%3E%3Cpath d='M22 11.5A10 10 0 0 0 12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 9.5 10'%3E%3C/path%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2v6h-6'%3E%3C/path%3E%3Cpath d='M2.5 22v-6h6'%3E%3C/path%3E%3Cpath d='M22 11.5A10 10 0 0 0 12 2C6.5 2 2 6.5 2 12a10 10 0 0 0 9.5 10'%3E%3C/path%3E%3C/svg%3E") no-repeat center; }
         .survey-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'%3E%3C/path%3E%3Cpath d='M12 11h4'%3E%3C/path%3E%3Cpath d='M12 16h4'%3E%3C/path%3E%3Cpath d='M8 11h.01'%3E%3C/path%3E%3Cpath d='M8 16h.01'%3E%3C/path%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'%3E%3C/rect%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'%3E%3C/path%3E%3Cpath d='M12 11h4'%3E%3C/path%3E%3Cpath d='M12 16h4'%3E%3C/path%3E%3Cpath d='M8 11h.01'%3E%3C/path%3E%3Cpath d='M8 16h.01'%3E%3C/path%3E%3Crect width='8' height='4' x='8' y='2' rx='1' ry='1'%3E%3C/rect%3E%3C/svg%3E") no-repeat center; }
         .blog-icon { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20'%3E%3C/path%3E%3C/svg%3E") no-repeat center; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20'%3E%3C/path%3E%3C/svg%3E") no-repeat center; }
@@ -375,7 +384,7 @@
             flex-wrap: wrap;
             font-size: 0.65rem;
             font-weight: 600;
-            text-transform: uppercase;
+            text-transform: none; /* Lowercase minimalist style */
         }
         .footer-content .grey { color: #888; }
         .footer-content .blue { color: var(--pure-blue); text-decoration: none; }
@@ -621,6 +630,7 @@
                     <div id="network-count" class="amount" style="color: var(--pure-purple);">0 Users</div>
                 </div>
                 <div class="card ads">
+                    <div class="card-icon ads-icon"></div>
                     <!-- Rose flowers (flower-decorator) remain for Ads Balance -->
                     <svg class="flower-decorator f-1" style="opacity: 0.15; width: 60px; height: 60px; top: -10px; right: -10px;" viewBox="0 0 24 24" fill="var(--pure-green)"><path d="M12 2C11.5 2 11 2.5 11 3V9.1L6.4 6C6.1 5.7 5.7 5.7 5.4 6C5.1 6.3 5.1 6.7 5.4 7L10 10.1V12.1L3.9 9.1C3.6 8.8 3.1 8.8 2.8 9.1C2.5 9.4 2.5 9.8 2.8 10.1L9 13.1V15.1L4.4 18.1C4.1 18.4 4.1 18.8 4.4 19.1C4.7 19.4 5.2 19.4 5.5 19.1L10.1 16.1V21C10.1 21.5 10.6 22 11.1 22H12.9C13.4 22 13.9 21.5 13.9 21V16.1L18.5 19.1C18.8 19.4 19.2 19.4 19.5 19.1C19.8 18.8 19.8 18.4 19.5 18.1L14.9 15.1V13.1L21.1 10.1C21.4 9.8 21.4 9.4 21.1 9.1C20.8 8.8 20.3 8.8 20.1 9.1L13.9 12.1V10.1L18.6 7C18.9 6.7 18.9 6.3 18.6 6C18.3 5.7 17.8 5.7 17.5 6L13 9.1V3.1C13 2.6 12.5 2.1 12 2.1L12 2Z"/></svg>
                     <h4>Ads Balance</h4>
@@ -660,8 +670,8 @@
             <div class="footer-content">
                 <span class="grey">copyright globalearn platforms</span>
                 <a href="#" class="blue">privacy policy</a>
-                <span class="yellow">managed by: jasper-brevin Technologies</span>
-                <span class="grey">All rights reserved</span>
+                    <span class="yellow">managed by: jasper-brevin technologies</span>
+                    <span class="grey">all rights reserved</span>
             </div>
         </footer>
     </div>
@@ -670,47 +680,9 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
 
+    <script src="shared-layout.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        // Dual-toggle Logic: Handles both sidebar header and top-nav buttons
-        document.addEventListener('DOMContentLoaded', () => {
-            const sidebar = document.getElementById('sidebar');
-            const mainWrapper = document.getElementById('mainWrapper');
-            const overlay = document.getElementById('overlay');
-            
-            const toggleSidebar = () => {
-                if (window.innerWidth > 992) {
-                    sidebar.classList.toggle('expanded');
-                    mainWrapper.classList.toggle('shifted');
-                } else {
-                    sidebar.classList.toggle('active');
-                    overlay.classList.toggle('show');
-                }
-            };
-
-            document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
-            document.getElementById('sidebarToggle')?.addEventListener('click', toggleSidebar);
-            
-            overlay?.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('show');
-            });
-        });
-
-        // Back to Top Logic
-        const backToTopBtn = document.getElementById('backToTop');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
-        });
-
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
         // Moon Glow Intersection Observer Logic
         const glowOptions = {
             threshold: 0.3,
