@@ -129,9 +129,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(5, 5, 5, 0.7);
+            background: #001a0a; /* Deep Dark Green */
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
             position: sticky;
             top: 0;
             z-index: 1500;
@@ -150,14 +150,27 @@
             padding-left: 20px;
         }
 
+        .portal-id {
+            font-size: clamp(1.1rem, 4vw, 1.8rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .header-icon-btn { background: transparent; border: none; color: #888; cursor: pointer; transition: 0.3s; display: flex; align-items: center; }
+        .header-icon-btn:hover { color: var(--pure-green); }
+        .login-svg-btn { color: var(--pure-blue); border: 1px solid rgba(0, 0, 255, 0.3); padding: 5px; border-radius: 8px; background: rgba(0, 0, 255, 0.05); }
+
         .user-meta { text-align: right; }
         .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
-        .user-meta .status { display: block; font-size: 0.6rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
         .toggle-btn {
-            background: var(--glass);
-            border: 1px solid transparent;
-            color: #fff;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--pure-green);
+            color: var(--pure-green);
             padding: 8px;
             border-radius: 8px;
             cursor: pointer;
@@ -339,15 +352,22 @@
         <header class="top-nav">
             <div class="nav-left-group">
                 <button class="toggle-btn" id="topNavToggle">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <div class="portal-id">EARNING_HUB ACTIVITIES</div>
+                <div class="portal-id">USER DASHBOARD</div>
             </div>
             <div class="nav-right-group">
+                <button class="header-icon-btn" title="Notifications">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </button>
                 <div class="user-meta">
-                    <span id="display-username" class="name">Loading...</span>
-                    <span class="status">● System_Active</span>
+                    <span class="name">
+                        <span id="display-username">Loading...</span>
+                    </span>
                 </div>
+                <a href="../login.html" class="header-icon-btn login-svg-btn" title="Login" style="margin-left: 10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                </a>
                 <div class="default-profile-avatar"></div>
             </div>
         </header>

@@ -549,31 +549,28 @@
 
     <div class="main-wrapper" id="mainWrapper">
         <header class="top-nav">
-        <header class="top-nav">
             <div class="nav-left-group">
                 <button class="toggle-btn" id="topNavToggle">
                     <!-- Bolded Green SVG Toggle -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--pure-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
                 <div class="portal-id">USER DASHBOARD</div>
             </div>
             <div class="nav-right-group">
                 <!-- Notification Bell -->
-                <button class="header-icon-btn" title="Notifications">
+                <button class="header-icon-btn" title="Notifications" style="margin-right: 5px;">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 </button>
-
-                <!-- Login Button -->
-                <a href="../login.html" class="header-icon-btn login-svg-btn" title="Login to Account">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                </a>
-
                 <div class="user-meta">
                     <span class="name">
                         <span id="display-username">Loading...</span>
                         <span id="display-tier" class="header-tier-badge"></span>
                     </span>
                 </div>
+                <!-- Login Button -->
+                <a href="../login.html" class="header-icon-btn login-svg-btn" title="Login" style="margin-left: 10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                </a>
                 <div class="default-profile-avatar"></div>
             </div>
         </header>
