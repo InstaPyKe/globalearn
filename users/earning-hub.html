@@ -141,16 +141,6 @@
         .nav-right-group { display: flex; align-items: center; gap: 15px; }
 
         .portal-id {
-            font-size: 1.1rem;
-            font-weight: 900;
-            letter-spacing: 3px;
-            color: #FFFF00;
-            text-transform: uppercase;
-            border-left: 1px solid rgba(255,255,255,0.1);
-            padding-left: 20px;
-        }
-
-        .portal-id {
             font-size: clamp(1.1rem, 4vw, 1.8rem);
             font-weight: 900;
             letter-spacing: 2px;
@@ -162,10 +152,52 @@
 
         .header-icon-btn { background: transparent; border: none; color: #888; cursor: pointer; transition: 0.3s; display: flex; align-items: center; }
         .header-icon-btn:hover { color: var(--pure-green); }
-        .login-svg-btn { color: var(--pure-blue); border: 1px solid rgba(0, 0, 255, 0.3); padding: 5px; border-radius: 8px; background: rgba(0, 0, 255, 0.05); }
 
         .user-meta { text-align: right; }
         .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
+
+        /* --- USER DROPDOWN STYLES --- */
+        .profile-container { position: relative; display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 5px; border-radius: 12px; transition: 0.3s; }
+        .profile-container:hover { background: rgba(255,255,255,0.05); }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 240px;
+            background: #001a0a;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 16px;
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+        .dropdown-menu.active { display: flex; animation: dropdownFade 0.3s ease; }
+        @keyframes dropdownFade { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+
+        .dropdown-header { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 5px; }
+        .dropdown-header .d-username { display: block; font-weight: 800; font-size: 0.9rem; color: #fff; }
+        .dropdown-header .d-email { display: block; font-size: 0.75rem; color: #555; margin-top: 2px; }
+
+        .dropdown-link {
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+        }
+        .dropdown-link:hover { background: rgba(0, 255, 0, 0.05); color: #fff; }
+        .dropdown-link svg { opacity: 0.6; }
+        .dropdown-link:hover svg { opacity: 1; color: var(--pure-green); }
+        .dropdown-link.logout-item:hover { color: var(--pure-red); }
+        .dropdown-link.logout-item:hover svg { color: var(--pure-red); }
 
         .toggle-btn {
             background: rgba(0, 255, 0, 0.1);
@@ -403,34 +435,6 @@
                 </section>
             </div>
         </main>
-
-        <footer class="global-footer">
-            <div class="footer-wrap">
-                <div class="footer-top">
-                    <div class="footer-brand">
-                        <div class="footer-logo">GLOBAL<span>EARN</span></div>
-                    </div>
-                    <div class="footer-links-grid">
-                        <div class="footer-column">
-                            <h5>Platform</h5>
-                            <a href="dashboard.html">Overview</a>
-                            <a href="earning-hub.html">Earn Hub</a>
-                            <a href="membership.html">Tiers</a>
-                        </div>
-                        <div class="footer-column">
-                            <h5>Account</h5>
-                            <a href="withdrawals.html">Cashout</a>
-                            <a href="refferals.html">Network</a>
-                            <a href="settings.html">Security</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
-                    <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
-                </div>
-            </div>
-        </footer>
     </div>
 
     <button class="back-to-top" id="backToTop" title="Back to Top">
@@ -562,6 +566,9 @@
                 const user = await res.json();
                 if (res.ok) {
                     document.getElementById('display-username').innerText = user.username;
+                    // Populate Dropdown Fields
+                    document.getElementById('drop-username').innerText = user.username;
+                    document.getElementById('drop-email').innerText = user.email;
                 }
             } catch (err) { console.error(err); }
         }
@@ -751,12 +758,28 @@
             }
         }
 
-        // Logout logic
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        // Profile Dropdown Toggle
+        const profileTrigger = document.getElementById('profileTrigger');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        profileTrigger?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            userDropdown?.classList.remove('active');
+        });
+
+        // Logout logic (Handles both dropdown and sidebar buttons)
+        const handleLogout = (e) => {
             e.preventDefault();
             localStorage.removeItem('token');
             window.location.href = '../login.html';
-        });
+        };
+
+        document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+        document.getElementById('dropLogoutBtn')?.addEventListener('click', handleLogout);
 
         async function loadUserData() {
             try {
