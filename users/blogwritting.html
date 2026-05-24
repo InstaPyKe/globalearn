@@ -239,7 +239,53 @@
         .footer-content .blue { color: var(--pure-blue); text-decoration: none; }
         .footer-content .yellow { color: var(--gold); }
 
-        .content-padding { padding: 40px; max-width: 900px; margin: 0 auto; flex: 1; width: 100%; }
+        .content-padding { padding: 40px; max-width: 900px; margin: 0 auto; flex: 1; width: 100%; transition: padding 0.3s; }
+
+        /* --- INTERACTIVE TOOLBAR --- */
+        .style-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .style-select {
+            background: #111;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .tool-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #888;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:hover, .tool-btn.active {
+            background: var(--glass);
+            color: var(--pure-blue);
+            border-color: var(--pure-blue);
+        }
+
+        .toolbar-divider { width: 1px; height: 20px; background: var(--border); margin: 0 5px; }
 
         /* Editor Styles */
         .editor-container { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
@@ -260,6 +306,19 @@
         .title-input { font-size: 1.4rem; font-weight: 700; }
         .content-input { min-height: 300px; resize: vertical; line-height: 1.6; }
 
+        /* --- EDITOR STATUS BAR --- */
+        .editor-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 0.7rem;
+            color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .post-btn {
             width: 100%; padding: 18px; border-radius: 15px; border: none;
             background: #fff; color: #000; font-weight: 800; font-size: 1rem;
@@ -269,7 +328,35 @@
         .post-btn:hover { background: var(--pure-green); transform: translateY(-2px); }
         .post-btn:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
 
+        /* --- PREVIEW MODAL STYLES --- */
+        .preview-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98); backdrop-filter: blur(20px);
+            z-index: 3000; display: none; overflow-y: auto; padding: 60px 20px;
+        }
+        .preview-overlay.active { display: block; }
+        .preview-container { max-width: 800px; margin: 0 auto; }
+        .preview-window { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 50px; }
+        
+        .preview-header { border-bottom: 1px solid var(--border); margin-bottom: 30px; padding-bottom: 20px; }
+        .preview-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; color: #fff; }
+        .preview-meta { font-size: 0.8rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+        .preview-body { line-height: 1.8; color: #ccc; white-space: pre-wrap; }
+
+        .close-preview {
+            position: fixed; top: 30px; right: 30px; background: #fff; color: #000;
+            border: none; padding: 10px 25px; border-radius: 12px; font-weight: 800;
+            cursor: pointer; transition: 0.3s; z-index: 3100;
+        }
+        .close-preview:hover { background: var(--pure-red); color: #fff; }
+
+        .preview-btn {
+            background: transparent; border: 1px solid var(--border); color: #fff;
+            padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
+        .preview-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--pure-blue); }
+
         #message { margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-size: 0.9rem; text-align: center; }
+
         @media (max-width: 992px) {
             .sidebar { 
                 transform: translateX(-100%); 
@@ -282,6 +369,23 @@
             .main-wrapper { margin-left: 0 !important; }
             .top-nav { padding: 0 20px; }
             .content-padding { padding: 20px 20px 100px 20px; }
+        }
+
+        /* --- ULTRA-SMALL SCREEN SUPPORT (Down to 200px) --- */
+        @media (max-width: 480px) {
+            .content-padding { padding: 15px; }
+            .editor-container { padding: 20px; }
+            .style-toolbar { gap: 5px; padding: 8px; }
+            .style-select { font-size: 0.7rem; padding: 4px 6px; }
+            .portal-id { border-left: none; padding-left: 0; }
+        }
+
+        @media (max-width: 250px) {
+            .content-padding { padding: 5px; }
+            .editor-container { padding: 15px; }
+            .editor-header h1 { font-size: 1.1rem; }
+            .post-btn { font-size: 0.8rem; padding: 12px; }
+            .style-toolbar { justify-content: center; }
         }
 
         /* Overlay for mobile */
@@ -376,14 +480,37 @@
                         <input type="text" id="title" class="blog-input title-input" placeholder="Enter a catchy title..." required>
                     </div>
 
+                    <div class="style-toolbar">
+                        <select id="fontFamily" class="style-select">
+                            <option value="'Inter', sans-serif">Sans Serif</option>
+                            <option value="'Georgia', serif">Serif</option>
+                            <option value="'Courier New', monospace">Monospace</option>
+                        </select>
+                        <select id="fontSize" class="style-select">
+                            <option value="1rem">Standard</option>
+                            <option value="1.2rem">Large</option>
+                            <option value="1.4rem">X-Large</option>
+                        </select>
+                        <div class="toolbar-divider"></div>
+                        <button type="button" class="tool-btn" id="boldToggle" title="Bold View"><b>B</b></button>
+                        <button type="button" class="tool-btn" id="italicToggle" title="Italic View"><i>I</i></button>
+                    </div>
+
                     <div class="input-group">
                         <label class="input-label">Content Body</label>
                         <textarea id="content" class="blog-input content-input" placeholder="Start writing your masterpiece here..." required></textarea>
+                        <div class="editor-footer">
+                            <span id="wordCount">0 words</span>
+                            <span id="readingTime">0 min read</span>
+                        </div>
                     </div>
 
-                    <button type="submit" id="submitBtn" class="post-btn">
-                        <span>🚀</span> PUBLISH TO GLOBALEARN
-                    </button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <button type="button" class="preview-btn" onclick="openPreview()">👁️ PREVIEW ARTICLE</button>
+                        <button type="submit" id="submitBtn" class="post-btn">
+                            <span>🚀</span> PUBLISH TO GLOBALEARN
+                        </button>
+                    </div>
                 </form>
 
                 <div id="message"></div>
@@ -399,6 +526,20 @@
             </div>
         </footer>
     </main>
+
+    <!-- PREVIEW OVERLAY -->
+    <div id="previewOverlay" class="preview-overlay">
+        <button class="close-preview" onclick="closePreview()">EXIT PREVIEW</button>
+        <div class="preview-container">
+            <div class="preview-window">
+                <div class="preview-header">
+                    <h1 id="p-title" class="preview-title">Title</h1>
+                    <div class="preview-meta">Draft Article • By: <span id="p-author">User</span></div>
+                </div>
+                <div id="p-body" class="preview-body">Content</div>
+            </div>
+        </div>
+    </div>
 
     <script src="shared-layout.js"></script>
     <script>
@@ -496,6 +637,75 @@
         }
 
         loadProfile();
+
+        // --- INTERACTIVE STYLING LOGIC ---
+        const contentInput = document.getElementById('content');
+        const fontFamilySelect = document.getElementById('fontFamily');
+        const fontSizeSelect = document.getElementById('fontSize');
+        const boldToggle = document.getElementById('boldToggle');
+        const italicToggle = document.getElementById('italicToggle');
+
+        fontFamilySelect?.addEventListener('change', (e) => {
+            contentInput.style.fontFamily = e.target.value;
+        });
+
+        fontSizeSelect?.addEventListener('change', (e) => {
+            contentInput.style.fontSize = e.target.value;
+        });
+
+        boldToggle?.addEventListener('click', () => {
+            boldToggle.classList.toggle('active');
+            contentInput.style.fontWeight = boldToggle.classList.contains('active') ? '700' : '400';
+        });
+
+        italicToggle?.addEventListener('click', () => {
+            italicToggle.classList.toggle('active');
+            contentInput.style.fontStyle = italicToggle.classList.contains('active') ? 'italic' : 'normal';
+        });
+
+        contentInput?.addEventListener('input', () => {
+            const text = contentInput.value.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            
+            // Estimate reading time (average 200 words per minute)
+            const readMins = Math.ceil(words / 200);
+            
+            const wordCountEl = document.getElementById('wordCount');
+            const readingTimeEl = document.getElementById('readingTime');
+            
+            if (wordCountEl) wordCountEl.innerText = `${words} word${words !== 1 ? 's' : ''}`;
+            if (readingTimeEl) readingTimeEl.innerText = `${readMins} min read`;
+        });
+
+        // --- PREVIEW MODE LOGIC ---
+        function openPreview() {
+            const title = document.getElementById('title').value || "Untitled Masterpiece";
+            const content = document.getElementById('content').value || "No content written yet...";
+            const author = document.getElementById('display-username').innerText;
+
+            const pTitle = document.getElementById('p-title');
+            const pBody = document.getElementById('p-body');
+            const pAuthor = document.getElementById('p-author');
+
+            // Sync Content
+            pTitle.innerText = title;
+            pBody.innerText = content;
+            pAuthor.innerText = author;
+
+            // Sync Styles
+            pBody.style.fontFamily = contentInput.style.fontFamily;
+            pBody.style.fontSize = contentInput.style.fontSize;
+            pBody.style.fontWeight = contentInput.style.fontWeight;
+            pBody.style.fontStyle = contentInput.style.fontStyle;
+
+            document.getElementById('previewOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            document.getElementById('previewOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
     </script>
 </body>
 </html>
