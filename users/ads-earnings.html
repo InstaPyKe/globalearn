@@ -9,42 +9,46 @@
             --pure-red: #FF0000;
             --pure-green: #00FF00;
             --pure-blue: #0000FF;
+            --pure-purple: #9B59B6;
+            --gold: #F1C40F;
+            --platinum: #FF4500;
+            --emerald: #00FF7F;
+            --bronze: #CD7F32;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
-            --sidebar-width: 260px; /* Expanded width */
-            --sidebar-mini: 80px; /* Collapsed width */
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 260px;
+            --sidebar-mini: 80px;
         }
-        .sidebar.collapsed { transform: translateX(-100%); }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #000; color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        .sidebar { 
-            width: var(--sidebar-mini); /* Start collapsed */
-            background: rgba(10, 10, 10, 0.8); 
-            backdrop-filter: blur(25px); 
-            border-right: 1px solid var(--border); 
-            height: 100vh; 
-            position: fixed; 
-            left: 0; 
-            top: 0; 
-            z-index: 1000; 
-            padding: 30px 20px; 
-            display: flex; 
-            flex-direction: column; 
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-mini);
+            background: linear-gradient(to bottom, rgba(15, 15, 15, 0.98), rgba(5, 5, 5, 0.98));
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 35px 12px;
+            display: flex;
+            flex-direction: column;
             overflow-y: auto;
             overflow-x: hidden;
-            white-space: nowrap; /* Prevent text wrapping */
-        }
-        .sidebar:hover {
-            width: var(--sidebar-width);
-            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            white-space: nowrap;
         }
 
-        /* Sleek Sidebar Scrollbar */
-        .sidebar::-webkit-scrollbar { width: 4px; }
-        .sidebar::-webkit-scrollbar-track { background: transparent; }
-        .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .sidebar.expanded {
+            width: var(--sidebar-width);
+            box-shadow: 30px 0 70px rgba(0,0,0,0.8);
+        }
+
+        .sidebar.collapsed { transform: translateX(-100%); }
 
         .sidebar-header {
             display: flex;
@@ -53,55 +57,69 @@
             margin-bottom: 40px;
             gap: 15px;
             transition: 0.3s;
+            padding: 0 10px;
         }
 
-        .logo { font-size: 22px; font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: -1px; text-decoration: none; color: inherit; display: block; }
+        .logo { 
+            font-size: 24px; 
+            font-weight: 800; 
+            letter-spacing: -1.5px; 
+            text-decoration: none; 
+            color: inherit; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
         .logo span { color: var(--pure-green); }
 
-        .sidebar:not(:hover) .logo { font-size: 0; opacity: 0; }
-        .sidebar:not(:hover) .logo::before { content: 'G'; font-size: 22px; opacity: 1; color: var(--pure-green); }
+        .sidebar:not(.expanded):not(.active) .logo { font-size: 0; opacity: 0; }
+        .sidebar:not(.expanded):not(.active) .logo::before { content: 'G'; font-size: 24px; opacity: 1; color: var(--pure-green); font-weight: 900; }
 
         .nav-links { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
-        .nav-link { padding: 14px 15px; text-decoration: none; color: #888; border-radius: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 20px; transition: 0.3s; border: 1px solid transparent; }
+
+        .nav-link {
+            padding: 14px 15px;
+            text-decoration: none;
+            color: #888;
+            border-radius: 14px;
+            font-size: 0.78rem; 
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: 0.3s;
+            border: 1px solid transparent; 
+            letter-spacing: 0.4px;
+        }
+
         .nav-text {
             transition: 0.3s;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .sidebar:hover .nav-text {
             opacity: 1;
-            visibility: visible;
         }
-        .nav-link:hover, .nav-link.active { background: var(--glass); color: #fff; }
-        .nav-link.active { border-left: 4px solid var(--pure-blue); }
+
+        .sidebar:not(.expanded):not(.active) .nav-text { opacity: 0; pointer-events: none; }
+
+        /* Dynamic Coloring */
+        [data-page="ads"] { --nc: var(--pure-green); }
+        .nav-link svg { color: var(--nc, #888); opacity: 0.6; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { background: var(--glass); color: #fff; border-color: rgba(255,255,255,0.08); }
+        .nav-link.active { background: linear-gradient(to right, rgba(255,255,255,0.05), transparent); border-left: 2px solid var(--nc); }
 
         .main-wrapper {
             flex-grow: 1;
             margin-left: var(--sidebar-mini);
             transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
-            display: flex; /* For sticky footer */
-            flex-direction: column; /* For sticky footer */
-            min-height: 100vh; /* For sticky footer */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .main-wrapper.expanded { margin-left: 0; }
+        .main-wrapper.shifted { margin-left: var(--sidebar-width); }
 
-        /* --- PRODUCTION CLASS HEADER --- */
-        .top-nav {
-            height: 75px;
-            padding: 0 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #001a0a; /* Deep Dark Green */
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--pure-green);
-            position: sticky;
-            top: 0;
-            z-index: 1500;
-        }
-
-        .nav-left-group { display: flex; align-items: center; gap: 20px; }
+        .top-nav { height: 75px; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; background: #001a0a; backdrop-filter: blur(20px); border-bottom: 1px solid var(--pure-green); position: sticky; top: 0; z-index: 1500; }
+        .nav-left-group { display: flex; align-items: center; gap: 15px; }
         .nav-right-group { display: flex; align-items: center; gap: 15px; }
 
         .portal-id {
@@ -114,61 +132,43 @@
             padding-left: 20px;
         }
 
+        /* Interactive Header Icons */
+        .header-icon-btn { background: transparent; border: none; color: #888; cursor: pointer; transition: 0.3s; display: flex; align-items: center; }
+        .header-icon-btn:hover { color: var(--pure-green); transform: translateY(-2px); }
+        .header-icon-btn svg { stroke-width: 2.5; }
+
         .user-meta { text-align: right; }
         .user-meta .name { display: block; font-size: 0.85rem; font-weight: 700; color: #fff; }
-        .user-meta .status { display: block; font-size: 0.6rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
-        .toggle-btn {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* --- TIER BADGE --- */
+        .header-tier-badge {
+            font-size: 0.55rem; font-weight: 900; padding: 2px 8px; border-radius: 4px;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px;
+            border: 1px solid transparent; display: none; vertical-align: middle;
         }
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--border);
-            color: var(--pure-blue);
-            transform: scale(1.05);
-        }
+        .header-tier-badge.tier-basic { color: #888; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+        .header-tier-badge.tier-gold { color: var(--gold); border-color: var(--gold); background: rgba(241, 196, 15, 0.1); }
+        .header-tier-badge.tier-platinum { color: var(--platinum); border-color: var(--platinum); background: rgba(255, 69, 0, 0.1); }
 
-        /* Reveal top-nav toggle only when sidebar is hidden */
-        .sidebar.collapsed ~ .main-wrapper #topNavToggle { display: flex !important; }
+        .toggle-btn { background: rgba(0, 255, 0, 0.1); border: 1px solid var(--pure-green); color: var(--pure-green); padding: 8px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toggle-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--pure-blue); transform: scale(1.05); }
+
+        /* --- COMPACT MINIMALIST FOOTER --- */
+        .global-footer {
+            margin-top: 40px; padding: 20px 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;
+        }
+        .footer-content {
+            display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 0.65rem; font-weight: 600; text-transform: none;
+        }
+        .footer-content .grey { color: #888; }
+        .footer-content .blue { color: var(--pure-blue); text-decoration: none; }
+        .footer-content .yellow { color: var(--gold); }
         
-        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; } /* flex:1 for sticky footer */
+        .content-padding { padding: 40px; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; }
         .header { margin-bottom: 40px; }
-        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; letter-spacing: -1px; }
+        .header h1 span { color: var(--pure-green); }
         .header p { color: #666; font-size: 0.9rem; }
-
-        /* --- PROFESSIONAL PRODUCTION FOOTER --- */
-        .global-footer { 
-            margin-top: 80px; 
-            padding: 80px 40px 40px; 
-            background: #050505; 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            position: relative; 
-        }
-        .footer-wrap { max-width: 1200px; margin: 0 auto; }
-        .footer-top { display: flex; justify-content: space-between; gap: 60px; margin-bottom: 60px; flex-wrap: wrap; }
-        .footer-brand { flex: 1; min-width: 200px; }
-        .footer-brand p { color: #444; font-size: 0.7rem; margin-top: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        .footer-logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -1.5px; }
-        .footer-logo span { color: var(--pure-green); }
-        .footer-links-grid { display: flex; gap: 80px; flex-wrap: wrap; }
-        .footer-column { display: flex; flex-direction: column; gap: 12px; }
-        .footer-column h5 { color: #fff; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: 900; }
-        .footer-column a { color: #555; text-decoration: none; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; transition: 0.3s; }
-        .footer-column a:hover { color: var(--pure-green); }
-        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.03); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-        .footer-copyright { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
-        .footer-managed { font-size: 0.58rem; color: #333; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
-        .footer-managed span { color: #555; }
 
         .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         .ad-slot { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 30px; text-align: center; transition: 0.2s; cursor: pointer; }
@@ -214,51 +214,30 @@
         }
         .ad-reward { color: var(--pure-green); font-weight: 900; margin-top: 15px; display: block; font-size: 1.1rem; }
 
-        @media (max-width: 992px) {
-            .sidebar { 
-                transform: translateX(-100%); 
-                width: 280px !important;
-                z-index: 2000;
-            }
-            .sidebar.active { transform: translateX(0); }
-            .top-nav .toggle-btn { display: flex !important; }
-            .main-wrapper { margin-left: 0 !important; }
-            .top-nav { padding: 0 20px; justify-content: space-between; }
-            .content-padding { padding: 20px; }
-        }
-        /* --- MOBILE FOOTER REFINEMENTS --- */
-        @media (max-width: 768px) {
-            .global-footer { padding: 60px 20px 40px; }
-            .footer-top { flex-direction: column; text-align: center; gap: 40px; }
-            .footer-brand { min-width: 100%; }
-            .footer-links-grid { justify-content: center; gap: 30px; width: 100%; }
-            .footer-bottom { flex-direction: column; text-align: center; gap: 15px; }
-        }
+        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); width: 260px !important; z-index: 2000; } .sidebar.active { transform: translateX(0); } .main-wrapper { margin-left: 0 !important; } .top-nav { padding: 0 20px; } }
     </style>
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="../homepage.html" class="logo">GLOBAL<span>EARN</span></a>
-            <button class="toggle-btn" id="toggleBtn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <button class="toggle-btn" id="sidebarToggle" style="margin-left: auto;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
         </div>
         <nav class="nav-links">
-            <a href="dashboard.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span class="nav-text">Dashboard</span></a>
-            <a href="earning-hub.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg> <span class="nav-text">Earning Hub</span></a>
-            <a href="blogwritting.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> <span class="nav-text">Write Blog</span></a>
-            <a href="ads-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> <span class="nav-text">Ad Rewards</span></a>
-            <a href="tiktok-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> <span class="nav-text">TikTok Tasks</span></a>
-            <a href="youtube-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> <span class="nav-text">YouTube Tasks</span></a>
-            <a href="survey-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> <span class="nav-text">Surveys</span></a>
-            <a href="blog-earnings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> <span class="nav-text">Blog Reading</span></a>
-            <a href="refferals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span class="nav-text">My Network</span></a>
-            <a href="membership.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span class="nav-text">Membership</span></a>
-            <a href="withdrawals.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> <span class="nav-text">Withdrawals</span></a>
-            <a href="settings.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span class="nav-text">Settings</span></a>
+            <a href="dashboard.html" class="nav-link" data-page="dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span class="nav-text">Dashboard</span></a>
+            <a href="blogwritting.html" class="nav-link" data-page="write"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg> <span class="nav-text">Write Blog</span></a>
+            <a href="ads-earnings.html" class="nav-link active" data-page="ads"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/><path d="m10 8 5 3-5 3Z"/></svg> <span class="nav-text">Ad Rewards</span></a>
+            <a href="tiktok-earnings.html" class="nav-link" data-page="tiktok"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg> <span class="nav-text">TikTok Tasks</span></a>
+            <a href="youtube-earnings.html" class="nav-link" data-page="youtube"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> <span class="nav-text">YouTube Tasks</span></a>
+            <a href="blog-earnings.html" class="nav-link" data-page="blog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> <span class="nav-text">Blog Reading</span></a>
+            <a href="refferals.html" class="nav-link" data-page="network"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span class="nav-text">My Network</span></a>
+            <a href="membership.html" class="nav-link" data-page="membership"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span class="nav-text">Membership</span></a>
+            <a href="withdrawals.html" class="nav-link" data-page="withdrawals"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> <span class="nav-text">Withdrawals</span></a>
+            <a href="settings.html" class="nav-link" data-page="settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1  1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9  19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span class="nav-text">Settings</span></a>
         </nav>
-        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> <span class="nav-text">Logout</span></a>
+        <a href="#" id="logoutBtn" class="nav-link" style="color: var(--pure-red); margin-top: auto;" data-page="logout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg> <span class="nav-text">Logout</span></a>
     </aside>
 
     <div class="sidebar-overlay" id="overlay"></div>
@@ -267,22 +246,33 @@
         <header class="top-nav">
             <div class="nav-left-group">
                 <button class="toggle-btn" id="topNavToggle">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--pure-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <div class="portal-id">AD_NETWORK REWARDS</div>
+                <div class="portal-id">USER DASHBOARD</div>
             </div>
             <div class="nav-right-group">
+                <button class="header-icon-btn" title="Notifications" style="margin-right: 5px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </button>
+                <a href="settings.html" class="header-icon-btn" title="Profile Settings" style="margin-right: 5px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1  1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9  19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                </a>
                 <div class="user-meta">
-                    <span id="display-username" class="name">AD_NETWORK_ACTIVE</span>
-                    <span class="status">● System_Active</span>
+                    <span class="name">
+                        <span id="display-username"></span>
+                        <span id="display-tier" class="header-tier-badge"></span>
+                    </span>
                 </div>
+                <a href="../login.html" class="header-icon-btn login-svg-btn" title="Login" style="margin-left: 10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                </a>
                 <div class="default-profile-avatar"></div>
             </div>
         </header>
 
         <main class="content-padding">
             <div class="header">
-                <h1>Ad <span>Rewards</span></h1>
+                <h1>AD_<span>REWARDS</span></h1>
                 <p>Engage with promotional content and earn instant payouts.</p>
             </div>
 
@@ -294,16 +284,11 @@
         </main>
 
         <footer class="global-footer">
-            <div class="footer-wrap">
-                <div class="footer-top">
-                    <div class="footer-brand">
-                        <div class="footer-logo">GLOBAL<span>EARN</span></div>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <div class="footer-copyright">&copy; 2023 GLOBALEARN INTERACTIVE. ALL RIGHTS RESERVED.</div>
-                    <div class="footer-managed">MANAGED BY: <span>JASPER-BREVIN TECHNOLOGIES</span></div>
-                </div>
+            <div class="footer-content">
+                <span class="grey">copyright globalearn platforms</span>
+                <a href="#" class="blue">privacy policy</a>
+                <span class="yellow">managed by: jasper-brevin technologies</span>
+                <span class="grey">all rights reserved</span>
             </div>
         </footer>
     </div>
@@ -312,10 +297,11 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
 
+    <script src="shared-layout.js"></script>
     <script>
         if (!localStorage.getItem('token')) window.location.href = '../login.html';
         
-        async function loadProfile() {
+        async function loadAdsPage() {
             const token = localStorage.getItem('token');
             try {
                 const res = await fetch('/api/user/profile', {
@@ -324,57 +310,97 @@
                 const user = await res.json();
                 if (res.ok) {
                     document.getElementById('display-username').innerText = user.username;
+                    
+                    // Populate Tier Badge
+                    const tierBadge = document.getElementById('display-tier');
+                    if (tierBadge && user.membership_tier) {
+                        const tier = user.membership_tier.toLowerCase();
+                        tierBadge.innerText = tier;
+                        tierBadge.className = `header-tier-badge tier-${tier}`;
+                        tierBadge.style.display = 'inline-block';
+                    }
+
+                    // Fetch the actual ads stream
+                    await fetchAds();
                 }
             } catch (err) { console.error(err); }
         }
 
-        // Navigation UI Logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const sidebar = document.getElementById('sidebar');
-            const mainWrapper = document.getElementById('mainWrapper');
-            const overlay = document.getElementById('overlay');
-            
-            const toggleSidebar = () => {
-                if (window.innerWidth > 992) {
-                    // Desktop behavior: slide and expand content
-                    sidebar.classList.toggle('collapsed');
-                    mainWrapper.classList.toggle('expanded');
-                } else {
-                    // Mobile behavior: overlay drawer
-                    sidebar.classList.toggle('active');
-                    if (overlay) overlay.classList.toggle('show');
+        async function fetchAds() {
+            const grid = document.getElementById('adsGrid');
+            const token = localStorage.getItem('token');
+
+            try {
+                const res = await fetch('/api/tasks/available', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const tasks = await res.json();
+
+                if (tasks.limitReached) {
+                    grid.innerHTML = `
+                        <div style="color:var(--pure-red); text-align:center; grid-column: 1/-1; padding: 40px; background: var(--glass); border-radius: 20px; border: 1px dashed var(--pure-red);">
+                            DAILY_LIMIT_REACHED: Ad stream will resume in ${Math.floor(tasks.secondsLeft / 3600)}h.
+                        </div>
+                    `;
+                    return;
                 }
-            };
 
-            // Listen for clicks on BOTH buttons
-            document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
-            document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
-            
-            overlay?.addEventListener('click', toggleSidebar);
-        });
+                // Filter for tasks of type 'ad'
+                const ads = tasks.filter(t => t.task_type === 'ad');
 
-        // Back to Top Logic
-        const backToTopBtn = document.getElementById('backToTop');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
+                if (ads.length === 0) {
+                    grid.innerHTML = `
+                        <div style="color:#666; text-align:center; grid-column: 1/-1; padding: 40px;">
+                            NO_ACTIVE_ADS: Check back later for new promotional content.
+                        </div>
+                    `;
+                    return;
+                }
+
+                renderAds(ads);
+
+            } catch (err) {
+                console.error("Ad Stream Error:", err);
+                grid.innerHTML = `<div style="color:var(--pure-red); grid-column: 1/-1; text-align:center;">STREAM_OFFLINE: Unable to connect to ad server.</div>`;
             }
-        });
+        }
 
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        function renderAds(ads) {
+            const grid = document.getElementById('adsGrid');
+            grid.innerHTML = ads.map(ad => `
+                <div class="ad-slot" onclick="watchAd('${ad.id}', ${ad.duration_seconds})">
+                    <div class="ad-icon">📺</div>
+                    <div class="ad-title">${ad.title}</div>
+                    <div class="ad-timer">${ad.duration_seconds}S ENGAGEMENT</div>
+                    <span class="ad-reward">KSH. ${parseFloat(ad.reward).toFixed(2)}</span>
+                </div>
+            `).join('');
+        }
 
-        // Logout logic
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        function watchAd(adId, duration) {
+            // Redirect to a dedicated ad player or open a modal
+            // For now, we simulate the interaction
+            const confirmWatch = confirm(`System initialized. You need to view this ad for ${duration} seconds to unlock the reward. Proceed?`);
+            
+            if (confirmWatch) {
+                // Option A: Navigate to a player page (like video-lounge)
+                // window.location.href = `ad-player.html?id=${adId}`;
+                
+                // Option B: Show a simple alert for testing
+                alert("Engagement protocol started. Stay on the page until the timer clears.");
+                
+                // Here you would typically trigger your timer logic similar to video-lounge.html
+            }
+        }
+
+        // Logout logic (Supports shared-layout toggle but handles specific redirect)
+        document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('token');
             window.location.href = '../login.html';
         });
 
-        loadProfile();
+        loadAdsPage();
     </script>
 </body>
 </html>
