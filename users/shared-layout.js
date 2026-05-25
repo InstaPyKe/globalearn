@@ -1,37 +1,37 @@
 /**
  * shared-layout.js
- * Centralized UI controller for Sidebar, Header Navigation, and common interactions.
+ * Professional UI controller for Sidebar and Header Navigation.
  */
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
-    const mainWrapper = document.getElementById('mainWrapper');
     const overlay = document.getElementById('overlay');
+    const topNavToggle = document.getElementById('topNavToggle');
 
-    // --- SIDEBAR & HEADER TOGGLE ---
     const toggleSidebar = () => {
         if (window.innerWidth > 992) {
-            // Desktop: Expansion behavior
+            // Desktop: Toggle between mini and full width
             sidebar?.classList.toggle('expanded');
-            mainWrapper?.classList.toggle('shifted');
-            
-            // Support for legacy class implementations
-            sidebar?.classList.toggle('collapsed');
-            mainWrapper?.classList.toggle('expanded');
         } else {
-            // Mobile: Drawer behavior
+            // Mobile: Toggle overlay drawer
             sidebar?.classList.toggle('active');
             overlay?.classList.toggle('show');
         }
     };
 
-    // Attach listeners to all possible toggle buttons
-    document.getElementById('topNavToggle')?.addEventListener('click', toggleSidebar);
-    document.getElementById('sidebarToggle')?.addEventListener('click', toggleSidebar);
-    document.getElementById('toggleBtn')?.addEventListener('click', toggleSidebar);
+    topNavToggle?.addEventListener('click', toggleSidebar);
     
+    // Close mobile menu by clicking outside
     overlay?.addEventListener('click', () => {
         sidebar?.classList.remove('active');
         overlay?.classList.remove('show');
+    });
+
+    // Handle viewport resize to clean up states
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+            sidebar?.classList.remove('active');
+            overlay?.classList.remove('show');
+        }
     });
 
     // --- BACK TO TOP LOGIC ---
