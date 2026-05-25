@@ -381,10 +381,19 @@
         }
 
         @media (max-width: 250px) {
-            .content-padding { padding: 5px; }
+            .top-nav { padding: 0 8px; height: 60px; }
+            .portal-id { font-size: 0.5rem; padding-left: 8px; letter-spacing: 0.5px; display: none; }
+            .nav-right-group { gap: 4px; }
+            .user-meta { display: none; }
+            .header-icon-btn svg { width: 14px; height: 14px; }
+            .default-profile-avatar { width: 24px; height: 24px; }
+            .header-icon-btn { margin-right: 0 !important; }
+            .login-svg-btn { margin-left: 4px !important; padding: 3px !important; }
+            .content-padding { padding: 10px 5px; }
             .editor-container { padding: 15px; }
             .editor-header h1 { font-size: 1.1rem; }
-            .post-btn { font-size: 0.8rem; padding: 12px; }
+            .post-btn, .preview-btn { font-size: 0.65rem; padding: 10px 4px; }
+            .post-btn svg, .preview-btn svg { width: 12px; height: 12px; margin-right: 4px !important; }
             .style-toolbar { justify-content: center; }
         }
 
@@ -506,9 +515,13 @@
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <button type="button" class="preview-btn" onclick="openPreview()">👁️ PREVIEW ARTICLE</button>
+                        <button type="button" class="preview-btn" onclick="openPreview()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            PREVIEW ARTICLE
+                        </button>
                         <button type="submit" id="submitBtn" class="post-btn">
-                            <span>🚀</span> PUBLISH TO GLOBALEARN
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-3 5-3"></path><path d="M12 15v5s3.03-.55 5-2c2.2-1.62 3-5 3-5"></path></svg>
+                            PUBLISH TO GLOBALEARN
                         </button>
                     </div>
                 </form>
@@ -584,6 +597,7 @@
 
             // UI Feedback
             submitBtn.disabled = true;
+            const originalHTML = submitBtn.innerHTML;
             submitBtn.innerText = "UPLOADING TO DATABASE...";
             messageDiv.style.display = 'none';
 
@@ -618,7 +632,7 @@
                 showMessage("Connection error. Ensure your backend server is running.", "var(--pure-red)");
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerText = "🚀 PUBLISH TO GLOBALEARN";
+                submitBtn.innerHTML = originalHTML;
             }
         });
 
@@ -626,7 +640,13 @@
             messageDiv.innerText = text;
             messageDiv.style.color = color;
             messageDiv.style.border = `1px solid ${color}`;
-            messageDiv.style.background = `rgba(${color === 'var(--pure-red)' ? '255,0,0' : '0,255,0'}, 0.05)`;
+            
+            // Determine background tint based on color variable
+            let bg = '0,255,0'; // Default Green
+            if (color === 'var(--pure-red)') bg = '255,0,0';
+            else if (color === 'var(--pure-blue)') bg = '0,0,255';
+            
+            messageDiv.style.background = `rgba(${bg}, 0.05)`;
             messageDiv.style.display = 'block';
             
             // Auto-hide success messages after 5 seconds
@@ -666,6 +686,10 @@
             if (!saved) return;
 
             const draft = JSON.parse(saved);
+            
+            // Only proceed if the draft contains actual content
+            if (!draft.title && !draft.content) return;
+
             titleInput.value = draft.title || '';
             contentInput.value = draft.content || '';
 
@@ -686,6 +710,9 @@
                 contentInput.style.fontStyle = 'italic';
             }
             contentInput.dispatchEvent(new Event('input'));
+
+            // Notify the user that a draft was restored
+            showMessage("Notice: Your previous draft has been automatically restored.", "var(--pure-blue)");
         }
 
         fontFamilySelect?.addEventListener('change', (e) => {
