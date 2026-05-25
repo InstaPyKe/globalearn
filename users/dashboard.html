@@ -170,10 +170,16 @@
             flex-grow: 1;
             margin-left: var(--sidebar-mini);
             transition: margin-left 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-            width: 100%;
+            width: auto;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+        }
+
+        /* Adjust width dynamically on desktop to prevent horizontal overflow and overlaps */
+        @media (min-width: 993px) {
+            .main-wrapper { width: calc(100% - var(--sidebar-mini)); }
+            .main-wrapper.shifted { width: calc(100% - var(--sidebar-width)); }
         }
 
         .main-wrapper.expanded { margin-left: 0; } /* For hiding sidebar entirely */
@@ -667,7 +673,7 @@
             <div class="footer-content">
                 <span class="grey">Copyright globalearn platforms</span>
                 <a href="#" class="blue">Privacy policy</a>
-                <span class="yellow">Managed by: jasper-brevin technologies</span>
+                <span class="yellow">Managed by jasper-brevin technologies</span>
                 <span class="grey">All rights reserved</span>
             </div>
         </footer>
