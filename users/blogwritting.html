@@ -197,6 +197,7 @@
             vertical-align: middle;
         }
         .header-tier-badge.tier-basic { color: #888; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+        .header-tier-badge.tier-standard { color: #888; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
         .header-tier-badge.tier-gold { color: var(--gold); border-color: var(--gold); background: rgba(241, 196, 15, 0.1); }
         .header-tier-badge.tier-platinum { color: var(--platinum); border-color: var(--platinum); background: rgba(255, 69, 0, 0.1); }
 
@@ -217,7 +218,7 @@
         .toggle-btn:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: var(--border);
-            color: var(--pure-blue);
+            color: var(--pure-green);
             transform: scale(1.05);
         }
 
@@ -288,14 +289,18 @@
         .editor-header p { color: #666; font-size: 0.9rem; margin-top: 5px; }
 
         .input-group { margin-bottom: 25px; }
-        .input-label { display: block; font-size: 0.75rem; font-weight: 800; color: var(--pure-blue); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        .input-label { display: block; font-size: 0.75rem; font-weight: 800; color: var(--pure-green); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; opacity: 0.8; }
         
+        .input-header { display: flex; justify-content: space-between; align-items: center; }
+        .char-counter { font-size: 0.65rem; font-weight: 700; color: #555; text-transform: uppercase; }
+        .char-counter.limit-reached { color: var(--pure-red); }
+
         .blog-input {
             width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
             border-radius: 12px; padding: 15px 20px; color: #fff; font-family: inherit;
             font-size: 1rem; transition: 0.3s; outline: none;
         }
-        .blog-input:focus { border-color: var(--pure-blue); background: rgba(255,255,255,0.05); }
+        .blog-input:focus { border-color: var(--pure-green); background: rgba(255,255,255,0.05); box-shadow: 0 0 15px rgba(0, 255, 0, 0.05); }
         
         .title-input { font-size: 1.4rem; font-weight: 700; }
         .content-input { min-height: 300px; resize: vertical; line-height: 1.6; }
@@ -332,7 +337,7 @@
         .preview-window { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 50px; }
         
         .preview-header { border-bottom: 1px solid var(--border); margin-bottom: 30px; padding-bottom: 20px; }
-        .preview-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; color: #fff; }
+        .preview-title { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 800; margin-bottom: 10px; color: #fff; }
         .preview-meta { font-size: 0.8rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
         .preview-body { line-height: 1.8; color: #ccc; white-space: pre-wrap; }
 
@@ -347,7 +352,7 @@
             background: transparent; border: 1px solid var(--border); color: #fff;
             padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
-        .preview-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--pure-blue); }
+        .preview-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--pure-green); }
 
         #message { margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-size: 0.9rem; text-align: center; }
 
@@ -476,7 +481,10 @@
 
                 <form id="blogForm">
                     <div class="input-group">
-                        <label class="input-label">Article Title</label>
+                        <div class="input-header">
+                            <label class="input-label">Article Title</label>
+                            <span id="titleCounter" class="char-counter">0 / 70</span>
+                        </div>
                         <input type="text" id="title" class="blog-input title-input" placeholder="Enter a catchy title..." required>
                     </div>
 
@@ -657,6 +665,7 @@
         const boldToggle = document.getElementById('boldToggle');
         const italicToggle = document.getElementById('italicToggle');
         const titleInput = document.getElementById('title');
+        const titleCounter = document.getElementById('titleCounter');
 
         const AUTO_SAVE_KEY = 'globalearn_blog_draft';
 
@@ -706,6 +715,12 @@
             showMessage("Notice: Your previous draft has been automatically restored.", "var(--pure-blue)");
         }
 
+        function updateTitleCounter() {
+            const count = titleInput.value.length;
+            titleCounter.innerText = `${count} / 70`;
+            titleCounter.classList.toggle('limit-reached', count > 70);
+        }
+
         fontFamilySelect?.addEventListener('change', (e) => {
             contentInput.style.fontFamily = e.target.value;
             saveDraft();
@@ -728,7 +743,10 @@
             saveDraft();
         });
 
-        titleInput?.addEventListener('input', saveDraft);
+        titleInput?.addEventListener('input', () => {
+            updateTitleCounter();
+            saveDraft();
+        });
 
         contentInput?.addEventListener('input', () => {
             const text = contentInput.value.trim();
@@ -746,6 +764,7 @@
         });
 
         loadDraft();
+        updateTitleCounter();
 
         // --- PREVIEW MODE LOGIC ---
         function openPreview() {

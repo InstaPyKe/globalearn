@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth > 992) {
             // Desktop: Toggle between mini and full width
             sidebar?.classList.toggle('expanded');
+            localStorage.setItem('sidebar_state', sidebar?.classList.contains('expanded') ? 'expanded' : 'mini');
         } else {
             // Mobile: Toggle overlay drawer
             sidebar?.classList.toggle('active');
@@ -18,6 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Restore preference
+    if (window.innerWidth > 992 && localStorage.getItem('sidebar_state') === 'expanded') {
+        sidebar?.classList.add('expanded');
+    }
+
+    topNavToggle?.setAttribute('aria-label', 'Toggle Navigation');
     topNavToggle?.addEventListener('click', toggleSidebar);
     
     // Close mobile menu by clicking outside
@@ -29,8 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle viewport resize to clean up states
     window.addEventListener('resize', () => {
         if (window.innerWidth > 992) {
-            sidebar?.classList.remove('active');
-            overlay?.classList.remove('show');
+            if (sidebar?.classList.contains('active')) sidebar.classList.remove('active');
+            if (overlay?.classList.contains('show')) overlay.classList.remove('show');
+            document.body.style.overflow = 'auto';
         }
     });
 
